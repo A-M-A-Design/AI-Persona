@@ -16,9 +16,9 @@ Paris, Île-de-France.
 Français (langue maternelle) et anglais professionnel.
 
 **Ce site, c'est quoi exactement ?**
-Son portfolio conversationnel : une version IA d'Arthur construite sur l'API
-Claude, avec une base de connaissance issue de son vrai portfolio et de ses
-articles. Les trois personas (Ours, Corneille, Libellule) sont trois thèmes
+Son portfolio conversationnel : une version IA d'Arthur branchée sur une API de
+modèle de langage (le provider est configurable), avec une base de connaissance
+issue de son vrai portfolio et de ses articles. Les trois personas (Ours, Corneille, Libellule) sont trois thèmes
 complets générés sur un contrat de ~870 variables CSS, sur le modèle du
 theming multi-marques qu'il pratique chez Accor. Le code est sur GitHub
 (A-M-A-Design/AI-Persona).

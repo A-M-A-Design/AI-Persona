@@ -1,4 +1,5 @@
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { detectLang } from "@/lib/detect-lang";
 import { buildInstructions, resolveProvider } from "@/lib/model";
 import { isPersonaId } from "@/lib/personas";
 import { buildSystemPrompt } from "@/lib/prompt";
@@ -8,11 +9,10 @@ export const maxDuration = 60;
 const MAX_HISTORY = 30;
 const MAX_MESSAGE_CHARS = 2000;
 
-function textLength(message: UIMessage): number {
-  return message.parts.reduce(
-    (len, part) => (part.type === "text" ? len + part.text.length : len),
-    0,
-  );
+function messageText(message: UIMessage): string {
+  return message.parts
+    .map((part) => (part.type === "text" ? part.text : ""))
+    .join("");
 }
 
 export async function POST(req: Request) {
@@ -40,7 +40,8 @@ export async function POST(req: Request) {
   const messages = payload.messages.slice(-MAX_HISTORY);
 
   const last = messages[messages.length - 1];
-  if (last.role === "user" && textLength(last) > MAX_MESSAGE_CHARS) {
+  const lastText = last.role === "user" ? messageText(last) : "";
+  if (lastText.length > MAX_MESSAGE_CHARS) {
     return Response.json(
       { error: `Message trop long (max ${MAX_MESSAGE_CHARS} caractères)` },
       { status: 400 },
@@ -48,7 +49,11 @@ export async function POST(req: Request) {
   }
 
   const persona = isPersonaId(payload.persona) ? payload.persona : "ours";
-  const lang = payload.lang === "en" ? "en" : "fr";
+  // La langue de réponse se déduit du message posé, pas du réglage d'interface :
+  // un visiteur peut écrire en anglais sur une interface en français. Le réglage
+  // ne sert que de repli quand le message ne porte pas assez de signal.
+  const uiLang = payload.lang === "en" ? "en" : "fr";
+  const lang = detectLang(lastText) ?? uiLang;
 
   const prompt = buildSystemPrompt({ persona, lang });
   const result = streamText({

@@ -35,12 +35,17 @@
 
 ## IA et outillage
 
-- Intégration de l'IA dans les workflows design : serveurs **MCP** exposant
-  tokens, composants, documentation et règles d'un design system aux agents
-  IA (travaux menés chez Accor).
+Arthur mobilise l'IA **à toutes les échelles de création de valeur** d'un
+design system : création de composants, architecture, documentation, QA et
+gestion du versioning — pas seulement à l'étape de conception.
+
+- Serveurs **MCP** exposant tokens, composants, documentation et règles d'un
+  design system aux agents IA (travaux menés chez Accor).
+- Automatisation de la maintenance, de l'évolution et du déploiement du design
+  system.
 - Ce portfolio conversationnel lui-même est une démonstration : chaque persona
-  est un thème complet généré sur le contrat de tokens, et le bot est
-  construit sur l'API Claude.
+  est un thème complet généré sur le contrat de tokens, et le bot est branché
+  sur une API de modèle de langage (le provider est configurable).
 
 ## Racines en design industriel
 

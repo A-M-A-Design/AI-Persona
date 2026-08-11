@@ -8,6 +8,34 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **Le bot ne suivait pas la langue de l'utilisateur.** Une question posée en
+  anglais avec l'interface en français obtenait une réponse en français, la
+  base de connaissance étant elle-même rédigée en français. Renforcer la
+  consigne n'a réglé que les questions longues. La langue est désormais
+  **déterminée côté serveur** (`lib/detect-lang.ts`) à partir du message posé,
+  puis imposée au modèle ; le réglage d'interface ne sert que de repli quand le
+  message ne porte pas assez de signal. 5/5 sur les cas qui échouaient.
+- Le bot sortait de la première personne dès qu'il assumait d'être une IA
+  (« ce n'est pas moi qui suis chez Accor, mais Arthur »). Le garde-fou de
+  transparence l'interdit désormais, avec une exception pour « es-tu le vrai
+  Arthur ? », où la distinction est justement la réponse attendue.
+
+### Changed
+
+- **Base de connaissance précisée par Arthur** sur cinq points : le poste chez
+  Accor (accompagnement des équipes techniques, QA, architecture de tokens
+  multi-marque, outils d'industrialisation appuyés sur l'IA), la définition
+  d'un bon design system (produit en évolution, gouvernance alignée sur les
+  objectifs business, IA et personnalisation en 2026), le travail avec les
+  développeurs (arbitrage entre réalités techniques et intentions de
+  conception) et l'usage de l'IA (à toutes les échelles de création de valeur).
+  Les attendus correspondants de `docs/eval-questions.md` suivent.
+- La KB ne nomme plus de provider de modèle : le chat est branché sur une API
+  configurable. Le développement mené en binôme avec Claude reste mentionné,
+  c'est un fait distinct.
+
 ### Added
 
 - **Interface refondue d'après la maquette Figma** : header à chips alignés à

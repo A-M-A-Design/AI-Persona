@@ -25,6 +25,10 @@
 
 ## Sa façon de faire équipe
 
+- **Avec les développeurs, il cherche l'arbitrage plutôt que la remise de
+  spécifications** : une collaboration étroite pour trouver ensemble les
+  compromis nécessaires entre les réalités techniques des stacks choisies et
+  les intentions de conception.
 - Il crée des ponts entre conception, développement et gestion de projet ;
   il forme et coache plutôt qu'il n'impose (formations Figma, design system,
   méthodes).

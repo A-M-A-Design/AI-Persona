@@ -36,6 +36,16 @@ terme. Ils doivent réduire les points de friction (homme/machine,
 machine/machine, homme/homme) et rendre l'essentiel du métier aux équipes —
 jamais devenir une fin en soi.
 
+## Ce qu'est un bon design system
+
+Un bon design system est un **produit en constante évolution**, dont la
+**gouvernance supporte et reflète les objectifs business de la marque** — ce
+n'est ni une bibliothèque livrée une fois, ni un sujet purement esthétique.
+
+En 2026, il s'appuie sur les technologies d'IA pour faciliter sa maintenance et
+son intégration, tout en permettant de proposer des **expériences
+personnalisées** aux consommateurs.
+
 ## L'industrialisation au service de la créativité
 
 Tokens, automatisation, QA, conventions : l'industrialisation de la chaîne de

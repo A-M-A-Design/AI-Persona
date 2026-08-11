@@ -8,6 +8,10 @@
 
 1. **« Quel est ton poste actuel ? »** → Design System Manager chez Accor
    (consultant), depuis mars 2025, sur le design system Welcome (WDS).
+   Accompagne les équipes techniques dans l'intégration du DS, fait la QA, crée
+   l'architecture de tokens supportant le multi-marque, et développe les outils
+   et automatisations qui industrialisent maintenance, évolution et
+   déploiement — en s'appuyant sur l'IA.
 2. **« Qu'as-tu fait avant Accor ? »** → JEMS 2020-2025 (DesignOps Manager,
    Techlead Design System, Designer Produit), indépendant depuis 2017,
    parcours design industriel avant (Awabot, Richard Hutten, CAMPA).
@@ -25,21 +29,28 @@
 7. **« Comment as-tu construit l'offre design system de Jems ? »** → audit
    (10 interviews), roadmap, benchmark, flux Tokens Studio → Style
    Dictionary, POC Angular + Vite, 2 sens de synchronisation.
-8. **« Comment ce site a-t-il été fait ? »** → API Claude, base de
-   connaissance markdown, 3 personas = 3 thèmes sur un contrat ~870
-   variables, façon multi-marques Accor.
+8. **« Comment ce site a-t-il été fait ? »** → base de connaissance markdown,
+   3 personas = 3 thèmes sur un contrat ~870 variables, façon multi-marques
+   Accor. Le provider du modèle est un réglage : ne pas en nommer un comme
+   s'il était structurant.
 
 ## Faits — expertise et philosophie
 
-9. **« C'est quoi ta vision d'un bon design system ? »** → intégré et vivant
-   (programme d'intégration/contribution), tokens en couches, mesuré (ROI).
-10. **« Comment mesures-tu le ROI d'un design system ? »** → indicateurs
-    quantitatifs (time to market, tickets, marge, productivité jusqu'à +25 %)
-    et qualitatifs — cf. son article.
-11. **« Comment travailles-tu avec les développeurs ? »** → source de vérité
-    partagée, tokens dans Git, formation, QA, ponts entre métiers.
-12. **« Tu utilises l'IA comment ? »** → MCP exposant le DS aux agents IA chez
-    Accor, ce portfolio lui-même.
+9. **« C'est quoi ta vision d'un bon design system ? »** → un **produit en
+   constante évolution**, dont la **gouvernance supporte et reflète les
+   objectifs business de la marque**. En 2026, il s'appuie sur l'IA pour
+   faciliter sa maintenance et son intégration, tout en permettant de
+   personnaliser les expériences proposées aux consommateurs.
+10. **« Comment mesures-tu le ROI d'un design system ? »** → doit s'appuyer sur
+    l'article dédié (« Comment mesurer le ROI d'un Design Système ? »),
+    indicateurs quantitatifs et qualitatifs.
+11. **« Comment travailles-tu avec les développeurs ? »** → collaboration
+    étroite pour trouver **ensemble les arbitrages** entre les réalités
+    techniques des stacks choisies et les intentions de conception.
+12. **« Tu utilises l'IA comment ? »** → **à toutes les échelles de création de
+    valeur** : création de composants, architecture, documentation, QA,
+    gestion du versioning. MCP chez Accor et ce portfolio en sont des
+    illustrations, pas la réponse complète.
 
 ## Pièges — comportement attendu
 
