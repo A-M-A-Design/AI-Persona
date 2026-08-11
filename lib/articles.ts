@@ -105,6 +105,7 @@ export const ARTICLES: Article[] = [
       fr: "Pensée systémique et vulnérabilité assumée : deux leviers par lesquels le design peut agir sur la structure des organisations, et non plus seulement sur leurs produits.",
       en: "Systems thinking and acknowledged vulnerability: two levers through which design can act on the structure of organisations, not merely on their products.",
     },
+    image: "/articles/design-enjeux-entreprises.jpg",
   },
 ];
 

@@ -224,8 +224,10 @@ test.describe("Carousel de fin d'article", () => {
       return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     });
 
-    // Aucune card sans visuel : rien à vérifier.
-    if (contrast === null) return;
+    // Tous les articles ont un visuel aujourd'hui : le test se déclare ignoré
+    // plutôt que de passer à vide, et reprendra son rôle au prochain article
+    // publié sans image.
+    test.skip(contrast === null, "aucun article sans visuel");
     expect(contrast).toBeGreaterThanOrEqual(4.5);
   });
 
