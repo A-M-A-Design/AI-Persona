@@ -65,6 +65,11 @@ body {
   gap: 0.375rem;
 }
 
+.chat-page__controls-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .chat {
   display: flex;
   flex-direction: column;

@@ -2,7 +2,9 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { t } from "../../lib/i18n";
+import { readCurrentSettings, useSettings } from "../useSettings";
 import Composer from "./Composer";
 import MessageBubble from "./MessageBubble";
 import SuggestedQuestions from "./SuggestedQuestions";
@@ -19,14 +21,6 @@ type Props = {
   personas: PersonaPublic[];
 };
 
-function currentSettings() {
-  const d = document.documentElement;
-  return {
-    persona: d.getAttribute("data-persona") ?? "ours",
-    lang: d.getAttribute("lang") === "en" ? ("en" as const) : ("fr" as const),
-  };
-}
-
 function messageText(parts: { type: string }[]): string {
   return parts
     .filter((p): p is { type: "text"; text: string } => p.type === "text")
@@ -38,19 +32,8 @@ export default function Chat({ personas }: Props) {
   const { messages, sendMessage, status, error, clearError } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
-  // Persona/langue affichés côté client uniquement (évite un mismatch d'hydratation).
-  const [settings, setSettings] = useState<{ persona: string; lang: "fr" | "en" }>({
-    persona: "ours",
-    lang: "fr",
-  });
+  const settings = useSettings();
   const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSettings(currentSettings());
-    const update = () => setSettings(currentSettings());
-    window.addEventListener("ai-persona:settings", update);
-    return () => window.removeEventListener("ai-persona:settings", update);
-  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -61,8 +44,9 @@ export default function Chat({ personas }: Props) {
     personas.find((p) => p.id === settings.persona) ?? personas[0];
 
   function send(text: string) {
-    const s = currentSettings();
-    setSettings(s);
+    // Settings relus au moment de l'envoi : un switch de persona/langue en
+    // cours de conversation change la voix du bot au message suivant.
+    const s = readCurrentSettings();
     clearError();
     sendMessage({ text }, { body: { persona: s.persona, lang: s.lang } });
   }
@@ -75,13 +59,10 @@ export default function Chat({ personas }: Props) {
             <MessageBubble
               role="assistant"
               avatarEmoji={activePersona.emoji}
-              text={
-                settings.lang === "fr"
-                  ? "Bonjour ! Je suis la version IA d'Arthur. Posez-moi vos questions sur son parcours, ses projets ou sa façon de travailler."
-                  : "Hi! I'm Arthur's AI self. Ask me anything about his background, projects or the way he works."
-              }
+              text={t(settings.lang, "welcome")}
             />
             <SuggestedQuestions
+              label={t(settings.lang, "suggestions")}
               questions={activePersona.suggestedQuestions[settings.lang]}
               onPick={send}
             />
@@ -102,18 +83,14 @@ export default function Chat({ personas }: Props) {
             <span className="chat__avatar" aria-hidden="true">
               {activePersona.emoji}
             </span>
-            <div className="wel-skeleton chat__skeleton" aria-label="Réponse en cours…" />
+            <div className="wel-skeleton chat__skeleton" aria-label={t(settings.lang, "thinking")} />
           </div>
         )}
 
         {error && (
           <div className="wel-message wel-message--warning" role="alert">
             <div className="wel-message__header">
-              <p className="wel-message__text">
-                {settings.lang === "fr"
-                  ? "Oups, quelque chose a coincé. Réessayez dans un instant."
-                  : "Oops, something went wrong. Please try again."}
-              </p>
+              <p className="wel-message__text">{t(settings.lang, "error")}</p>
             </div>
           </div>
         )}
@@ -122,9 +99,8 @@ export default function Chat({ personas }: Props) {
 
       <Composer
         disabled={busy}
-        placeholder={
-          settings.lang === "fr" ? "Posez votre question…" : "Ask your question…"
-        }
+        placeholder={t(settings.lang, "placeholder")}
+        sendLabel={t(settings.lang, "send")}
         onSend={send}
       />
     </div>
