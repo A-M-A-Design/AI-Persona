@@ -21,6 +21,23 @@ async function visitArticle(page: import("@playwright/test").Page, lang = "fr") 
   );
   await page.goto(`/articles/${SLUG}`);
   await page.waitForLoadState("networkidle");
+  await waitForHydration(page);
+}
+
+/**
+ * Attend que React ait repris la main sur la barre de navigation.
+ *
+ * Entre le rendu serveur et l'hydratation, un clic sur un lien Next peut être
+ * avalé : l'écouteur est posé mais le routeur n'est pas prêt, et la navigation
+ * native n'a plus lieu. Sous charge, la fenêtre est assez large pour rendre le
+ * test instable. La présence des propriétés internes de React sur le nœud est
+ * le signal que l'hydratation est faite.
+ */
+async function waitForHydration(page: import("@playwright/test").Page) {
+  await page.waitForFunction(() => {
+    const el = document.querySelector(".site-nav .article-back");
+    return Boolean(el && Object.keys(el).some((k) => k.startsWith("__react")));
+  });
 }
 
 test.describe("Cards de l'accueil", () => {

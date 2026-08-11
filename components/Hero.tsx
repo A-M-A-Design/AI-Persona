@@ -45,6 +45,8 @@ export default function Hero({ lang, persona, disabled, questions, onSend }: Pro
               label={t(lang, "suggestions")}
               questions={questions}
               onPick={onSend}
+              scrollable
+              nextLabel={t(lang, "moreQuestions")}
             />
           </div>
         </div>

@@ -137,11 +137,38 @@ test.describe("Lanceur", () => {
       /.+/,
     );
 
-    // Les chips défilent au lieu de passer à la ligne.
+    // Les chips défilent au lieu de passer à la ligne, avec le bouton de
+    // défilement de la maquette au bout de la rangée.
     const chips = page.locator(".launcher__suggestions");
     await expect(chips).toHaveCSS("flex-wrap", "nowrap");
     const scrolls = await chips.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(scrolls).toBe(true);
+    await expect(page.locator(".suggestions__next")).toBeVisible();
+  });
+
+  test("mobile : champ en pilule, flèche à l'intérieur, image pleine largeur", async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
+    await visit(page);
+
+    // La maquette met le champ et les chips en retrait de 16 px de plus que
+    // l'illustration : 311 contre 343 sur une base de 375.
+    const field = await page.locator(".launcher__row .wel-input-text__wrapper").boundingBox();
+    const media = await page.locator(".hero__media").boundingBox();
+    expect(Math.round(field?.width ?? 0)).toBe(311);
+    expect(Math.round(media?.width ?? 0)).toBe(343);
+
+    // Le champ est une pilule, et l'action est posée dedans — pas à côté.
+    await expect(page.locator(".launcher__row .wel-input-text__wrapper")).toHaveCSS(
+      "border-radius",
+      "100px",
+    );
+    const button = await page.locator(".launcher__row button[type=submit]").boundingBox();
+    const fieldRight = (field?.x ?? 0) + (field?.width ?? 0);
+    const buttonRight = (button?.x ?? 0) + (button?.width ?? 0);
+    expect(buttonRight).toBeLessThanOrEqual(fieldRight);
+    expect(button?.x ?? 0).toBeGreaterThan(field?.x ?? 0);
 
     // Et le bloc ne déborde plus sur l'illustration.
     await expect(page.locator(".hero__media")).toHaveCSS("margin-top", "0px");

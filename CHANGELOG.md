@@ -24,6 +24,13 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le héro mobile ne suivait pas la maquette.** Le champ de saisie était
+  rectangulaire avec un bouton rond posé à côté, sur toute la largeur ; la
+  maquette dessine un champ en pilule occupant 311 px, la flèche d'envoi
+  **à l'intérieur** à droite, et laisse l'illustration en pleine largeur
+  (343 px). La rangée de chips reçoit son bouton de défilement, rendu
+  uniquement lorsqu'elle déborde — donc jamais en desktop, où les chips
+  passent à la ligne.
 - **La pilule « Retour » recouvrait le texte de l'article.** Posée au-dessus de
   l'article, elle occupait exactement l'emplacement où démarre la colonne de
   lecture dès que la fenêtre passait sous ~1100 px. Elle est désormais portée

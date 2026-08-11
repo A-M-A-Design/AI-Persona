@@ -282,16 +282,60 @@ img {
    directement sur la page — ni fond, ni rayon, ni ombre, ni retrait — et
    l'action se réduit à une icône au bout du champ. */
 @media (max-width: 767px) {
+  /* La maquette met le champ et les chips en retrait de 16 px de plus que le
+     reste, tandis que l'illustration reste pleine largeur : 311 contre 343. */
   .launcher {
     gap: 12px;
     padding: 0;
+    margin-inline: 16px;
     border-radius: 0;
     background: none;
     box-shadow: none;
   }
 
-  /* La ligne reste horizontale : le champ occupe la largeur, l'action se
-     réduit à sa flèche. */
+  /* L'action n'est pas posée à côté du champ mais dedans, à droite : une
+     simple flèche sans fond ni bordure, dans un champ en pilule. */
+  .launcher__row {
+    position: relative;
+    gap: 0;
+  }
+
+  .launcher__row .composer__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .launcher__row .wel-input-text__wrapper {
+    border-radius: var(--pill-radius);
+  }
+
+  /* Réserve la place de la flèche pour que la saisie ne passe pas dessous. */
+  .launcher__row .wel-input-text__input {
+    padding-right: 48px;
+  }
+
+  .launcher__row button[type="submit"] {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--pill-radius);
+    background: none;
+    color: var(--wel-sem-color-on-surface-hi);
+  }
+
+  /* Inactive, la flèche s'estompe sur une couleur de texte qui reste
+     contrastée — jamais un aplat translucide, illisible à cette taille. */
+  .launcher__row button[type="submit"]:disabled {
+    background: none;
+    color: var(--wel-sem-color-on-surface-mid);
+  }
+
   .launcher__row .composer__label {
     display: none;
   }
@@ -953,4 +997,31 @@ img {
   .article__quote {
     padding-left: 20px;
   }
+}
+
+/* Rangée de chips avec son bouton de défilement (maquette mobile). Le bouton
+   n'est rendu que lorsque la rangée déborde, donc jamais en desktop où les
+   chips passent à la ligne. */
+.suggestions {
+  position: relative;
+  min-width: 0;
+}
+.suggestions__next {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pill-radius);
+  background: var(--wel-sem-color-surface);
+  color: var(--wel-sem-color-on-surface-hi);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgb(7 5 24 / 24%);
 }
