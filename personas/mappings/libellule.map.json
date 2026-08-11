@@ -1,0 +1,30 @@
+{
+  "$comment": "Libellule — geek, rétro 16-bit : cyan/magenta saturés, coins durs, ombres arcade sans flou, typo pixel (display) et terminal (body).",
+  "colors": {
+    "hueRules": [
+      { "from": [195, 270], "to": 187, "saturate": 1.4, "spread": 0.2 },
+      { "from": [270, 340], "to": 315, "saturate": 1.35 },
+      { "maxSat": 0.1, "tintHue": 200, "tintSat": 0.06 }
+    ],
+    "saturateAll": 1.12
+  },
+  "fonts": {
+    "Montserrat": "var(--font-libellule-display)",
+    "Unna": "var(--font-libellule-display)",
+    "Roboto": "var(--font-libellule-body)"
+  },
+  "vars": {
+    "--wel-sem-border-radius-*": "0",
+    "--wel-comp-checkbox-radius": "0",
+    "--wel-comp-map-pointer-radius": "0",
+    "--wel-comp-booking-engine-radius": "0",
+    "--wel-sem-number-shadow-blur": "0",
+    "--wel-sem-number-shadow-wide-blur": "0",
+    "--wel-sem-number-shadow-up-y": "4px",
+    "--wel-sem-number-shadow-down-y": "4px",
+    "--wel-sem-number-shadow-down-wide-y": "6px",
+    "--wel-sem-font-sizes-body-md": "1.2rem",
+    "--wel-sem-font-sizes-input-md": "1.2rem",
+    "--wel-sem-font-sizes-display-sm": "1.4rem"
+  }
+}

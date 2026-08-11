@@ -18,6 +18,8 @@ styles/welds-src/
 
 # --- Documents sources personnels (extraits vers knowledge/ après curation)
 *.pdf
+*.docx
+article/
 
 # --- OS / éditeurs
 .DS_Store

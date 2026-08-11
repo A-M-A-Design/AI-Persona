@@ -1,5 +1,6 @@
 import Chat, { type PersonaPublic } from "../components/chat/Chat";
 import ColorModeToggle from "../components/header/ColorModeToggle";
+import PersonaSwitcher from "../components/header/PersonaSwitcher";
 import { getPersonas } from "../lib/personas";
 
 export default function Home() {
@@ -18,7 +19,10 @@ export default function Home() {
             Design System Lead · Product · Ops — discutez avec ma version IA
           </p>
         </div>
-        <ColorModeToggle />
+        <div className="chat-page__controls">
+          <PersonaSwitcher />
+          <ColorModeToggle />
+        </div>
       </header>
       <Chat personas={personas} />
     </main>

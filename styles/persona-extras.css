@@ -1,0 +1,20 @@
+/* Effets hors contrat de variables — volontairement minuscule pour ne pas
+   créer un « deuxième thème » parallèle. */
+
+/* Libellule : rendu rétro/16-bit */
+[data-persona="libellule"] img,
+[data-persona="libellule"] .chat__avatar {
+  image-rendering: pixelated;
+}
+
+[data-persona="libellule"] .wel-button,
+[data-persona="libellule"] .wel-chip,
+[data-persona="libellule"] .wel-input-text__input,
+[data-persona="libellule"] .wel-message {
+  border-width: 2px;
+  border-style: solid;
+}
+
+[data-persona="libellule"] .chat-page__title {
+  letter-spacing: 0.02em;
+}

@@ -42,6 +42,10 @@ npm run dev                  # http://localhost:3000
 2. **Chaque PR met à jour le CHANGELOG** (section `[Unreleased]`, format Keep a Changelog)
 3. Commits conventionnels : `feat(chat): …`, `kb(projects): …` — scopes : `chat`, `theme`, `kb`, `i18n`, `ui`, `infra`, `docs`
 4. **IP Accor** : `styles/welds-src/`, les zips et PDF sont gitignorés et ne doivent jamais apparaître dans un diff
+5. **Tokens** : le CSS applicatif ne consomme que `--wel-sem-*` et
+   `--wel-comp-*` — jamais les primitives `--wel-prim-*` ni les alias
+   `bsem`/`bcomp` (couches internes du système). Les fichiers de thème
+   *générés* définissent toutes les couches : c'est leur rôle.
 
 ### Mettre à jour la base de connaissance (rituel)
 

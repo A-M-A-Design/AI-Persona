@@ -1,0 +1,15 @@
+{
+  "$comment": "Ours — chaleureux, réconfortant : les bleus de la base deviennent terracotta/ambre, les neutres sont légèrement réchauffés. Rouges/verts/jaunes sémantiques préservés.",
+  "colors": {
+    "hueRules": [
+      { "from": [180, 270], "to": 26, "saturate": 0.95, "spread": 0.3 },
+      { "from": [270, 335], "to": 20, "saturate": 0.9 },
+      { "maxSat": 0.1, "tintHue": 30, "tintSat": 0.05 }
+    ]
+  },
+  "fonts": {
+    "Montserrat": "var(--font-ours-display)",
+    "Unna": "var(--font-ours-display)",
+    "Roboto": "var(--font-ours-body)"
+  }
+}
