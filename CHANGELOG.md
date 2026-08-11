@@ -24,10 +24,19 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Normalisation des articles sources** (`scripts/normalize-articles.mjs`).
+  Les fichiers de `knowledge/content-library/` étaient des extractions PDF :
+  lignes coupées à ~86 caractères en plein milieu des phrases, titre répété en
+  texte brut sous le H1, titres de section sans balisage, listes en puces
+  « • ». Le script les recolle en markdown structuré et **vérifie fichier par
+  fichier que la suite des mots est identique avant et après**, aux seuls
+  segments explicitement retirés près ; il refuse d'écrire sinon. La
+  transformation est typographique, aucun texte n'est réécrit.
 - **Deux articles ajoutés** : « Le design système au service de vos besoins en
   data visualisation » (texte fourni par Arthur, visuel exporté de la maquette)
   et « Comment le Design peut répondre aux enjeux actuels des entreprises ? »,
-  dont le texte était déjà dans la base de connaissance sans être affiché.
+  dont le texte était déjà dans la base de connaissance sans être affiché — son
+  visuel est la couverture d'Olivier Hamant citée en référence dans l'article.
   Six articles au total, tous traduits en anglais. La grille d'accueil en
   compose quatre, comme la maquette ; le carousel les propose tous.
 - **Carousel en fin d'article** : les autres articles y défilent, trois par page
@@ -89,6 +98,13 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   « Article written by Arthur Mathon… » ouvrait le corps des six versions
   anglaises. La parité de structure FR/EN est désormais testée sur les
   paragraphes, pas seulement sur les titres et les listes.
+- **`.gitignore` : le motif `article/` n'était pas ancré** et excluait donc
+  n'importe quel dossier de ce nom à toute profondeur — dont
+  `components/article/`, absent du dépôt sans que rien ne le signale
+  localement. Ancré à `/article/` ; les documents sources d'Arthur restent
+  exclus, doublés par `*.docx`.
+- La chaîne « Nouvelle version — bientôt en ligne » est retirée : depuis que
+  chaque article a sa page, aucune card ne peut plus se trouver dans cet état.
 - **Des commentaires de relecture Word s'affichaient dans les articles.**
   L'extraction PDF avait laissé sept annotations (« Commented [MA1] : … »,
   « Revoir le titre », « Rajouter les références ») dans le corps du texte, ainsi
