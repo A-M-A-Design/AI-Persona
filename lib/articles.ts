@@ -5,6 +5,8 @@
 // de la seconde — c'est la composition de la maquette Figma.
 import type { Lang } from "./i18n";
 
+export type ColorMode = "light" | "dark";
+
 export type Article = {
   slug: string;
   title: Record<Lang, string>;
@@ -118,9 +120,14 @@ export const LINKS = {
   email: "mailto:a.mathon@stratecollege.fr",
 };
 
-/** Illustration du héro, par persona (exportée de la maquette Figma). */
-export const HERO_IMAGES: Record<string, string> = {
-  ours: "/hero/ours.png",
-  corneille: "/hero/corneille.png",
-  libellule: "/hero/libellule.png",
+/**
+ * Illustration du héro, par persona et par mode de couleur — la maquette
+ * dessine deux scènes distinctes, pas une simple variation de traitement :
+ * l'ours contemple la montagne de jour en clair, sous la lune en sombre.
+ * Exportées de Figma.
+ */
+export const HERO_IMAGES: Record<string, Record<ColorMode, string>> = {
+  ours: { light: "/hero/ours-light.jpg", dark: "/hero/ours-dark.jpg" },
+  corneille: { light: "/hero/corneille-light.jpg", dark: "/hero/corneille-dark.jpg" },
+  libellule: { light: "/hero/libellule-light.jpg", dark: "/hero/libellule-dark.jpg" },
 };

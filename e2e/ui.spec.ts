@@ -221,6 +221,40 @@ test.describe("Thèmes", () => {
     }
   });
 
+  for (const persona of PERSONAS) {
+    test(`${persona} — le visuel du héro diffère entre clair et sombre`, async ({ page }) => {
+      const source = async () =>
+        decodeURIComponent(
+          await page.locator(".hero__image").evaluate((el: HTMLImageElement) => el.currentSrc),
+        );
+
+      await visit(page, { persona, mode: "light" });
+      const clair = await source();
+      await visit(page, { persona, mode: "dark" });
+      const sombre = await source();
+
+      expect(clair).toContain(`/hero/${persona}-light.`);
+      expect(sombre).toContain(`/hero/${persona}-dark.`);
+      // Les deux visuels sont chargés, pas seulement référencés.
+      const charge = await page
+        .locator(".hero__image")
+        .evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0);
+      expect(charge).toBe(true);
+    });
+  }
+
+  test("le visuel du héro suit la bascule de mode sans rechargement", async ({ page }) => {
+    await visit(page, { mode: "light" });
+    const image = page.locator(".hero__image");
+    const avant = await image.evaluate((el: HTMLImageElement) => el.currentSrc);
+
+    await page.locator(".site-nav__toggle").click();
+    await expect(page.locator("html")).toHaveAttribute("data-color-mode", "dark");
+    await expect
+      .poll(async () => image.evaluate((el: HTMLImageElement) => el.currentSrc))
+      .not.toBe(avant);
+  });
+
   test("le sélecteur de mode bascule l'attribut de la page", async ({ page }) => {
     await visit(page);
     await expect(page.locator("html")).toHaveAttribute("data-color-mode", "light");

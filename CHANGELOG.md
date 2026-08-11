@@ -10,6 +10,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **L'illustration du héro suit le mode de couleur.** La maquette dessine deux
+  scènes distinctes par persona, pas une variation de traitement : l'ours
+  contemple la montagne de jour en clair et sous la lune en sombre. Six visuels
+  exportés (`public/hero/<persona>-<mode>.jpg`), servis en JPEG plutôt qu'en
+  PNG — le dossier passe de 3,7 Mo à 1,2 Mo pour deux fois plus d'images.
 - **L'accueil compose les six articles** : deux grandes cards puis une rangée
   de quatre cards étroites, d'après la maquette mise à jour. La carte contact
   quitte la grille — elle en occupait deux colonnes — et s'étend désormais sur

@@ -7,7 +7,7 @@
 // Les questions suggérées vivent dans la carte du lanceur, sous le champ :
 // c'est là qu'elles se lisent comme une alternative à la saisie.
 import Image from "next/image";
-import { HERO_IMAGES } from "../lib/articles";
+import { HERO_IMAGES, type ColorMode } from "../lib/articles";
 import { t, type Lang } from "../lib/i18n";
 import Composer from "./chat/Composer";
 import SuggestedQuestions from "./chat/SuggestedQuestions";
@@ -15,13 +15,14 @@ import SuggestedQuestions from "./chat/SuggestedQuestions";
 type Props = {
   lang: Lang;
   persona: string;
+  colorMode: ColorMode;
   disabled: boolean;
   questions: string[];
   onSend: (text: string) => void;
 };
 
-export default function Hero({ lang, persona, disabled, questions, onSend }: Props) {
-  const image = HERO_IMAGES[persona] ?? HERO_IMAGES.ours;
+export default function Hero({ lang, persona, colorMode, disabled, questions, onSend }: Props) {
+  const image = (HERO_IMAGES[persona] ?? HERO_IMAGES.ours)[colorMode];
 
   return (
     <section className="hero">
