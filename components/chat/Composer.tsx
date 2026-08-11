@@ -47,10 +47,18 @@ export default function Composer({
           />
         </div>
       </div>
+      {/*
+        Le bouton n'est jamais désactivé sur champ vide : ce serait l'état par
+        défaut de la page, or le style désactivé du WDS repose sur une opacité
+        de 0.38 qui ramène le label à 1.25:1 — la CTA principale serait
+        illisible au chargement, sans que rien n'explique pourquoi. Un envoi à
+        vide est simplement ignoré par submit(). Seule une requête en cours
+        désactive réellement le bouton, et cet état-là est transitoire.
+      */}
       <button
         type="submit"
         className="wel-button wel-button--primary wel-button--icon-right"
-        disabled={disabled || value.trim().length === 0}
+        disabled={disabled}
       >
         {sendLabel}
         <span aria-hidden="true"> →</span>

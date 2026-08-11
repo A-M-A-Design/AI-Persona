@@ -59,6 +59,14 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le bouton d'envoi n'est plus désactivé sur champ vide.** C'était l'état par
+  défaut de la page, or le style désactivé du WDS repose sur une opacité de
+  0,38 qui ramène le label à 1,25:1 : la CTA principale était illisible au
+  chargement, sans que rien n'explique pourquoi. Un envoi à vide est ignoré par
+  le gestionnaire. Seule une requête en cours désactive encore le bouton — état
+  transitoire, et exclu du critère AA (WCAG 1.4.3 exempte les composants
+  inactifs).
+
 - **Contraste insuffisant sur les boutons de certains thèmes.** La
   transformation de teinte conservait la *clarté HSL*, pas la *luminance
   relative WCAG* — deux grandeurs différentes, le vert pesant 0,7152 dans la

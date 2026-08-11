@@ -23,9 +23,16 @@ const MODES = ["light", "dark"];
 // tolère 3:1, mais aucune des paires ci-dessous n'est exclusivement large.
 const AA = 4.5;
 
+// `exempt` : WCAG 1.4.3 exclut les composants inactifs du critère de contraste.
+// On les mesure quand même — un état désactivé illisible reste un problème
+// d'usage — mais sans faire échouer l'audit.
 const PAIRS = [
   ["Bouton primaire", "--wel-comp-btn-primary-fg-color", "--wel-comp-btn-primary-bg-color"],
+  ["Bouton primaire · survol", "--wel-comp-btn-primary-hover-fg-color", "--wel-comp-btn-primary-hover-bg-color"],
+  ["Bouton primaire · pressé", "--wel-comp-btn-primary-pressed-fg-color", "--wel-comp-btn-primary-pressed-bg-color"],
+  ["Bouton primaire · inactif", "--wel-comp-btn-primary-disabled-fg-color", "--wel-comp-btn-primary-disabled-bg-color", { exempt: true, opacity: "--wel-comp-btn-disabled-opacity" }],
   ["Bouton secondaire", "--wel-comp-btn-secondary-fg-color", "--wel-comp-btn-secondary-bg-color"],
+  ["Bouton secondaire · survol", "--wel-comp-btn-secondary-hover-fg-color", "--wel-comp-btn-secondary-hover-bg-color"],
   ["Bouton tertiaire", "--wel-comp-btn-tertiary-fg-color", "--wel-comp-btn-tertiary-bg-color"],
   ["Chip", "--wel-comp-chip-fg-color", "--wel-comp-chip-bg-color"],
   ["Chip sélectionné", "--wel-comp-chip-fg-color", "--wel-comp-chip-selected-bg-color"],
@@ -84,10 +91,14 @@ for (const persona of PERSONAS) {
   for (const mode of MODES) {
     const token = (t) => b[mode][t] ?? b.base[t];
     const surface = rgba(token("--wel-sem-color-surface")) ?? [255, 255, 255, 1];
-    for (const [label, fgToken, bgToken] of PAIRS) {
+    for (const [label, fgToken, bgToken, opts = {}] of PAIRS) {
       const fg = rgba(token(fgToken));
       const bgRaw = token(bgToken);
       if (!fg || !bgRaw) continue;
+
+      // Un état inactif est peint à l'opacité du composant : fond et label sont
+      // tous deux composés sur la surface.
+      const op = opts.opacity ? parseFloat(token(opts.opacity) ?? "1") : 1;
 
       // Un dégradé n'est conforme que si ses deux extrémités le sont.
       const stops = /gradient/i.test(bgRaw)
@@ -97,15 +108,18 @@ for (const persona of PERSONAS) {
 
       const worst = Math.min(
         ...stops.map((s) => {
-          const solid = over(s, surface);
-          return ratio(over(fg, solid), solid);
+          const solid = over([s[0], s[1], s[2], s[3] * op], surface);
+          return ratio(over([fg[0], fg[1], fg[2], fg[3] * op], solid), solid);
         }),
       );
       const ok = worst >= AA;
+      const mark = ok ? "✔" : opts.exempt ? "·" : "✘";
       lines.push(
-        `  ${ok ? "✔" : "✘"} ${label.padEnd(19)} ${worst.toFixed(2)}:1`,
+        `  ${mark} ${label.padEnd(26)} ${worst.toFixed(2)}:1${opts.exempt && !ok ? "  (inactif — hors critère AA)" : ""}`,
       );
-      if (!ok) failures.push({ persona, mode, label, ratio: worst, fg: token(fgToken), bg: bgRaw });
+      if (!ok && !opts.exempt) {
+        failures.push({ persona, mode, label, ratio: worst, fg: token(fgToken), bg: bgRaw });
+      }
     }
     lines.splice(lines.length - PAIRS.length, 0, `\n${persona} / ${mode}`);
   }
