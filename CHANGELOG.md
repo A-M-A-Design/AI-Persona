@@ -8,7 +8,109 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **Images servies en WebP** : les douze visuels (héros et articles) passent de
+  PNG/JPEG à WebP — 1 854 Ko à 1 002 Ko, soit 46 % de moins.
+- **L'illustration du héro suit le mode de couleur.** La maquette dessine deux
+  scènes distinctes par persona, pas une variation de traitement : l'ours
+  contemple la montagne de jour en clair et sous la lune en sombre. Six visuels
+  exportés (`public/hero/<persona>-<mode>.jpg`), servis en JPEG plutôt qu'en
+  PNG — le dossier passe de 3,7 Mo à 1,2 Mo pour deux fois plus d'images.
+- **L'accueil compose les six articles** : deux grandes cards puis une rangée
+  de quatre cards étroites, d'après la maquette mise à jour. La carte contact
+  quitte la grille — elle en occupait deux colonnes — et s'étend désormais sur
+  toute la largeur sous les deux grilles.
+
+### Added
+
+- **Normalisation des articles sources** (`scripts/normalize-articles.mjs`).
+  Les fichiers de `knowledge/content-library/` étaient des extractions PDF :
+  lignes coupées à ~86 caractères en plein milieu des phrases, titre répété en
+  texte brut sous le H1, titres de section sans balisage, listes en puces
+  « • ». Le script les recolle en markdown structuré et **vérifie fichier par
+  fichier que la suite des mots est identique avant et après**, aux seuls
+  segments explicitement retirés près ; il refuse d'écrire sinon. La
+  transformation est typographique, aucun texte n'est réécrit.
+- **Deux articles ajoutés** : « Le design système au service de vos besoins en
+  data visualisation » (texte fourni par Arthur, visuel exporté de la maquette)
+  et « Comment le Design peut répondre aux enjeux actuels des entreprises ? »,
+  dont le texte était déjà dans la base de connaissance sans être affiché — son
+  visuel est la couverture d'Olivier Hamant citée en référence dans l'article.
+  Six articles au total, tous traduits en anglais. La grille d'accueil en
+  compose quatre, comme la maquette ; le carousel les propose tous.
+- **Carousel en fin d'article** : les autres articles y défilent, trois par page
+  en desktop, deux en tablette, une en mobile, avec la pagination condensée de
+  la maquette (précédent · compteur · suivant). Le défilement est celui du
+  navigateur — `scroll-snap` — donc le geste tactile et le clavier fonctionnent
+  d'origine ; le nombre de pages se déduit de la géométrie des cartes et suit
+  les breakpoints sans les connaître. Le carousel occupe toute la largeur de
+  contenu, là où la colonne de lecture reste resserrée.
+- **Les quatre articles sont traduits en anglais** (`knowledge/content-library/en/`).
+  La page sert la version correspondant à la langue choisie ; le titre, le
+  surtitre et le chapô suivaient déjà ce réglage. Le sous-dossier `en/` n'entre
+  pas dans la base de connaissance du bot, qui ne lit que la racine — le modèle
+  continue de traduire à la volée.
+- **Une page par article**, générée statiquement (`/articles/<slug>`), d'après
+  les trois frames de la maquette. Les boutons « Lire l'article » de l'accueil
+  mènent désormais au site et non plus au profil LinkedIn. Colonne de lecture
+  de 850 px en desktop et 550 en tablette ; en mobile l'article occupe toute la
+  largeur. Surtitre, titre et chapô suivent la langue choisie ; le corps est
+  annoncé en français, langue de rédaction des articles.
+
 ### Fixed
+
+- La rangée de chips s'estompe sous son bouton de défilement, et le bloc
+  reprend le retrait bas de 28 px de la maquette avant l'illustration.
+- **Le héro mobile ne suivait pas la maquette.** Le champ de saisie était
+  rectangulaire avec un bouton rond posé à côté, sur toute la largeur ; la
+  maquette dessine un champ en pilule occupant 311 px, la flèche d'envoi
+  **à l'intérieur** à droite, et laisse l'illustration en pleine largeur
+  (343 px). La rangée de chips reçoit son bouton de défilement, rendu
+  uniquement lorsqu'elle déborde — donc jamais en desktop, où les chips
+  passent à la ligne.
+- **La pilule « Retour » recouvrait le texte de l'article.** Posée au-dessus de
+  l'article, elle occupait exactement l'emplacement où démarre la colonne de
+  lecture dès que la fenêtre passait sous ~1100 px. Elle est désormais portée
+  par la barre de navigation, déjà collante, à toutes les largeurs.
+- En thème Libellule, la police d'affichage — une pixel font très large —
+  faisait déborder le titre d'article hors de la colonne mobile de 311 px et
+  provoquait un défilement horizontal de toute la page.
+- **Le premier affichage d'une illustration prenait plus d'une minute.** Next
+  propose par défaut l'AVIF, que tout navigateur récent réclame via son en-tête
+  `Accept` ; l'encodage AVIF d'une illustration de 2624 × 1248 dépassait la
+  minute, et le visiteur attendait d'autant. `images.formats` est restreint au
+  WebP : 5 ms mesurées contre plus de 60 s, pour un gain de poids marginal sur
+  des sources déjà en WebP. Le symptôme s'est manifesté en test, par des
+  chargements de page qui n'aboutissaient jamais en mode sombre — le mode dont
+  les visuels n'avaient pas encore été encodés.
+- **Le bouton de défilement des chips disparaissait en mode sombre.** Son fond
+  reprenait la surface de la page et l'ombre portée y est invisible : il ne
+  restait que le chevron, sans forme, rayon ni retrait perceptibles. Il porte
+  désormais une surface surélevée et la bordure des chips.
+- **Le titre d'une card sans visuel était invisible.** Son contenu est composé
+  en mode sombre — ce qui le rend lisible sur une photo — mais sans image
+  dessous il se retrouvait en clair sur la surface claire de la page, soit un
+  contraste de 1:1. Ces cards portent désormais l'aplat de thème prévu :
+  19,15:1.
+- **La ligne de crédit s'affichait en tête des articles traduits.** Le
+  découpage du markdown ne filtrait que sa forme française, si bien que
+  « Article written by Arthur Mathon… » ouvrait le corps des six versions
+  anglaises. La parité de structure FR/EN est désormais testée sur les
+  paragraphes, pas seulement sur les titres et les listes.
+- **`.gitignore` : le motif `article/` n'était pas ancré** et excluait donc
+  n'importe quel dossier de ce nom à toute profondeur — dont
+  `components/article/`, absent du dépôt sans que rien ne le signale
+  localement. Ancré à `/article/` ; les documents sources d'Arthur restent
+  exclus, doublés par `*.docx`.
+- La chaîne « Nouvelle version — bientôt en ligne » est retirée : depuis que
+  chaque article a sa page, aucune card ne peut plus se trouver dans cet état.
+- **Des commentaires de relecture Word s'affichaient dans les articles.**
+  L'extraction PDF avait laissé sept annotations (« Commented [MA1] : … »,
+  « Revoir le titre », « Rajouter les références ») dans le corps du texte, ainsi
+  qu'un « Bouton » resté en placeholder. Retirés, avec les césures cassées par
+  l'export (« ci- dessous ») et quatre titres de section absorbés dans des
+  paragraphes ou des listes.
 
 - **Le bot ne suivait pas la langue de l'utilisateur.** Une question posée en
   anglais avec l'interface en français obtenait une réponse en français, la

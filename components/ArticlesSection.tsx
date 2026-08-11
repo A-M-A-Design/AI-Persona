@@ -1,8 +1,9 @@
 "use client";
 
 // Les deux grilles de la maquette : les articles mis en avant occupent des
-// grandes cards carrées, les suivants des cards étroites partageant la rangée
-// avec la carte contact.
+// grandes cards carrées, les suivants une rangée de cards étroites. La carte
+// contact les suit sur toute la largeur — elle partageait auparavant la rangée
+// étroite, que les articles occupent désormais en entier.
 import { ARTICLES, FEATURED_COUNT } from "../lib/articles";
 import ArticleCard from "./ArticleCard";
 import ConnectCard from "./ConnectCard";
@@ -25,8 +26,9 @@ export default function ArticlesSection() {
         {rest.map((a) => (
           <ArticleCard key={a.slug} article={a} lang={lang} persona={persona} />
         ))}
-        <ConnectCard lang={lang} />
       </section>
+
+      <ConnectCard lang={lang} />
     </>
   );
 }

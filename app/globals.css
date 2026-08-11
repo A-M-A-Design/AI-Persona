@@ -282,16 +282,62 @@ img {
    directement sur la page — ni fond, ni rayon, ni ombre, ni retrait — et
    l'action se réduit à une icône au bout du champ. */
 @media (max-width: 767px) {
+  /* La maquette met le champ et les chips en retrait de 16 px de plus que le
+     reste, tandis que l'illustration reste pleine largeur : 311 contre 343. */
   .launcher {
     gap: 12px;
-    padding: 0;
+    /* 28 px sous les chips, comme le retrait bas du bloc dans la maquette :
+       l'illustration suit immédiatement, sans quoi elle les touche. */
+    padding: 0 0 28px;
+    margin-inline: 16px;
     border-radius: 0;
     background: none;
     box-shadow: none;
   }
 
-  /* La ligne reste horizontale : le champ occupe la largeur, l'action se
-     réduit à sa flèche. */
+  /* L'action n'est pas posée à côté du champ mais dedans, à droite : une
+     simple flèche sans fond ni bordure, dans un champ en pilule. */
+  .launcher__row {
+    position: relative;
+    gap: 0;
+  }
+
+  .launcher__row .composer__field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .launcher__row .wel-input-text__wrapper {
+    border-radius: var(--pill-radius);
+  }
+
+  /* Réserve la place de la flèche pour que la saisie ne passe pas dessous. */
+  .launcher__row .wel-input-text__input {
+    padding-right: 48px;
+  }
+
+  .launcher__row button[type="submit"] {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--pill-radius);
+    background: none;
+    color: var(--wel-sem-color-on-surface-hi);
+  }
+
+  /* Inactive, la flèche s'estompe sur une couleur de texte qui reste
+     contrastée — jamais un aplat translucide, illisible à cette taille. */
+  .launcher__row button[type="submit"]:disabled {
+    background: none;
+    color: var(--wel-sem-color-on-surface-mid);
+  }
+
   .launcher__row .composer__label {
     display: none;
   }
@@ -554,25 +600,15 @@ img {
   row-gap: 28px;
 }
 
-/* Seconde grille : 4 colonnes en desktop, la carte contact occupe les deux
-   dernières de la première rangée — comme dans la maquette. */
+/* Seconde grille : quatre colonnes de cards étroites en desktop. La carte
+   contact n'y figure plus — elle suit les grilles sur toute la largeur. */
 .articles--secondary {
   grid-template-columns: repeat(4, 1fr);
-}
-
-.articles--secondary .connect-card {
-  grid-column: 3 / span 2;
-  grid-row: 1;
 }
 
 @media (max-width: 1279px) {
   .articles--secondary {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .articles--secondary .connect-card {
-    grid-column: 1 / span 2;
-    grid-row: auto;
   }
 }
 
@@ -580,10 +616,6 @@ img {
   .articles,
   .articles--secondary {
     grid-template-columns: 1fr;
-  }
-
-  .articles--secondary .connect-card {
-    grid-column: 1;
   }
 }
 
@@ -626,6 +658,14 @@ img {
 .article-card__fade {
   flex: 1;
   background: linear-gradient(to bottom, transparent, var(--media-veil-strong));
+}
+
+/* Article sans visuel : le contenu de la card reste en mode sombre — c'est ce
+   qui le rend lisible sur une photo — mais sans image dessous, il se retrouvait
+   en clair sur la surface claire de la page, soit un contraste de 1:1. Le bloc
+   portant déjà le mode sombre, sa propre surface fournit l'aplat attendu. */
+.article-card--flat .article-card__body {
+  background: var(--wel-sem-color-surface);
 }
 
 .article-card__content {
@@ -683,19 +723,21 @@ img {
 
 /* --- Card contact ------------------------------------------------------- */
 
+/* Carte contact : une bande sur toute la largeur, sous les deux grilles.
+   Elle occupait auparavant deux colonnes de la grille étroite, d'où un
+   `align-self` qui l'empêchait désormais de s'étendre. */
 .connect-card {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 12px;
-  align-self: start;
 }
 
 /* Boîte de l'icône : 76 px, radius 2 et fond accent, repris de la maquette.
    .wel-icon-slot ne fournit que le centrage. */
 .connect-card__icon {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   padding: 12px;
   flex-shrink: 0;
   border-radius: 2px;
@@ -784,4 +826,298 @@ img {
   font-family: var(--wel-sem-font-families-title), system-ui, sans-serif;
   font-size: var(--wel-sem-font-sizes-title-md, 1.25rem);
   color: var(--wel-sem-color-on-surface-mid);
+}
+
+/* ---------------------------------------------------------------------------
+   Page article
+   ---------------------------------------------------------------------------
+   La maquette imbrique deux conteneurs : la page (padding 64/32/16) puis un
+   cadre intérieur de même retrait, d'où le doublement du padding horizontal.
+   La colonne de lecture est étroite et centrée (850 puis 550 px) ; en mobile
+   elle occupe toute la largeur disponible, soit 311 px sur une base de 375. */
+/* La page article garde les marges communes : le carousel de fin occupe toute
+   la largeur de contenu (1312 / 704 / 343 dans la maquette), et seule la
+   colonne de lecture est resserrée. */
+
+/* La pilule de retour est portée par la barre de navigation, déjà collante.
+   Posée au-dessus de l'article, elle recouvrait le texte dès que la colonne
+   de lecture rejoignait le bord du retrait de page — entre 768 et ~1100 px,
+   la colonne démarre exactement à l'emplacement qu'occupait la pilule. */
+.site-nav__inner .article-back {
+  margin-right: auto;
+  border-radius: var(--pill-radius);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  width: 100%;
+  max-width: 850px;
+  margin-inline: auto;
+  padding: 56px 0 28px;
+  /* La police d'affichage de la libellule est une pixel font très large :
+     sans coupure, un mot long dépasse la colonne mobile de 311 px et fait
+     défiler la page entière horizontalement. */
+  overflow-wrap: break-word;
+}
+@media (max-width: 1279px) {
+  .article {
+    max-width: 550px;
+    gap: 32px;
+    padding: 32px 0 20px;
+  }
+}
+/* En mobile la colonne n'est plus centrée par sa largeur : elle prend tout
+   l'espace disponible moins un retrait de 16 px — 311 px sur une base de 375,
+   là où l'illustration et le carousel restent à 343. */
+@media (max-width: 767px) {
+  .article {
+    max-width: none;
+    gap: 28px;
+    padding: 24px 16px 16px;
+  }
+}
+
+/* Titre, surtitre et chapô sont centrés ; seul le corps est aligné à gauche. */
+.article__head {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: center;
+}
+@media (max-width: 1279px) {
+  .article__head {
+    gap: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .article__head {
+    gap: 16px;
+  }
+}
+.article__kicker {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-body-xs);
+  line-height: var(--wel-sem-line-heights-body-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--wel-sem-color-on-surface-mid);
+}
+.article__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-xl);
+  line-height: var(--wel-sem-line-heights-display-xl);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.article__lede {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-style: italic;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.article__media {
+  position: relative;
+  aspect-ratio: 850 / 386;
+  overflow: hidden;
+  border-radius: var(--wel-sem-border-radius-container-low);
+}
+.article__image {
+  object-fit: cover;
+}
+
+/* Les articles sont rédigés en français, l'interface est traduite : on
+   l'annonce au lecteur anglophone plutôt que de le laisser le découvrir. */
+.article__notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-accent-container-low);
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  line-height: var(--wel-sem-line-heights-body-sm);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.article__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: var(--wel-sem-font-sizes-body-md);
+  line-height: var(--wel-sem-line-heights-body-md);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+.article__body p {
+  margin: 0;
+}
+.article__h2 {
+  margin: 28px 0 0;
+  font-size: var(--wel-sem-font-sizes-title-lg);
+  line-height: var(--wel-sem-line-heights-title-lg);
+  font-weight: 500;
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.article__body > .article__h2:first-child {
+  margin-top: 0;
+}
+.article__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 24px;
+}
+.article__quote {
+  margin: 12px 0;
+  padding-left: 36px;
+  border-left: 2px solid var(--wel-sem-color-primary);
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-style: italic;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+@media (max-width: 767px) {
+  .article__quote {
+    padding-left: 20px;
+  }
+}
+
+/* Rangée de chips avec son bouton de défilement (maquette mobile). Le bouton
+   n'est rendu que lorsque la rangée déborde, donc jamais en desktop où les
+   chips passent à la ligne. */
+.suggestions {
+  position: relative;
+  min-width: 0;
+}
+
+/* Tant qu'il reste des chips à droite, la rangée s'estompe sous le bouton de
+   défilement : sans ce masque, elles passent derrière lui en restant nettes et
+   le bord de la rangée paraît coupé net. Le masque disparaît en fin de course,
+   avec le bouton. */
+.suggestions--more .launcher__suggestions {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
+}
+.suggestions__next {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  /* Le fond de surface se confondait avec celui de la page, et l'ombre portée
+     est invisible sur fond sombre : le bouton se réduisait alors à son chevron,
+     sans forme ni rayon perceptibles. Une surface surélevée et la bordure des
+     chips lui donnent un contour dans les deux modes. */
+  border: var(--wel-sem-border-width-thin, 1px) solid var(--wel-sem-color-outline-hi);
+  border-radius: var(--pill-radius);
+  background: var(--wel-sem-color-surface-container-mid);
+  color: var(--wel-sem-color-on-surface-hi);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgb(7 5 24 / 24%);
+}
+
+/* --- Carousel de fin d'article ------------------------------------------ */
+
+/* Il occupe toute la largeur de contenu, pas la colonne de lecture : la
+   maquette le pose dans le wrapper de page (1312 / 704 / 343). */
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Le défilement est natif : scroll-snap cale les pages, sans position
+   calculée en JavaScript. Trois cartes visibles, deux en tablette, une en
+   mobile — la piste garde toujours un nombre entier de cartes par page. */
+.carousel__track {
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.carousel__track::-webkit-scrollbar {
+  display: none;
+}
+.carousel__track > * {
+  flex: 0 0 calc((100% - 2 * 28px) / 3);
+  scroll-snap-align: start;
+  aspect-ratio: 388 / 485;
+}
+
+.carousel__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.carousel__counter {
+  margin: 0;
+  min-width: 29px;
+  text-align: center;
+  font-size: var(--wel-sem-font-sizes-body-md);
+  line-height: var(--wel-sem-line-heights-body-md);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.carousel__step {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pill-radius);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+/* En bout de course, le pas reste lisible : on baisse l'opacité du fond, pas
+   celle du chevron, qui doit garder son contraste. */
+.carousel__step:disabled {
+  cursor: default;
+  background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+@media (max-width: 1279px) {
+  .carousel {
+    gap: 12px;
+  }
+  .carousel__track {
+    gap: 16px;
+  }
+  .carousel__track > * {
+    flex-basis: calc((100% - 16px) / 2);
+    aspect-ratio: 340 / 604;
+  }
+}
+
+@media (max-width: 767px) {
+  .carousel__track {
+    gap: 12px;
+  }
+  .carousel__track > * {
+    flex-basis: 100%;
+    aspect-ratio: 311 / 553;
+  }
+  .carousel__step {
+    width: 40px;
+    height: 40px;
+  }
 }

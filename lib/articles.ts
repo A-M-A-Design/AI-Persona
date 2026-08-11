@@ -5,21 +5,24 @@
 // de la seconde — c'est la composition de la maquette Figma.
 import type { Lang } from "./i18n";
 
+export type ColorMode = "light" | "dark";
+
 export type Article = {
   slug: string;
   title: Record<Lang, string>;
   /** Surtitre de la card, rendu en capitales — « kicker » dans la maquette. */
   kicker: Record<Lang, string>;
   tags: string[];
-  /** Résumé interne (non affiché par les cards). */
-  excerpt: string;
+  /** Chapô de la page article, rendu en italique sous le titre. */
+  lede: Record<Lang, string>;
   /** Visuel de fond de la card. Absent = aplat de thème (pas de visuel dans la maquette). */
   image?: string;
-  /** Absent = pas encore publié en ligne (ex. nouvelle version en cours). */
-  href?: string;
 };
 
-const LINKEDIN_ARTICLES = "https://www.linkedin.com/in/arthur-mathon/recent-activity/articles/";
+/** Chemin de la page d'un article. Les cards de la home pointent ici, plus vers LinkedIn. */
+export function articlePath(slug: string): string {
+  return `/articles/${slug}`;
+}
 
 export const ARTICLES: Article[] = [
   {
@@ -30,9 +33,11 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Société", en: "Society" },
     tags: ["DesignOps", "OrgDesign", "Recherche"],
-    excerpt:
-      "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
-    image: "/articles/entreprise-traumatisee.jpg",
+    lede: {
+      fr: "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
+      en: "Organizational trauma, resilience and tensegrity: what neuroscience and living systems teach us about freeing a frozen organization.",
+    },
+    image: "/articles/entreprise-traumatisee.webp",
   },
   {
     slug: "roi-design-system",
@@ -42,23 +47,25 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Ops et Design System", en: "Ops and Design System" },
     tags: ["Business", "DesignSystem"],
-    excerpt:
-      "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
-    image: "/articles/roi-design-system.jpg",
-    href: LINKEDIN_ARTICLES,
+    lede: {
+      fr: "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
+      en: "Qualitative and quantitative indicators, KPIs to track: making a design system's value tangible to the executive committee.",
+    },
+    image: "/articles/roi-design-system.webp",
   },
   {
-    slug: "systeme-de-tokens",
+    slug: "dataviz-design-system",
     title: {
-      fr: "Pourquoi et comment créer un système de tokens applicable à vos produits digitaux",
-      en: "Why and how to build a token system for your digital products",
+      fr: "Le design système au service de vos besoins en data visualisation",
+      en: "Design System tailored to your data visualization needs",
     },
-    kicker: { fr: "Design System et Product", en: "Design System and Product" },
-    tags: ["DesignSystem", "Product"],
-    excerpt:
-      "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
-    image: "/articles/systeme-de-tokens.jpg",
-    href: LINKEDIN_ARTICLES,
+    kicker: { fr: "Ops et Design System", en: "Ops and Design System" },
+    tags: ["DesignOps", "Dashboard", "Dataviz", "DesignSystem"],
+    lede: {
+      fr: "Prototyper un tableau de bord sur de vraies données plutôt que sur des maquettes : ce que change une librairie de graphiques pensée comme un design system.",
+      en: "Prototyping a dashboard on real data rather than on mockups: what changes when the chart library is built as a design system.",
+    },
+    image: "/articles/dataviz-design-system.webp",
   },
   {
     slug: "designops-outils-workflows",
@@ -68,29 +75,59 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Ops et Automatisation", en: "Ops and Automation" },
     tags: ["Automation", "DesignOps"],
-    excerpt:
-      "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
-    image: "/articles/designops-outils-workflows.jpg",
-    href: LINKEDIN_ARTICLES,
+    lede: {
+      fr: "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
+      en: "Tools are to a team what oil is to an engine: facilitators of transfer, never goals in themselves.",
+    },
+    image: "/articles/designops-outils-workflows.webp",
+  },
+  {
+    slug: "systeme-de-tokens",
+    title: {
+      fr: "Pourquoi et comment créer un système de tokens applicable à vos produits digitaux",
+      en: "Why and how to build a token system for your digital products",
+    },
+    kicker: { fr: "Design System et Product", en: "Design System and Product" },
+    tags: ["DesignSystem", "Product"],
+    lede: {
+      fr: "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
+      en: "From the 1990s to today: how tokens finally reconcile designers and developers in the industrialization of design.",
+    },
+    image: "/articles/systeme-de-tokens.webp",
+  },
+  {
+    slug: "design-enjeux-entreprises",
+    title: {
+      fr: "Comment le Design peut répondre aux enjeux actuels des entreprises ?",
+      en: "How can design answer the challenges companies face today?",
+    },
+    kicker: { fr: "Société et Organisation", en: "Society and Organisation" },
+    tags: ["Business", "DesignOps", "OrgDesign", "Recherche"],
+    lede: {
+      fr: "Pensée systémique et vulnérabilité assumée : deux leviers par lesquels le design peut agir sur la structure des organisations, et non plus seulement sur leurs produits.",
+      en: "Systems thinking and acknowledged vulnerability: two levers through which design can act on the structure of organisations, not merely on their products.",
+    },
+    image: "/articles/design-enjeux-entreprises.webp",
   },
 ];
 
-// « Comment le Design peut répondre aux enjeux actuels des entreprises ? » n'est
-// pas affiché : la maquette compose quatre cards, et l'article reste accessible
-// par le lien LinkedIn. Sa fiche demeure dans knowledge/content-library/, donc
-// le bot continue de pouvoir en parler.
-
 /** Les deux premiers articles occupent les grandes cards de la maquette. */
 export const FEATURED_COUNT = 2;
+
 
 export const LINKS = {
   linkedin: "https://www.linkedin.com/in/arthur-mathon/",
   email: "mailto:a.mathon@stratecollege.fr",
 };
 
-/** Illustration du héro, par persona (exportée de la maquette Figma). */
-export const HERO_IMAGES: Record<string, string> = {
-  ours: "/hero/ours.png",
-  corneille: "/hero/corneille.png",
-  libellule: "/hero/libellule.png",
+/**
+ * Illustration du héro, par persona et par mode de couleur — la maquette
+ * dessine deux scènes distinctes, pas une simple variation de traitement :
+ * l'ours contemple la montagne de jour en clair, sous la lune en sombre.
+ * Exportées de Figma.
+ */
+export const HERO_IMAGES: Record<string, Record<ColorMode, string>> = {
+  ours: { light: "/hero/ours-light.webp", dark: "/hero/ours-dark.webp" },
+  corneille: { light: "/hero/corneille-light.webp", dark: "/hero/corneille-dark.webp" },
+  libellule: { light: "/hero/libellule-light.webp", dark: "/hero/libellule-dark.webp" },
 };

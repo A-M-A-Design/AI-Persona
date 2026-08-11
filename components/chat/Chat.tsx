@@ -77,6 +77,7 @@ export default function Chat({ personas }: Props) {
       <Hero
         lang={settings.lang}
         persona={settings.persona}
+        colorMode={settings.colorMode}
         disabled={busy}
         questions={questions}
         onSend={send}

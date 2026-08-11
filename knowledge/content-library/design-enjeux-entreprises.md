@@ -1,160 +1,33 @@
 # Comment le Design peut répondre aux enjeux actuels des entreprises ?
-
 Article rédigé par Arthur Mathon (LinkedIn). Tags : Business, DesignOps, OrgDesign, Recherche.
 
-Comment le Design peut répondre aux enjeux actuels
-des entreprises ?
-Aujourd’hui, les entreprises s’efforcent d’exister et de pérenniser leur activité dans un
-monde en constante accélération. Chaque jour, de nouvelles forces viennent perturber
-leurs équilibres, redéfinissant les règles du jeu. Les fluctuations des prix des ressources
-et de l’énergie, souvent influencées par des crises écologiques et politiques, mettent à
-rude épreuve leur stabilité. Par ailleurs, l’économie mondiale peine à se stabiliser, ce qui
-complique la tâche des entrepreneurs cherchant à s’y projeter. La durée de vie des
-technologies, autrefois un gage de longévité, se raccourcit drastiquement, et le rythme
-de l’innovation technologique ne laisse aucun répit aux entreprises. La conséquence
-directe est une remise en question de la durabilité de leurs produits, de leurs services et
-de leurs systèmes organisationnels. En somme, une entreprise performante en 2024
-n’est plus assurée de prospérer en 2025.
-Ces défis imposent une réflexion plus profonde sur le culte de la performance et de la
-rentabilité, pilier de notre société depuis l’émergence du capitalisme. Alors que la
-recherche d’efficience et de productivité maximale a longtemps dominé, il devient
-nécessaire de réexaminer ces priorités face aux enjeux actuels. À travers cette réflexion,
-le design émerge comme une discipline capable de jouer un rôle fondamental pour
-relever ces défis contemporains. En réinventant son périmètre d’action, je suis
-convaincu que le design peut offrir des solutions durables aux problématiques
-auxquelles les entreprises sont confrontées.
-1. La pensée systémique pour redéfinir la structure des organisations
-Un système est un ensemble d’éléments qui interagissent entre eux. On les retrouve
-partout, que ce soit dans la nature ou dans notre société.
-Aujourd’hui, la pensée pseudo-systémique est dominante : elle consiste à vouloir
-changer le système en jouant uniquement sur la quantité et la qualité des flux sans
-changer le réseau d’interaction. Par exemple, la quasi-totalité des modes
-organisationnels des entreprises sont calqués sur les mêmes modèles. Nous
-retrouvons les silos de production (ingénierie, design...), les départements support
-(ressources humaines, finance) et les ilots décisionnels (équipe dirigeante, actionnaire).
-Dans la pensée pseudo-systémique, la nature des liens reste inchangée, seuls les
-éléments du système sont considérés. Les actionnaires et dirigeants communiquent
-toujours entre eux pour définir une vision stratégique et business. Les designers et
-ingénieurs collaborent avec beaucoup de difficulté pour définir les produits et services.
-Les commerciaux et le marketing travaillent à développer l’offre et l’image de
-l’entreprise.
+Aujourd’hui, les entreprises s’efforcent d’exister et de pérenniser leur activité dans un monde en constante accélération. Chaque jour, de nouvelles forces viennent perturber leurs équilibres, redéfinissant les règles du jeu. Les fluctuations des prix des ressources et de l’énergie, souvent influencées par des crises écologiques et politiques, mettent à rude épreuve leur stabilité. Par ailleurs, l’économie mondiale peine à se stabiliser, ce qui complique la tâche des entrepreneurs cherchant à s’y projeter. La durée de vie des technologies, autrefois un gage de longévité, se raccourcit drastiquement, et le rythme de l’innovation technologique ne laisse aucun répit aux entreprises. La conséquence directe est une remise en question de la durabilité de leurs produits, de leurs services et de leurs systèmes organisationnels. En somme, une entreprise performante en 2024 n’est plus assurée de prospérer en 2025. Ces défis imposent une réflexion plus profonde sur le culte de la performance et de la rentabilité, pilier de notre société depuis l’émergence du capitalisme. Alors que la recherche d’efficience et de productivité maximale a longtemps dominé, il devient nécessaire de réexaminer ces priorités face aux enjeux actuels. À travers cette réflexion, le design émerge comme une discipline capable de jouer un rôle fondamental pour relever ces défis contemporains. En réinventant son périmètre d’action, je suis convaincu que le design peut offrir des solutions durables aux problématiques auxquelles les entreprises sont confrontées.
 
-Par opposition, la pensée systémique consiste à changer le système en modifiant les
-interactions entre les éléments qui le compose. Vous pouvez donc penser une société
-et organisation comportant les mêmes éléments (support, production, décision…) mais
-qui interagissent entre eux d’une manière singulière. Dans cette inversion de paradigme,
-vous interrogez la nature d’une collaboration entre un actionnaire et un ouvrier, entre un
-dirigeant et un agent d’entretien, entre un commercial et un designer, entre un recruteur
-et un ingénieur. Le rapport Meadows nous l’avait pourtant affirmé en 1972, il est illusoire
-d’imaginer un résultat différent si la nature des interactions ne sont pas modifiées.
-« Faire fonctionner le même système avec plus d’intensité ou de vitesse ne changera
-rien à la trajectoire tant que la structure du système ne sera modifiée »1
-Le design a un rôle à jouer pour que cette transition s’opère. En tant que science
-humaine, il s’intéresse tout particulier aux interactions. C’est la raison pour laquelle une
-grande majorité des outils qu’il utilise intègre la pensée systémique : userflow, user
-journey, mind map … On comprend alors pourquoi la majorité des fiches de poste
-intègre l’empathie, la pensée en arborescence ou encore l’adaptabilité, qui sont des
-compétences essentielles dans la construction de systèmes cohérents. Plus
-récemment, une discipline a pris une nouvelle importance : le design de systèmes. Je
-suis alors convaincu que le design, en s’intéressant à structure des organisations
-(autrement dit aux connexions), peut répondre aux enjeux auxquels elles font face.
-2. Redéfinir la nature des interactions pour développer la confiance
-Dans une époque obsédée par la performance et le contrôle, la connexion entre les
-individus s’est largement appauvrie pour devenir mécaniciste : les fameux process. Il est
-alors particulièrement difficile d’envisager l’intimité, la relation et la confiance
-autrement qu’à travers un prisme de contrôle. Pourtant, dans toute coopération, la force
-véritable émerge lorsqu’on laisse la place à la vulnérabilité, lorsqu’on accepte d’ouvrir
-un espace pour le doute, le questionnement, et, surtout, pour ce que l’on ne sait pas.
-Olivier Hamant, biologiste et chercheur à l’INRA l’a bien résumé : « Dans une
-coopération, il faut être capable d’exposer ses vulnérabilités. Si on les cache, c’est
-qu’on est dans la performance. Dans le monde de la robustesse, on expose ses
-vulnérabilités qui vont stimuler les interactions et renforcer le groupe » 2. Mais comment
-faire de cette vision une réalité dans nos pratiques professionnelles, où l’humain est
-dépossédé de sa substance, où l’intimité n’es tolérée que dans le cadre de la sphère
-des Ressources Humaines ? Vous remarquerez facilement le paradoxe qui nait de
-l’association des mots « Ressources » et « Humaines ».
-Une des actions qu’on peut mettre en place concrètement pour incarner cette vision,
-c’est de transformer les formulations du type « je veux » et « je sais » en « j’ai envie » et
-« je ne sais pas ». Cela paraît peu intuitif, surtout pour un manager et un dirigeant qui,
+## 1. La pensée systémique pour redéfinir la structure des organisations
 
-dans l’imaginaire collectif, doit savoir où il va et être en contrôle du dessein de son
-entreprise. Ce "je veux" semble incarner une direction, une autorité, un engagement.
-Mais que sous-entend-il en réalité ? Il présuppose que l'on connaît déjà le chemin, que
-l’on détient la réponse, que la route est balisée. Ce type de langage ferme l’espace,
-réduit le potentiel d’échange et décourage l’innovation. Pourquoi partager ses idées si
-tout est déjà décidé, si l’essentiel est d’appliquer une recette toute faite ? La
-collaboration s’appauvrit, les échanges deviennent des échanges de convenance, des
-interactions superficielles où l’on ne risque rien de personnel.
-Mais que se passe-t-il lorsqu’un dirigeant, un manager, un collaborateur ose s’aventurer
-dans le « j’ai envie » ou le « je ne sais pas » ? À première vue, cela pourrait paraître fragile,
-incertain. Comment avancer si l’on ne sait pas exactement où l’on va ? Pourtant, ce sont
-précisément ces expressions de vulnérabilité qui ouvrent un champ de relations
-authentiques et vivantes. C’est dans ce léger déplacement que le manager ou le
-dirigeant peut devenir un Leader ! Dire « j’ai envie » laisse place à l’élan sans prétendre
-imposer une certitude. Cela invite chaque membre de l’équipe à contribuer, à enrichir la
-vision initiale, à s’approprier le projet. « Je ne sais pas » est un appel au dialogue, une
-porte ouverte aux idées des autres, un espace où la relation et la confiance peuvent
-véritablement émerger. Ce sont des mots qui créent un lien d’humanité et d’intimité. Le
-leadership devient alors une qualité relationnelle, une posture d’ouverture et d’écoute
-active, où la confiance s’établit par une vulnérabilité partagée et sincère.
-Imaginons une équipe où le leader commence non pas par énoncer des directives
-fermes, mais par dire : « j’ai envie que nous explorions ensemble le business model de
-notre entreprise pour faire face aux transformations de notre secteur d’activité » ou « je
-ne sais pas exactement quelle est la meilleure solution, mais j’ai envie que nous
-cherchions ensemble ». Dans cette configuration, l’équipe est reconnue, non pas
-comme de simples exécutants d’un plan prédéfini, mais comme des partenaires d’une
-aventure collective. Chacun sent qu’il peut créer de l’impact, qu’il est accueilli dans sa
-propre capacité d’interroger, de douter, de proposer. La confiance devient alors un
-terrain commun, fondé sur une vulnérabilité partagée. Et cette confiance est active,
-nourrie par une intimité relationnelle qui ne peut naître que dans l’acceptation des
-fragilités.
-3. Un petit déplacement pour les managers, un grand pas pour la
-cohésion d’équipe !
-La tendance actuelle, avec les séminaires d'entreprise où l’on distribue les « 10
-Commandements de la Productivité », semble aller dans la direction opposée de l’élan
-proposé ci-dessus. On ne fait que transmettre la vision d’une poignée d’actionnaires qui
-ne sont même pas issus de notre métier, comme s’il existait une recette de la réussite
-applicable à toutes les situations, à tous les individus et sans rentrer en contact avec
+Un système est un ensemble d’éléments qui interagissent entre eux. On les retrouve partout, que ce soit dans la nature ou dans notre société. Aujourd’hui, la pensée pseudo-systémique est dominante : elle consiste à vouloir changer le système en jouant uniquement sur la quantité et la qualité des flux sans changer le réseau d’interaction. Par exemple, la quasi-totalité des modes organisationnels des entreprises sont calqués sur les mêmes modèles. Nous retrouvons les silos de production (ingénierie, design...), les départements support (ressources humaines, finance) et les ilots décisionnels (équipe dirigeante, actionnaire). Dans la pensée pseudo-systémique, la nature des liens reste inchangée, seuls les éléments du système sont considérés. Les actionnaires et dirigeants communiquent toujours entre eux pour définir une vision stratégique et business. Les designers et ingénieurs collaborent avec beaucoup de difficulté pour définir les produits et services. Les commerciaux et le marketing travaillent à développer l’offre et l’image de l’entreprise.
 
-eux ! Ce qui est sous-entendu est limpide : il suffit de suivre la règle pour atteindre
-l’objectif. Mais la vie, l’entreprise, la création ne peuvent être réduites à des injonctions.
-J’irai même plus loin, il existe une certaine violence à ces injonctions. Elle nait du
-principe de considération des Hommes comme « Ressources ». Comment pouvons-
-nous alors inspirer une véritable cohésion d’équipe si chacun est sommé d’appliquer
-des règles externes, sans se risquer à explorer ses propres aspirations, ses propres
-doutes ?
-On comprend alors que le vrai rôle du leader est de créer un cadre, une direction
-générale, tout en laissant les détails et les moyens d’y parvenir émerger des interactions
-du groupe. Le leader inspire, guide, mais ne contrôle pas. Il agit davantage comme un
-jardinier qui prépare le terrain, nourrit les idées, et permet aux talents de s’épanouir,
-plutôt que comme un commandant qui dicte et impose. Ce passage du "je veux" au "j’ai
-envie" est une révolution subtile mais profonde, qui permet de passer d’une approche
-autoritaire à une approche inspirante et inclusive.
-« Ce n’est pas le doute, c’est la certitude qui rend fou. » Friedrich Nietzsche
-Ainsi, le leader moderne est celui qui sait renoncer aux certitudes, qui ose explorer les
-possibilités en compagnie de son équipe, et qui favorise une dynamique d’échange.
-C’est un leader qui, loin de se cacher derrière des commandements ou des objectifs
-figés, accompagne son équipe dans l’incertitude, en reconnaissant que la vraie
-puissance d’une organisation réside dans la diversité et l’intimité des relations
-humaines. La performance n’est alors plus une fin en soi, mais un résultat naturel
-de cette cohésion sincère et vivante.
-Si nous voulons bâtir des équipes, des projets, et des organisations qui soient vraiment
-vivants, nous devons dépasser l’illusion du contrôle. Nous devons inviter chaque
-membre à entrer dans l’aventure humaine du travail, avec ses incertitudes, ses doutes,
-et ses échecs. C’est là que réside le leadership : dans la capacité d’un leader à accepter
-et encourager la vulnérabilité de chacun, en commençant par la sienne, pour laisser
-émerger des solutions véritablement novatrices nourries par la confiance et l’intimité
-collective.
-Ouverture
-Aujourd'hui, le Design se doit de résister à une idéologie de la performance qui ne fait
-qu’amplifier les problèmes inhérents au monde de l’entreprise. Par la pensée
-systémique, il peut accompagner les entreprises dans le développement de la
-robustesse pour répondre aux fluctuations de notre monde. En s’intéressant aux modes
-de collaboration, il peut répondre à une déshumanisation du poumon économique. Car
-en fin de compte, la performance et la productivité ne sont pas des objectifs en soi,
+Par opposition, la pensée systémique consiste à changer le système en modifiant les interactions entre les éléments qui le compose. Vous pouvez donc penser une société et organisation comportant les mêmes éléments (support, production, décision…) mais qui interagissent entre eux d’une manière singulière. Dans cette inversion de paradigme, vous interrogez la nature d’une collaboration entre un actionnaire et un ouvrier, entre un dirigeant et un agent d’entretien, entre un commercial et un designer, entre un recruteur et un ingénieur. Le rapport Meadows nous l’avait pourtant affirmé en 1972, il est illusoire d’imaginer un résultat différent si la nature des interactions ne sont pas modifiées. « Faire fonctionner le même système avec plus d’intensité ou de vitesse ne changera rien à la trajectoire tant que la structure du système ne sera modifiée »1 Le design a un rôle à jouer pour que cette transition s’opère. En tant que science humaine, il s’intéresse tout particulier aux interactions. C’est la raison pour laquelle une grande majorité des outils qu’il utilise intègre la pensée systémique : userflow, user journey, mind map … On comprend alors pourquoi la majorité des fiches de poste intègre l’empathie, la pensée en arborescence ou encore l’adaptabilité, qui sont des compétences essentielles dans la construction de systèmes cohérents. Plus récemment, une discipline a pris une nouvelle importance : le design de systèmes. Je suis alors convaincu que le design, en s’intéressant à structure des organisations (autrement dit aux connexions), peut répondre aux enjeux auxquels elles font face.
 
-mais des résultats qui découlent de la création d'un environnement où chacun se sent
-en sécurité et respecté.
+## 2. Redéfinir la nature des interactions pour développer la confiance
+
+Dans une époque obsédée par la performance et le contrôle, la connexion entre les individus s’est largement appauvrie pour devenir mécaniciste : les fameux process. Il est alors particulièrement difficile d’envisager l’intimité, la relation et la confiance autrement qu’à travers un prisme de contrôle. Pourtant, dans toute coopération, la force véritable émerge lorsqu’on laisse la place à la vulnérabilité, lorsqu’on accepte d’ouvrir un espace pour le doute, le questionnement, et, surtout, pour ce que l’on ne sait pas. Olivier Hamant, biologiste et chercheur à l’INRA l’a bien résumé : « Dans une coopération, il faut être capable d’exposer ses vulnérabilités. Si on les cache, c’est qu’on est dans la performance. Dans le monde de la robustesse, on expose ses vulnérabilités qui vont stimuler les interactions et renforcer le groupe » 2. Mais comment faire de cette vision une réalité dans nos pratiques professionnelles, où l’humain est dépossédé de sa substance, où l’intimité n’es tolérée que dans le cadre de la sphère des Ressources Humaines ? Vous remarquerez facilement le paradoxe qui nait de l’association des mots « Ressources » et « Humaines ». Une des actions qu’on peut mettre en place concrètement pour incarner cette vision, c’est de transformer les formulations du type « je veux » et « je sais » en « j’ai envie » et « je ne sais pas ». Cela paraît peu intuitif, surtout pour un manager et un dirigeant qui, dans l’imaginaire collectif, doit savoir où il va et être en contrôle du dessein de son entreprise. Ce "je veux" semble incarner une direction, une autorité, un engagement. Mais que sous-entend-il en réalité ? Il présuppose que l'on connaît déjà le chemin, que l’on détient la réponse, que la route est balisée. Ce type de langage ferme l’espace, réduit le potentiel d’échange et décourage l’innovation. Pourquoi partager ses idées si tout est déjà décidé, si l’essentiel est d’appliquer une recette toute faite ? La collaboration s’appauvrit, les échanges deviennent des échanges de convenance, des interactions superficielles où l’on ne risque rien de personnel. Mais que se passe-t-il lorsqu’un dirigeant, un manager, un collaborateur ose s’aventurer dans le « j’ai envie » ou le « je ne sais pas » ? À première vue, cela pourrait paraître fragile, incertain. Comment avancer si l’on ne sait pas exactement où l’on va ? Pourtant, ce sont précisément ces expressions de vulnérabilité qui ouvrent un champ de relations authentiques et vivantes. C’est dans ce léger déplacement que le manager ou le dirigeant peut devenir un Leader ! Dire « j’ai envie » laisse place à l’élan sans prétendre imposer une certitude. Cela invite chaque membre de l’équipe à contribuer, à enrichir la vision initiale, à s’approprier le projet. « Je ne sais pas » est un appel au dialogue, une porte ouverte aux idées des autres, un espace où la relation et la confiance peuvent véritablement émerger. Ce sont des mots qui créent un lien d’humanité et d’intimité. Le leadership devient alors une qualité relationnelle, une posture d’ouverture et d’écoute active, où la confiance s’établit par une vulnérabilité partagée et sincère. Imaginons une équipe où le leader commence non pas par énoncer des directives fermes, mais par dire : « j’ai envie que nous explorions ensemble le business model de notre entreprise pour faire face aux transformations de notre secteur d’activité » ou « je ne sais pas exactement quelle est la meilleure solution, mais j’ai envie que nous cherchions ensemble ». Dans cette configuration, l’équipe est reconnue, non pas comme de simples exécutants d’un plan prédéfini, mais comme des partenaires d’une aventure collective. Chacun sent qu’il peut créer de l’impact, qu’il est accueilli dans sa propre capacité d’interroger, de douter, de proposer. La confiance devient alors un terrain commun, fondé sur une vulnérabilité partagée. Et cette confiance est active, nourrie par une intimité relationnelle qui ne peut naître que dans l’acceptation des fragilités.
+
+## 3. Un petit déplacement pour les managers, un grand pas pour la cohésion d’équipe !
+
+La tendance actuelle, avec les séminaires d'entreprise où l’on distribue les « 10 Commandements de la Productivité », semble aller dans la direction opposée de l’élan proposé ci-dessus. On ne fait que transmettre la vision d’une poignée d’actionnaires qui ne sont même pas issus de notre métier, comme s’il existait une recette de la réussite applicable à toutes les situations, à tous les individus et sans rentrer en contact avec eux ! Ce qui est sous-entendu est limpide : il suffit de suivre la règle pour atteindre l’objectif. Mais la vie, l’entreprise, la création ne peuvent être réduites à des injonctions. J’irai même plus loin, il existe une certaine violence à ces injonctions. Elle nait du principe de considération des Hommes comme « Ressources ». Comment pouvons-nous alors inspirer une véritable cohésion d’équipe si chacun est sommé d’appliquer des règles externes, sans se risquer à explorer ses propres aspirations, ses propres doutes ? On comprend alors que le vrai rôle du leader est de créer un cadre, une direction générale, tout en laissant les détails et les moyens d’y parvenir émerger des interactions du groupe. Le leader inspire, guide, mais ne contrôle pas. Il agit davantage comme un jardinier qui prépare le terrain, nourrit les idées, et permet aux talents de s’épanouir, plutôt que comme un commandant qui dicte et impose. Ce passage du "je veux" au "j’ai envie" est une révolution subtile mais profonde, qui permet de passer d’une approche autoritaire à une approche inspirante et inclusive.
+
+> Ce n’est pas le doute, c’est la certitude qui rend fou. — Friedrich Nietzsche
+
+Ainsi, le leader moderne est celui qui sait renoncer aux certitudes, qui ose explorer les possibilités en compagnie de son équipe, et qui favorise une dynamique d’échange. C’est un leader qui, loin de se cacher derrière des commandements ou des objectifs figés, accompagne son équipe dans l’incertitude, en reconnaissant que la vraie puissance d’une organisation réside dans la diversité et l’intimité des relations humaines. La performance n’est alors plus une fin en soi, mais un résultat naturel de cette cohésion sincère et vivante. Si nous voulons bâtir des équipes, des projets, et des organisations qui soient vraiment vivants, nous devons dépasser l’illusion du contrôle. Nous devons inviter chaque membre à entrer dans l’aventure humaine du travail, avec ses incertitudes, ses doutes, et ses échecs. C’est là que réside le leadership : dans la capacité d’un leader à accepter et encourager la vulnérabilité de chacun, en commençant par la sienne, pour laisser émerger des solutions véritablement novatrices nourries par la confiance et l’intimité collective.
+
+## Ouverture
+
+Aujourd'hui, le Design se doit de résister à une idéologie de la performance qui ne fait qu’amplifier les problèmes inhérents au monde de l’entreprise. Par la pensée systémique, il peut accompagner les entreprises dans le développement de la robustesse pour répondre aux fluctuations de notre monde. En s’intéressant aux modes de collaboration, il peut répondre à une déshumanisation du poumon économique. Car en fin de compte, la performance et la productivité ne sont pas des objectifs en soi, mais des résultats qui découlent de la création d'un environnement où chacun se sent en sécurité et respecté.
+
 Voulez-vous en faire partie ?
-1 Les Limites à la croissance – Le rapport Meadows
-2 Olivier Hamant - La robustesse du vivant comme antidote au culte de la performance
+
+## Références
+
+- *Les Limites à la croissance* — le rapport Meadows.
+- Olivier Hamant — *La robustesse du vivant comme antidote au culte de la performance*.

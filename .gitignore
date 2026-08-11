@@ -19,7 +19,9 @@ styles/welds-src/
 # --- Documents sources personnels (extraits vers knowledge/ après curation)
 *.pdf
 *.docx
-article/
+# Ancré à la racine : sans la barre oblique initiale, le motif exclut aussi
+# tout dossier « article » imbriqué, dont components/article/.
+/article/
 
 # --- OS / éditeurs
 .DS_Store
