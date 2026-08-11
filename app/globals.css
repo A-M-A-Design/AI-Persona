@@ -785,3 +785,172 @@ img {
   font-size: var(--wel-sem-font-sizes-title-md, 1.25rem);
   color: var(--wel-sem-color-on-surface-mid);
 }
+
+/* ---------------------------------------------------------------------------
+   Page article
+   ---------------------------------------------------------------------------
+   La maquette imbrique deux conteneurs : la page (padding 64/32/16) puis un
+   cadre intérieur de même retrait, d'où le doublement du padding horizontal.
+   La colonne de lecture est étroite et centrée (850 puis 550 px) ; en mobile
+   elle occupe toute la largeur disponible, soit 311 px sur une base de 375. */
+.page--article {
+  padding-inline: 128px;
+}
+@media (max-width: 1279px) {
+  .page--article {
+    padding-inline: 64px;
+    gap: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .page--article {
+    padding-inline: 32px;
+    gap: 16px;
+  }
+}
+
+/* La pilule de retour est portée par la barre de navigation, déjà collante.
+   Posée au-dessus de l'article, elle recouvrait le texte dès que la colonne
+   de lecture rejoignait le bord du retrait de page — entre 768 et ~1100 px,
+   la colonne démarre exactement à l'emplacement qu'occupait la pilule. */
+.site-nav__inner .article-back {
+  margin-right: auto;
+  border-radius: var(--pill-radius);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  width: 100%;
+  max-width: 850px;
+  margin-inline: auto;
+  padding: 56px 0 28px;
+  /* La police d'affichage de la libellule est une pixel font très large :
+     sans coupure, un mot long dépasse la colonne mobile de 311 px et fait
+     défiler la page entière horizontalement. */
+  overflow-wrap: break-word;
+}
+@media (max-width: 1279px) {
+  .article {
+    max-width: 550px;
+    gap: 32px;
+    padding: 32px 0 20px;
+  }
+}
+@media (max-width: 767px) {
+  .article {
+    max-width: none;
+    gap: 28px;
+    padding: 24px 0 16px;
+  }
+}
+
+/* Titre, surtitre et chapô sont centrés ; seul le corps est aligné à gauche. */
+.article__head {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: center;
+}
+@media (max-width: 1279px) {
+  .article__head {
+    gap: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .article__head {
+    gap: 16px;
+  }
+}
+.article__kicker {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-body-xs);
+  line-height: var(--wel-sem-line-heights-body-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--wel-sem-color-on-surface-mid);
+}
+.article__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-xl);
+  line-height: var(--wel-sem-line-heights-display-xl);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.article__lede {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-style: italic;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.article__media {
+  position: relative;
+  aspect-ratio: 850 / 386;
+  overflow: hidden;
+  border-radius: var(--wel-sem-border-radius-container-low);
+}
+.article__image {
+  object-fit: cover;
+}
+
+/* Les articles sont rédigés en français, l'interface est traduite : on
+   l'annonce au lecteur anglophone plutôt que de le laisser le découvrir. */
+.article__notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-accent-container-low);
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  line-height: var(--wel-sem-line-heights-body-sm);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.article__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: var(--wel-sem-font-sizes-body-md);
+  line-height: var(--wel-sem-line-heights-body-md);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+.article__body p {
+  margin: 0;
+}
+.article__h2 {
+  margin: 28px 0 0;
+  font-size: var(--wel-sem-font-sizes-title-lg);
+  line-height: var(--wel-sem-line-heights-title-lg);
+  font-weight: 500;
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.article__body > .article__h2:first-child {
+  margin-top: 0;
+}
+.article__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 24px;
+}
+.article__quote {
+  margin: 12px 0;
+  padding-left: 36px;
+  border-left: 2px solid var(--wel-sem-color-primary);
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-style: italic;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+@media (max-width: 767px) {
+  .article__quote {
+    padding-left: 20px;
+  }
+}

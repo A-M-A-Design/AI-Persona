@@ -11,15 +11,16 @@ export type Article = {
   /** Surtitre de la card, rendu en capitales — « kicker » dans la maquette. */
   kicker: Record<Lang, string>;
   tags: string[];
-  /** Résumé interne (non affiché par les cards). */
-  excerpt: string;
+  /** Chapô de la page article, rendu en italique sous le titre. */
+  lede: Record<Lang, string>;
   /** Visuel de fond de la card. Absent = aplat de thème (pas de visuel dans la maquette). */
   image?: string;
-  /** Absent = pas encore publié en ligne (ex. nouvelle version en cours). */
-  href?: string;
 };
 
-const LINKEDIN_ARTICLES = "https://www.linkedin.com/in/arthur-mathon/recent-activity/articles/";
+/** Chemin de la page d'un article. Les cards de la home pointent ici, plus vers LinkedIn. */
+export function articlePath(slug: string): string {
+  return `/articles/${slug}`;
+}
 
 export const ARTICLES: Article[] = [
   {
@@ -30,8 +31,10 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Société", en: "Society" },
     tags: ["DesignOps", "OrgDesign", "Recherche"],
-    excerpt:
-      "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
+    lede: {
+      fr: "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
+      en: "Organizational trauma, resilience and tensegrity: what neuroscience and living systems teach us about freeing a frozen organization.",
+    },
     image: "/articles/entreprise-traumatisee.jpg",
   },
   {
@@ -42,10 +45,11 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Ops et Design System", en: "Ops and Design System" },
     tags: ["Business", "DesignSystem"],
-    excerpt:
-      "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
+    lede: {
+      fr: "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
+      en: "Qualitative and quantitative indicators, KPIs to track: making a design system's value tangible to the executive committee.",
+    },
     image: "/articles/roi-design-system.jpg",
-    href: LINKEDIN_ARTICLES,
   },
   {
     slug: "systeme-de-tokens",
@@ -55,10 +59,11 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Design System et Product", en: "Design System and Product" },
     tags: ["DesignSystem", "Product"],
-    excerpt:
-      "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
+    lede: {
+      fr: "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
+      en: "From the 1990s to today: how tokens finally reconcile designers and developers in the industrialization of design.",
+    },
     image: "/articles/systeme-de-tokens.jpg",
-    href: LINKEDIN_ARTICLES,
   },
   {
     slug: "designops-outils-workflows",
@@ -68,17 +73,17 @@ export const ARTICLES: Article[] = [
     },
     kicker: { fr: "Ops et Automatisation", en: "Ops and Automation" },
     tags: ["Automation", "DesignOps"],
-    excerpt:
-      "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
+    lede: {
+      fr: "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
+      en: "Tools are to a team what oil is to an engine: facilitators of transfer, never goals in themselves.",
+    },
     image: "/articles/designops-outils-workflows.jpg",
-    href: LINKEDIN_ARTICLES,
   },
 ];
 
 // « Comment le Design peut répondre aux enjeux actuels des entreprises ? » n'est
-// pas affiché : la maquette compose quatre cards, et l'article reste accessible
-// par le lien LinkedIn. Sa fiche demeure dans knowledge/content-library/, donc
-// le bot continue de pouvoir en parler.
+// pas affiché : la maquette compose quatre cards. Sa fiche demeure dans
+// knowledge/content-library/, donc le bot continue de pouvoir en parler.
 
 /** Les deux premiers articles occupent les grandes cards de la maquette. */
 export const FEATURED_COUNT = 2;

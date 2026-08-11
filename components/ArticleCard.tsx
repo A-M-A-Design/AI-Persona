@@ -3,7 +3,8 @@
 // Card-image de la maquette : visuel en fond, dégradé de lisibilité, puis un
 // bloc voilé portant le surtitre, le titre et l'appel à l'action.
 import Image from "next/image";
-import type { Article } from "../lib/articles";
+import Link from "next/link";
+import { articlePath, type Article } from "../lib/articles";
 import { t, type Lang } from "../lib/i18n";
 
 type Props = {
@@ -20,8 +21,6 @@ type Props = {
 const SIZES = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 644px";
 
 export default function ArticleCard({ article, lang, persona }: Props) {
-  const published = Boolean(article.href);
-
   const inner = (
     <>
       {/* Visuel décoratif : le sens est porté par le titre de la card. */}
@@ -52,26 +51,17 @@ export default function ArticleCard({ article, lang, persona }: Props) {
             <h3 className="article-card__title">{article.title[lang]}</h3>
           </div>
           <span className="wel-button wel-button--secondary wel-button--sm">
-            {published ? t(lang, "readArticle") : t(lang, "comingSoon")}
+            {t(lang, "readArticle")}
           </span>
         </div>
       </div>
     </>
   );
 
-  // Un article non publié n'est pas un lien : on garde la card, sans cible.
-  if (!published) {
-    return <article className="article-card">{inner}</article>;
-  }
-
+  // Chaque article a désormais sa page : la card mène au site, plus à LinkedIn.
   return (
-    <a
-      className="article-card"
-      href={article.href}
-      target="_blank"
-      rel="noreferrer"
-    >
+    <Link className="article-card" href={articlePath(article.slug)}>
       {inner}
-    </a>
+    </Link>
   );
 }

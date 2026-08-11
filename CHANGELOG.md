@@ -8,7 +8,24 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Une page par article**, générée statiquement (`/articles/<slug>`), d'après
+  les trois frames de la maquette. Les boutons « Lire l'article » de l'accueil
+  mènent désormais au site et non plus au profil LinkedIn. Colonne de lecture
+  de 850 px en desktop et 550 en tablette ; en mobile l'article occupe toute la
+  largeur. Surtitre, titre et chapô suivent la langue choisie ; le corps est
+  annoncé en français, langue de rédaction des articles.
+
 ### Fixed
+
+- **La pilule « Retour » recouvrait le texte de l'article.** Posée au-dessus de
+  l'article, elle occupait exactement l'emplacement où démarre la colonne de
+  lecture dès que la fenêtre passait sous ~1100 px. Elle est désormais portée
+  par la barre de navigation, déjà collante, à toutes les largeurs.
+- En thème Libellule, la police d'affichage — une pixel font très large —
+  faisait déborder le titre d'article hors de la colonne mobile de 311 px et
+  provoquait un défilement horizontal de toute la page.
 
 - **Le bot ne suivait pas la langue de l'utilisateur.** Une question posée en
   anglais avec l'interface en français obtenait une réponse en français, la
