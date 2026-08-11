@@ -56,25 +56,54 @@ img {
   }
 }
 
-/* --- Header : chips + toggle, alignés à droite -------------------------- */
+/* --- Barre de navigation collante --------------------------------------- */
 
-.site-header {
+/* Pleine largeur avec une ombre portée, elle reste en haut au défilement.
+   z-index sous le panneau de conversation (10), qui doit la recouvrir. */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--wel-sem-color-surface);
+  box-shadow: 0 2px 6px rgb(7 5 24 / 20%);
+}
+
+/* Le contenu suit les marges de la page : la barre déborde, pas ses contrôles. */
+.site-nav__inner {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  min-height: 40px;
+  height: 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-inline: 64px;
+}
+
+@media (max-width: 1279px) {
+  .site-nav__inner {
+    padding-inline: 32px;
+  }
+}
+
+/* La maquette ne dessine la barre qu'en desktop : 80 px y mangeraient trop de
+   hauteur sur un petit écran. */
+@media (max-width: 767px) {
+  .site-nav__inner {
+    height: 64px;
+    padding-inline: 16px;
+  }
 }
 
 /* Le chip WDS est un bouton : on neutralise l'apparence native du select
    qu'il enveloppe, pour garder le composant et son accessibilité. */
-.site-header__chip {
+.site-nav__chip {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-.site-header__select {
+.site-nav__select {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -84,7 +113,7 @@ img {
   font: inherit;
 }
 
-.site-header__toggle {
+.site-nav__toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +127,7 @@ img {
   cursor: pointer;
 }
 
-.site-header__toggle:focus-visible {
+.site-nav__toggle:focus-visible {
   outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
   outline-offset: 2px;
 }

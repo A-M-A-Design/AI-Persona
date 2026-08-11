@@ -35,14 +35,14 @@ function ChipSelect({
 }) {
   const current = options.find((o) => o.value === value) ?? options[0];
   return (
-    <span className="wel-chip wel-chip--dropdown site-header__chip">
+    <span className="wel-chip wel-chip--dropdown site-nav__chip">
       <span className="wel-chip__label">{current.label}</span>
       <span className="wel-chip__icon" aria-hidden="true">
         ▾
       </span>
       <select
         id={id}
-        className="site-header__select"
+        className="site-nav__select"
         aria-label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -71,29 +71,31 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="site-header">
-      <ChipSelect
-        id="setting-avatar"
-        label={t(lang, "avatarType")}
-        value={settings.persona}
-        options={AVATARS.map((o) => ({ value: o.value, label: t(lang, o.labelKey) }))}
-        onChange={(v) => apply({ persona: v })}
-      />
-      <ChipSelect
-        id="setting-language"
-        label={t(lang, "language")}
-        value={settings.lang}
-        options={LANGS}
-        onChange={(v) => apply({ lang: v as "fr" | "en" })}
-      />
-      <button
-        type="button"
-        className="site-header__toggle"
-        aria-label={`${t(lang, "colorMode")} — ${t(lang, nextMode === "dark" ? "optionDark" : "optionLight")}`}
-        onClick={() => apply({ colorMode: nextMode })}
-      >
-        <span aria-hidden="true">{settings.colorMode === "dark" ? "☾" : "☀"}</span>
-      </button>
+    <header className="site-nav">
+      <div className="site-nav__inner">
+        <ChipSelect
+          id="setting-avatar"
+          label={t(lang, "avatarType")}
+          value={settings.persona}
+          options={AVATARS.map((o) => ({ value: o.value, label: t(lang, o.labelKey) }))}
+          onChange={(v) => apply({ persona: v })}
+        />
+        <ChipSelect
+          id="setting-language"
+          label={t(lang, "language")}
+          value={settings.lang}
+          options={LANGS}
+          onChange={(v) => apply({ lang: v as "fr" | "en" })}
+        />
+        <button
+          type="button"
+          className="site-nav__toggle"
+          aria-label={`${t(lang, "colorMode")} — ${t(lang, nextMode === "dark" ? "optionDark" : "optionLight")}`}
+          onClick={() => apply({ colorMode: nextMode })}
+        >
+          <span aria-hidden="true">{settings.colorMode === "dark" ? "☾" : "☀"}</span>
+        </button>
+      </div>
     </header>
   );
 }

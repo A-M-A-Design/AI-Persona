@@ -10,13 +10,17 @@ export default function Home() {
     suggestedQuestions: p.suggestedQuestions,
   }));
 
-  // Chat porte l'état de la conversation : au repos il rend le héro de la
-  // maquette, et le remplace par le fil dès le premier message.
+  // La barre de navigation est pleine largeur et collante : elle sort donc du
+  // conteneur de page, qui garde ses marges. Chat porte l'état de la
+  // conversation : au repos il rend le héro, et le remplace par le fil dès le
+  // premier message.
   return (
-    <main className="page">
+    <>
       <SiteHeader />
-      <Chat personas={personas} />
-      <ArticlesSection />
-    </main>
+      <main className="page">
+        <Chat personas={personas} />
+        <ArticlesSection />
+      </main>
+    </>
   );
 }

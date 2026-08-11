@@ -88,6 +88,36 @@ test.describe("Panneau de conversation", () => {
   });
 });
 
+test.describe("Barre de navigation", () => {
+  test("reste en haut au défilement", async ({ page }) => {
+    await visit(page);
+    const nav = page.locator(".site-nav");
+    const avant = await nav.boundingBox();
+    expect(avant?.y).toBe(0);
+
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForFunction(() => window.scrollY > 400);
+
+    const apres = await nav.boundingBox();
+    expect(apres?.y).toBe(0);
+    // Et les contrôles restent cliquables une fois la page défilée.
+    await page.locator(".site-nav__toggle").click();
+    await expect(page.locator("html")).toHaveAttribute("data-color-mode", "dark");
+  });
+
+  test("le panneau de conversation recouvre la barre", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+    await openChat(page);
+    const auDessus = await page.evaluate(() => {
+      const nav = document.querySelector(".site-nav")!.getBoundingClientRect();
+      const el = document.elementFromPoint(nav.right - 40, nav.height / 2);
+      return el?.closest(".chat-modal") !== null;
+    });
+    expect(auDessus).toBe(true);
+  });
+});
+
 test.describe("Lanceur", () => {
   test("mobile : pas de carte, action compacte, chips défilantes", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
@@ -160,7 +190,7 @@ test.describe("Thèmes", () => {
   test("le sélecteur de mode bascule l'attribut de la page", async ({ page }) => {
     await visit(page);
     await expect(page.locator("html")).toHaveAttribute("data-color-mode", "light");
-    await page.locator(".site-header__toggle").click();
+    await page.locator(".site-nav__toggle").click();
     await expect(page.locator("html")).toHaveAttribute("data-color-mode", "dark");
   });
 });

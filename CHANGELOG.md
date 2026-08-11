@@ -23,6 +23,10 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
 - Les questions suggérées **se consomment** : une question déjà posée
   disparaît des chips, dans le héro comme dans le panneau.
+- **Barre de navigation collante** (`aem.header-navigation`) : pleine largeur,
+  80 px, fond de surface et ombre portée, elle reste en haut au défilement et
+  porte les trois contrôles (avatar, langue, mode). Ses contrôles suivent les
+  marges de la page ; le panneau de conversation la recouvre.
 - Bouton **« Démarrer une nouvelle conversation »** dans l'en-tête du panneau :
   il vide le fil et restaure les questions suggérées sans fermer le panneau.
   Il n'apparaît qu'une fois la conversation entamée, et reste inactif pendant
