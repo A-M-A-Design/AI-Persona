@@ -1,9 +1,6 @@
 import ArticlesSection from "../components/ArticlesSection";
 import Chat, { type PersonaPublic } from "../components/chat/Chat";
-import HeaderSubtitle from "../components/header/HeaderSubtitle";
-import HeroIllustration from "../components/header/HeroIllustration";
-import SettingsBar from "../components/header/SettingsBar";
-import SiteFooter from "../components/SiteFooter";
+import SiteHeader from "../components/header/SiteHeader";
 import { getPersonas } from "../lib/personas";
 
 export default function Home() {
@@ -13,19 +10,13 @@ export default function Home() {
     suggestedQuestions: p.suggestedQuestions,
   }));
 
+  // Chat porte l'état de la conversation : au repos il rend le héro de la
+  // maquette, et le remplace par le fil dès le premier message.
   return (
-    <>
-      <main className="chat-page">
-        <header className="hero">
-          <HeroIllustration />
-          <h1 className="chat-page__title">Arthur Mathon</h1>
-          <HeaderSubtitle />
-          <SettingsBar />
-        </header>
-        <Chat personas={personas} />
-        <ArticlesSection />
-      </main>
-      <SiteFooter />
-    </>
+    <main className="page">
+      <SiteHeader />
+      <Chat personas={personas} />
+      <ArticlesSection />
+    </main>
   );
 }

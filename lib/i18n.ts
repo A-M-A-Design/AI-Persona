@@ -3,6 +3,15 @@ export type Lang = "fr" | "en";
 
 const STRINGS = {
   fr: {
+    heroTitle: "Bonjour, je suis Arthur !",
+    heroSubtitle: "Designaut passionné de Design System, Product et Operations",
+    askAnything: "Posez-moi n'importe quelle question !",
+    letsChat: "Discutons",
+    readArticle: "Lire l'article",
+    letsConnect: "Restons en contact !",
+    connectText:
+      "N'hésitez pas à me contacter sur les réseaux ou à m'envoyer un e-mail.",
+    mail: "E-mail",
     subtitle: "Design System Lead · Product · Ops — discutez avec ma version IA",
     welcome:
       "Bonjour ! Je suis la version IA d'Arthur. Posez-moi vos questions sur son parcours, ses projets ou sa façon de travailler.",
@@ -27,6 +36,15 @@ const STRINGS = {
     footerEmail: "Écrire à Arthur",
   },
   en: {
+    heroTitle: "Hi, I'm Arthur!",
+    heroSubtitle: "A Designaut passionate of Design System, Product and Operations",
+    askAnything: "Ask me anything!",
+    letsChat: "Let's chat",
+    readArticle: "Read the article",
+    letsConnect: "Let's connect!",
+    connectText:
+      "Feel free to contact me on social media or send me an email.",
+    mail: "Mail",
     subtitle: "Design System Lead · Product · Ops — chat with my AI self",
     welcome:
       "Hi! I'm Arthur's AI self. Ask me anything about his background, projects or the way he works.",

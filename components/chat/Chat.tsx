@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useRef } from "react";
 import { t } from "../../lib/i18n";
+import Hero from "../Hero";
 import PersonaGlyph from "../PersonaGlyph";
 import { readCurrentSettings, useSettings } from "../useSettings";
 import Composer from "./Composer";
@@ -30,7 +31,7 @@ function messageText(parts: { type: string }[]): string {
 }
 
 export default function Chat({ personas }: Props) {
-  const { messages, sendMessage, status, error, clearError } = useChat({
+  const { messages, sendMessage, status, error, clearError, setMessages } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
   const settings = useSettings();
@@ -41,6 +42,7 @@ export default function Chat({ personas }: Props) {
   }, [messages]);
 
   const busy = status === "submitted" || status === "streaming";
+  const started = messages.length > 0;
   const activePersona =
     personas.find((p) => p.id === settings.persona) ?? personas[0];
 
@@ -52,23 +54,49 @@ export default function Chat({ personas }: Props) {
     sendMessage({ text }, { body: { persona: s.persona, lang: s.lang } });
   }
 
+  // Au repos, la maquette ne montre que le héro et sa barre de chat. Les
+  // questions suggérées sont ajoutées dessous — elles n'existent pas dans la
+  // maquette mais viennent du M1, et disparaissent dès que la conversation
+  // démarre.
+  if (!started) {
+    return (
+      <>
+        <Hero
+          lang={settings.lang}
+          persona={settings.persona}
+          disabled={busy}
+          onSend={send}
+        />
+        <SuggestedQuestions
+          label={t(settings.lang, "suggestions")}
+          questions={activePersona.suggestedQuestions[settings.lang]}
+          onPick={send}
+        />
+      </>
+    );
+  }
+
   return (
-    <div className="chat">
+    <section className="chat">
+      <div className="chat__toolbar">
+        <button
+          type="button"
+          className="wel-button wel-button--tertiary wel-button--sm"
+          onClick={() => {
+            clearError();
+            setMessages([]);
+          }}
+        >
+          {t(settings.lang, "newChat")}
+        </button>
+      </div>
+
       <div className="chat__messages" aria-live="polite">
-        {messages.length === 0 && (
-          <>
-            <MessageBubble
-              role="assistant"
-              persona={activePersona.id}
-              text={t(settings.lang, "welcome")}
-            />
-            <SuggestedQuestions
-              label={t(settings.lang, "suggestions")}
-              questions={activePersona.suggestedQuestions[settings.lang]}
-              onPick={send}
-            />
-          </>
-        )}
+        <MessageBubble
+          role="assistant"
+          persona={activePersona.id}
+          text={t(settings.lang, "welcome")}
+        />
 
         {messages.map((m) => (
           <MessageBubble
@@ -84,7 +112,10 @@ export default function Chat({ personas }: Props) {
             <span className="chat__avatar" aria-hidden="true">
               <PersonaGlyph persona={activePersona.id} className="chat__avatar-glyph" />
             </span>
-            <div className="wel-skeleton chat__skeleton" aria-label={t(settings.lang, "thinking")} />
+            <div
+              className="wel-skeleton chat__skeleton"
+              aria-label={t(settings.lang, "thinking")}
+            />
           </div>
         )}
 
@@ -103,7 +134,8 @@ export default function Chat({ personas }: Props) {
         placeholder={t(settings.lang, "placeholder")}
         sendLabel={t(settings.lang, "send")}
         onSend={send}
+        autoFocus
       />
-    </div>
+    </section>
   );
 }

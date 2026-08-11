@@ -7,9 +7,20 @@ type Props = {
   placeholder: string;
   sendLabel: string;
   onSend: (text: string) => void;
+  /** Classe du formulaire : « launcher » dans le héro, « chat__composer » en conversation. */
+  className?: string;
+  /** Focus au montage — utilisé au passage héro → conversation. */
+  autoFocus?: boolean;
 };
 
-export default function Composer({ disabled, placeholder, sendLabel, onSend }: Props) {
+export default function Composer({
+  disabled,
+  placeholder,
+  sendLabel,
+  onSend,
+  className = "chat__composer",
+  autoFocus = false,
+}: Props) {
   const [value, setValue] = useState("");
 
   function submit(e: FormEvent) {
@@ -21,8 +32,8 @@ export default function Composer({ disabled, placeholder, sendLabel, onSend }: P
   }
 
   return (
-    <form className="chat__composer" onSubmit={submit}>
-      <div className="wel-input-text chat__composer-field">
+    <form className={className} onSubmit={submit}>
+      <div className="wel-input-text composer__field">
         <div className="wel-input-text__wrapper">
           <input
             className="wel-input-text__input"
@@ -31,15 +42,18 @@ export default function Composer({ disabled, placeholder, sendLabel, onSend }: P
             placeholder={placeholder}
             maxLength={2000}
             aria-label={placeholder}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- transfert de focus héro → conversation
+            autoFocus={autoFocus}
           />
         </div>
       </div>
       <button
         type="submit"
-        className="wel-button wel-button--primary"
+        className="wel-button wel-button--primary wel-button--icon-right"
         disabled={disabled || value.trim().length === 0}
       >
         {sendLabel}
+        <span aria-hidden="true"> →</span>
       </button>
     </form>
   );

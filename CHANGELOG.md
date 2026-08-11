@@ -10,6 +10,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Interface refondue d'après la maquette Figma** : header à chips alignés à
+  droite (avatar, langue) et toggle clair/sombre ; héro avec titre, sous-titre
+  et barre de chat posée en débord sur l'illustration du persona ; deux grilles
+  d'articles en cards-image (deux grandes carrées, puis des cards étroites
+  partageant la rangée avec la carte contact). Le footer disparaît, remplacé
+  par cette carte contact.
+- La conversation **remplace le héro** au premier message, avec un bouton
+  « nouvelle conversation » pour revenir à l'état de repos.
+
 - **Choix du provider de chat** (`lib/model.ts`) : `CHAT_PROVIDER` sélectionne
   `mistral` (défaut) ou `anthropic`. La route `/api/chat` ne connaît plus ni le
   SDK du provider, ni le nom de sa variable de clé, ni sa capacité de cache.
@@ -33,6 +42,19 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   reprend le glyphe La Linea.
 
 ### Changed
+
+- **La typographie responsive passe par les tokens WDS.** Les tailles de la
+  maquette (titre 62/48/38 px, radius 6 px) sont exactement les valeurs de
+  `--wel-sem-font-sizes-display-2xl` et `--wel-sem-border-radius-container-low`
+  selon les breakpoints du thème : aucune media query de texte n'est écrite,
+  seules les grilles et les marges en ont.
+- `lib/articles.ts` porte désormais un surtitre et un visuel par article ;
+  `ArticlesSection` rend les deux grilles de la maquette.
+
+### Removed
+
+- `SiteFooter`, `HeaderSubtitle` et `HeroIllustration` : la maquette ne les
+  utilise plus. `PersonaGlyph` reste l'avatar du chat.
 
 - **Le prompt caching devient spécifique à Anthropic.** Le provider Mistral
   n'expose aucun breakpoint de cache : sous `CHAT_PROVIDER=mistral`, les
