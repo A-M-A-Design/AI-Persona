@@ -23,6 +23,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
 - Les questions suggérées **se consomment** : une question déjà posée
   disparaît des chips, dans le héro comme dans le panneau.
+- **Titres et surtitres d'articles bilingues** : `title` et `kicker` passent en
+  `Record<Lang, string>` et suivent la bascule FR/EN, comme le reste de l'UI.
+- Transition d'ouverture et de fermeture du panneau de conversation (fondu du
+  scrim, fondu + glissement du panneau, `ease-in-out`), neutralisée sous
+  `prefers-reduced-motion`.
 - **Visuels exportés de la maquette** : 3 illustrations de héro (`public/hero/`)
   et 4 visuels d'articles (`public/articles/`). Servis par `next/image`, qui
   les convertit en WebP à la volée — le héro tombe de 1,64 Mo à 88 Ko.
@@ -48,6 +53,14 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   « Color Mode ») ; bloc « Articles » sous le chat (une card WDS par article,
   liens LinkedIn) ; footer avec liens LinkedIn et e-mail. L'avatar du chat
   reprend le glyphe La Linea.
+
+### Fixed
+
+- **Le fil de conversation ne défilait pas** quand il dépassait la hauteur du
+  panneau : `justify-content: flex-end` sur un conteneur en `overflow: auto`
+  fait déborder le contenu au-dessus de la zone scrollable, hors d'atteinte de
+  la barre de défilement. L'ancrage en bas passe désormais par une marge
+  automatique sur le premier enfant.
 
 ### Changed
 

@@ -268,6 +268,7 @@ img {
   justify-content: center;
   padding-block: 20px;
   background: var(--modal-scrim);
+  animation: modal-scrim-in 200ms ease-in-out both;
 }
 
 .chat-modal__panel {
@@ -279,6 +280,64 @@ img {
   padding: 28px;
   border-radius: var(--wel-sem-border-radius-container-low);
   background: var(--wel-sem-color-surface);
+  animation: modal-panel-in 240ms ease-in-out both;
+}
+
+.chat-modal--closing {
+  animation: modal-scrim-out 180ms ease-in-out both;
+}
+
+.chat-modal--closing .chat-modal__panel {
+  animation: modal-panel-out 180ms ease-in-out both;
+}
+
+@keyframes modal-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-scrim-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes modal-panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Mouvement réduit : on garde une durée non nulle, sinon animationend ne se
+   déclenche pas et le panneau ne se démonterait jamais. */
+@media (prefers-reduced-motion: reduce) {
+  .chat-modal,
+  .chat-modal__panel,
+  .chat-modal--closing,
+  .chat-modal--closing .chat-modal__panel {
+    animation-duration: 1ms;
+  }
+
+  @keyframes modal-panel-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes modal-panel-out {
+    to {
+      opacity: 0;
+    }
+  }
 }
 
 /* Tablette et mobile : le panneau occupe tout l'écran. */
@@ -331,16 +390,23 @@ img {
   color: var(--wel-sem-color-on-surface-hi);
 }
 
-/* Le fil s'ancre en bas et les blocs sont alignés à droite. */
+/* Le fil s'ancre en bas et les blocs sont alignés à droite.
+   L'ancrage passe par une marge auto sur le premier enfant, jamais par
+   justify-content: flex-end — qui ferait déborder le contenu au-dessus de la
+   zone scrollable, hors d'atteinte de la barre de défilement. */
 .chat-modal__body {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: flex-end;
   flex: 1;
   min-height: 0;
   gap: 28px;
   overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-modal__body > *:first-child {
+  margin-top: auto;
 }
 
 .chat-modal__exchange {

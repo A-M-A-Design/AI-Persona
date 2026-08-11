@@ -34,8 +34,8 @@ export default function ArticleCard({ article, lang }: Props) {
         <div className="article-card__fade" />
         <div className="article-card__content">
           <div className="article-card__texts">
-            <p className="article-card__kicker">{article.kicker}</p>
-            <h3 className="article-card__title">{article.title}</h3>
+            <p className="article-card__kicker">{article.kicker[lang]}</p>
+            <h3 className="article-card__title">{article.title[lang]}</h3>
           </div>
           <span className="wel-button wel-button--secondary wel-button--sm">
             {published ? t(lang, "readArticle") : t(lang, "comingSoon")}

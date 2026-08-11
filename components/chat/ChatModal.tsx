@@ -5,7 +5,7 @@
 // Desktop : 640 px centré sur un scrim ; tablette et mobile : plein écran.
 // Le fil s'ancre en bas, les blocs sont alignés à droite, la question de
 // l'utilisateur est une pastille sombre et la réponse du texte simple.
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { t, type Lang } from "../../lib/i18n";
 import Composer from "./Composer";
 import SuggestedQuestions from "./SuggestedQuestions";
@@ -36,6 +36,9 @@ export default function ChatModal({
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  // Le panneau reste monté le temps de l'animation de sortie.
+  const [closing, setClosing] = useState(false);
+  const requestClose = useCallback(() => setClosing(true), []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
@@ -49,7 +52,7 @@ export default function ChatModal({
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        onClose();
+        requestClose();
         return;
       }
       if (e.key !== "Tab" || !panelRef.current) return;
@@ -74,13 +77,13 @@ export default function ChatModal({
       document.body.style.overflow = overflow;
       previous?.focus();
     };
-  }, [onClose]);
+  }, [requestClose]);
 
   return (
     <div
-      className="chat-modal"
+      className={closing ? "chat-modal chat-modal--closing" : "chat-modal"}
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget) requestClose();
       }}
     >
       <div
@@ -89,13 +92,17 @@ export default function ChatModal({
         aria-modal="true"
         aria-labelledby="chat-modal-title"
         ref={panelRef}
+        // Le démontage n'a lieu qu'une fois l'animation de sortie terminée.
+        onAnimationEnd={(e) => {
+          if (closing && e.target === e.currentTarget) onClose();
+        }}
       >
         <header className="chat-modal__header">
           <div className="chat-modal__actions">
             <button
               type="button"
               className="chat-modal__close"
-              onClick={onClose}
+              onClick={requestClose}
               aria-label={t(lang, "closeChat")}
             >
               <span aria-hidden="true">✕</span>
