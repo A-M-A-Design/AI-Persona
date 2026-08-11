@@ -14,16 +14,45 @@ sur le modèle du theming multi-marques d'Accor.
 
 - Node ≥ 20 (`node --version`)
 - Le zip `welds-mcp-v3.zip` à la racine du projet (assets WDS — **non commité**)
-- Une clé API Anthropic ([console.anthropic.com](https://console.anthropic.com))
+- Une clé API : Mistral ([console.mistral.ai](https://console.mistral.ai/api-keys), tier
+  gratuit) ou Anthropic ([console.anthropic.com](https://console.anthropic.com)) —
+  le provider se choisit avec `CHAT_PROVIDER`
 
 ## Setup
 
 ```powershell
 npm install
 npm run welds:install        # extrait les assets WDS vers styles/welds-src/ (gitignoré)
-Copy-Item .env.example .env.local   # puis renseigner ANTHROPIC_API_KEY
+Copy-Item .env.example .env.local   # puis renseigner la clé du provider choisi
 npm run dev                  # http://localhost:3000
 ```
+
+### Derrière un proxy d'entreprise
+
+Sur un poste dont le TLS est intercepté (cas du réseau Accor), les appels
+sortants de Node échouent avec `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` : `curl`
+utilise le magasin de certificats Windows, Node embarque le sien. Le chat
+renvoie alors une erreur générique alors que la clé API est valide.
+
+Exporter le magasin Windows une fois, puis pointer Node dessus :
+
+```powershell
+$sb = New-Object System.Text.StringBuilder
+foreach ($s in @("Cert:\LocalMachine\Root","Cert:\CurrentUser\Root","Cert:\LocalMachine\CA")) {
+  Get-ChildItem $s -ErrorAction SilentlyContinue | ForEach-Object {
+    [void]$sb.AppendLine("-----BEGIN CERTIFICATE-----")
+    [void]$sb.AppendLine([Convert]::ToBase64String($_.RawData,'InsertLineBreaks'))
+    [void]$sb.AppendLine("-----END CERTIFICATE-----")
+  }
+}
+New-Item -ItemType Directory "$HOME\.certs" -Force | Out-Null
+Set-Content "$HOME\.certs\corporate-ca.pem" $sb.ToString() -Encoding ascii
+setx NODE_EXTRA_CA_CERTS "$HOME\.certs\corporate-ca.pem"   # rouvrir le terminal ensuite
+```
+
+`NODE_EXTRA_CA_CERTS` est lu au démarrage du process : il doit être présent
+dans l'environnement **avant** `npm run dev`, le mettre dans `.env.local` ne
+fonctionne pas.
 
 ## Scripts
 
