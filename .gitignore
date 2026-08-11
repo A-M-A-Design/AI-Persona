@@ -1,0 +1,24 @@
+# --- Dépendances & build
+node_modules/
+.next/
+out/
+build/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# --- Secrets
+.env*
+!.env.example
+
+# --- IP Accor : ne JAMAIS committer (règle d'or du projet)
+# Les CSS/tokens WDS bruts sont extraits localement par scripts/install-welds.mjs
+styles/welds-src/
+*.zip
+
+# --- Documents sources personnels (extraits vers knowledge/ après curation)
+*.pdf
+
+# --- OS / éditeurs
+.DS_Store
+Thumbs.db
