@@ -5,10 +5,11 @@ import { useState, type FormEvent } from "react";
 type Props = {
   disabled: boolean;
   placeholder: string;
+  sendLabel: string;
   onSend: (text: string) => void;
 };
 
-export default function Composer({ disabled, placeholder, onSend }: Props) {
+export default function Composer({ disabled, placeholder, sendLabel, onSend }: Props) {
   const [value, setValue] = useState("");
 
   function submit(e: FormEvent) {
@@ -38,7 +39,7 @@ export default function Composer({ disabled, placeholder, onSend }: Props) {
         className="wel-button wel-button--primary"
         disabled={disabled || value.trim().length === 0}
       >
-        Envoyer
+        {sendLabel}
       </button>
     </form>
   );

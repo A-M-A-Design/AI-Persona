@@ -1,37 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-type ColorMode = "light" | "dark";
-
-const STORAGE_KEY = "ai-persona:settings";
-
-function readSettings(): Record<string, unknown> {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-  } catch {
-    return {};
-  }
-}
+import { t } from "../../lib/i18n";
+import { persistSetting, useSettings } from "../useSettings";
 
 export default function ColorModeToggle() {
-  const [mode, setMode] = useState<ColorMode>("light");
-
-  // Synchronise l'état React avec l'attribut posé par le script anti-flash.
-  useEffect(() => {
-    if (document.documentElement.getAttribute("data-color-mode") === "dark") {
-      setMode("dark");
-    }
-  }, []);
+  const { colorMode, lang } = useSettings();
 
   function toggle() {
-    const next: ColorMode = mode === "light" ? "dark" : "light";
-    setMode(next);
+    const next = colorMode === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-color-mode", next);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ ...readSettings(), colorMode: next }),
-    );
+    persistSetting({ colorMode: next });
   }
 
   return (
@@ -39,9 +17,9 @@ export default function ColorModeToggle() {
       type="button"
       className="wel-button wel-button--secondary wel-button--sm"
       onClick={toggle}
-      aria-pressed={mode === "dark"}
+      aria-pressed={colorMode === "dark"}
     >
-      {mode === "light" ? "🌙 Mode sombre" : "☀️ Mode clair"}
+      {colorMode === "light" ? t(lang, "darkMode") : t(lang, "lightMode")}
     </button>
   );
 }

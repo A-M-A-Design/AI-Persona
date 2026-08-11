@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const STORAGE_KEY = "ai-persona:settings";
-export const SETTINGS_EVENT = "ai-persona:settings";
+import { t } from "../../lib/i18n";
+import { persistSetting, useSettings } from "../useSettings";
 
 const PERSONAS = [
   { id: "ours", emoji: "🐻", label: "Ours" },
@@ -11,37 +9,23 @@ const PERSONAS = [
   { id: "libellule", emoji: "✨", label: "Libellule" },
 ] as const;
 
-function readSettings(): Record<string, unknown> {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-  } catch {
-    return {};
-  }
-}
-
 export default function PersonaSwitcher() {
-  const [active, setActive] = useState<string>("ours");
-
-  useEffect(() => {
-    setActive(document.documentElement.getAttribute("data-persona") ?? "ours");
-  }, []);
+  const { persona, lang } = useSettings();
 
   function pick(id: string) {
-    setActive(id);
     document.documentElement.setAttribute("data-persona", id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...readSettings(), persona: id }));
-    window.dispatchEvent(new Event(SETTINGS_EVENT));
+    persistSetting({ persona: id });
   }
 
   return (
-    <div role="radiogroup" aria-label="Choisir un persona" className="persona-switcher">
+    <div role="radiogroup" aria-label={t(lang, "personaLabel")} className="persona-switcher">
       {PERSONAS.map((p) => (
         <button
           key={p.id}
           type="button"
           role="radio"
-          aria-checked={active === p.id}
-          className={`wel-chip${active === p.id ? " wel-chip--selected" : ""}`}
+          aria-checked={persona === p.id}
+          className={`wel-chip${persona === p.id ? " wel-chip--selected" : ""}`}
           onClick={() => pick(p.id)}
         >
           {p.emoji} {p.label}

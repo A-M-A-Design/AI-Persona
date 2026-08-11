@@ -10,6 +10,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **i18n FR/EN (M4)** : dictionnaire maison typé (`lib/i18n.ts`), `LangToggle`
+  (UI + `<html lang>` + langue du bot au message suivant), hook partagé
+  `useSettings` (persona/langue/mode synchronisés entre tous les composants via
+  un événement), sous-titre et libellés localisés. Les modulateurs de
+  personnalité et questions suggérées FR/EN étaient en place depuis M1.
+
 - **Theming des 3 personas (M3)** : `scripts/build-themes.mjs` génère un thème
   complet par persona depuis le template WDS — transformation des couleurs par
   règles de teinte HSL (luminance préservée → contrastes light/dark intacts,

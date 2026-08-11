@@ -1,4 +1,5 @@
 import ColorModeToggle from "../../../components/header/ColorModeToggle";
+import LangToggle from "../../../components/header/LangToggle";
 import PersonaSwitcher from "../../../components/header/PersonaSwitcher";
 
 // Page kit (POC uniquement) : audit visuel des composants WDS.
@@ -10,6 +11,7 @@ export default function DevKit() {
         <h1>Kit — composants WDS</h1>
         <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
           <PersonaSwitcher />
+          <LangToggle />
           <ColorModeToggle />
         </div>
       </div>
