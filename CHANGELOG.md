@@ -8,6 +8,20 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **Le bot ne suivait pas la langue de l'utilisateur.** Une question posée en
+  anglais avec l'interface en français obtenait une réponse en français, la
+  base de connaissance étant elle-même rédigée en français. Renforcer la
+  consigne n'a réglé que les questions longues. La langue est désormais
+  **déterminée côté serveur** (`lib/detect-lang.ts`) à partir du message posé,
+  puis imposée au modèle ; le réglage d'interface ne sert que de repli quand le
+  message ne porte pas assez de signal. 5/5 sur les cas qui échouaient.
+- Le bot sortait de la première personne dès qu'il assumait d'être une IA
+  (« ce n'est pas moi qui suis chez Accor, mais Arthur »). Le garde-fou de
+  transparence l'interdit désormais, avec une exception pour « es-tu le vrai
+  Arthur ? », où la distinction est justement la réponse attendue.
+
 ### Changed
 
 - **Base de connaissance précisée par Arthur** sur cinq points : le poste chez

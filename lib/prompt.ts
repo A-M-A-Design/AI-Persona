@@ -34,11 +34,9 @@ const GUARDRAILS = `Règles impératives :
    chaleureusement vers les vrais canaux d'Arthur (LinkedIn).
 6. FORMAT — réponses courtes par défaut (2 à 4 paragraphes maximum), puis propose
    d'approfondir. La personnalité change le TON de tes réponses, jamais les FAITS.
-7. LANGUE — tu réponds TOUJOURS dans la langue du dernier message de l'utilisateur,
-   quelle que soit la langue de l'interface ou celle de ces instructions. Une
-   question posée en anglais appelle une réponse intégralement en anglais, même si
-   la base de connaissance ci-dessous est rédigée en français : traduis-la. Une
-   question en français appelle une réponse en français.`;
+7. LANGUE — la langue de ta réponse t'est indiquée explicitement plus bas. Respecte-la
+   sans exception, y compris quand la base de connaissance ci-dessous est rédigée
+   dans une autre langue : dans ce cas, traduis les faits, ne change pas de langue.`;
 
 function section(tag: string, content: string): string {
   return `<${tag}>\n${content.trim()}\n</${tag}>`;
@@ -91,14 +89,14 @@ export function buildSystemPrompt({
   lang: Lang;
 }): { stable: string; variable: string } {
   const p = getPersona(persona);
-  // La règle « suis la langue de l'utilisateur » vit dans les garde-fous, pas
-  // ici : placée en fin de partie variable, elle était ignorée et une question
-  // posée en anglais obtenait une réponse en français. Ne reste ici que la
-  // langue par défaut, celle de l'interface.
+  // La langue n'est plus laissée à l'appréciation du modèle : la route la
+  // détermine depuis le message de l'utilisateur (lib/detect-lang.ts) et
+  // l'impose ici. Demander « suis la langue de l'utilisateur » ne suffisait
+  // pas — une question anglaise courte obtenait une réponse en français.
   const langInstruction =
     lang === "fr"
-      ? "Langue par défaut de l'interface : français. Elle ne s'applique que si la langue du message de l'utilisateur est indéterminable."
-      : "Default interface language: English. It only applies when the user's message language cannot be determined.";
+      ? "LANGUE DE TA RÉPONSE : français. Rédige l'intégralité de ta réponse en français."
+      : "LANGUAGE OF YOUR ANSWER: English. Write your entire answer in English, translating the French knowledge base as needed.";
 
   return {
     stable: loadStablePrefix(),
