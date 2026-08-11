@@ -16,8 +16,13 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   d'articles en cards-image (deux grandes carrées, puis des cards étroites
   partageant la rangée avec la carte contact). Le footer disparaît, remplacé
   par cette carte contact.
-- La conversation **remplace le héro** au premier message, avec un bouton
-  « nouvelle conversation » pour revenir à l'état de repos.
+- La conversation s'ouvre dans un **panneau modal** (`ChatModal`) : 640 px
+  centré sur un scrim en desktop, plein écran en tablette et mobile. Le fil
+  s'ancre en bas, la question posée est une pastille sombre et la réponse du
+  texte simple. Échap et clic sur le scrim ferment, le focus est piégé dans le
+  panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
+- Les questions suggérées **se consomment** : une question déjà posée
+  disparaît des chips, dans le héro comme dans le panneau.
 - **Visuels exportés de la maquette** : 3 illustrations de héro (`public/hero/`)
   et 4 visuels d'articles (`public/articles/`). Servis par `next/image`, qui
   les convertit en WebP à la volée — le héro tombe de 1,64 Mo à 88 Ko.
@@ -56,8 +61,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Removed
 
-- `SiteFooter`, `HeaderSubtitle` et `HeroIllustration` : la maquette ne les
-  utilise plus. `PersonaGlyph` reste l'avatar du chat.
+- `SiteFooter`, `HeaderSubtitle`, `HeroIllustration` et `MessageBubble` : la
+  maquette ne les utilise plus. Le panneau de conversation n'affiche pas
+  d'avatar, `PersonaGlyph` n'est donc plus référencé (conservé sur demande).
+- Clés i18n devenues sans emploi : `subtitle`, `welcome`, `placeholder`,
+  `send`, `newChat`, `articlesTitle`, `readOnLinkedIn`, `footerEmail`.
 
 - **Le prompt caching devient spécifique à Anthropic.** Le provider Mistral
   n'expose aucun breakpoint de cache : sous `CHAT_PROVIDER=mistral`, les

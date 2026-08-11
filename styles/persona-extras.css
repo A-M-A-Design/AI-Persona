@@ -7,13 +7,20 @@
 :root {
   --media-veil: rgba(7, 5, 24, 0.3);
   --media-veil-strong: rgba(7, 5, 24, 0.54);
+  /* Scrim du panneau de conversation (#070518 à 70 % dans la maquette). */
+  --modal-scrim: rgba(7, 5, 24, 0.7);
   /* Débord de la barre de chat sur l'image du héro (gap -55 dans la maquette). */
   --hero-overlap: 55px;
+  /* Pastille de la question posée : arrondi complet, sauf pour libellule. */
+  --chat-question-radius: 100px;
 }
 
 /* Libellule : rendu rétro/16-bit */
-[data-persona="libellule"] img,
-[data-persona="libellule"] .chat__avatar {
+[data-persona="libellule"] {
+  --chat-question-radius: 0;
+}
+
+[data-persona="libellule"] img {
   image-rendering: pixelated;
 }
 
