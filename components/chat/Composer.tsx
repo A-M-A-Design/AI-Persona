@@ -57,8 +57,12 @@ export default function Composer({
         type="submit"
         className="wel-button wel-button--primary wel-button--icon-right"
         disabled={disabled || value.trim().length === 0}
+        // En mobile la maquette réduit l'action à une icône posée dans le
+        // champ : le libellé est masqué visuellement, jamais retiré du nom
+        // accessible.
+        aria-label={sendLabel}
       >
-        {sendLabel}
+        <span className="composer__label">{sendLabel}</span>
         <span aria-hidden="true"> →</span>
       </button>
     </form>

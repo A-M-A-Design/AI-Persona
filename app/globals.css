@@ -115,7 +115,7 @@ img {
 
 @media (max-width: 767px) {
   .hero {
-    gap: 24px;
+    gap: 28px;
     padding-top: 24px;
   }
 }
@@ -127,6 +127,12 @@ img {
   gap: 28px;
   text-align: center;
   max-width: 866px;
+}
+
+@media (max-width: 767px) {
+  .hero__heading {
+    gap: 16px;
+  }
 }
 
 .hero__title {
@@ -185,9 +191,12 @@ img {
   background: var(--wel-sem-color-surface-container-mid);
 }
 
+/* Mobile : pas de débord — la maquette met le gap du bloc héro à 0 — et
+   l'image passe en 3/2 (343 × 229). */
 @media (max-width: 767px) {
   .hero__media {
-    aspect-ratio: 4 / 3;
+    margin-top: 0;
+    aspect-ratio: 343 / 229;
   }
 }
 
@@ -233,16 +242,45 @@ img {
   gap: 8px;
 }
 
+/* Tablette : même carte, padding réduit (16 dans la maquette contre 28). */
+@media (max-width: 1279px) {
+  .launcher {
+    padding: 16px;
+  }
+}
+
+/* Mobile : la maquette abandonne la carte. Le champ et les chips reposent
+   directement sur la page — ni fond, ni rayon, ni ombre, ni retrait — et
+   l'action se réduit à une icône au bout du champ. */
 @media (max-width: 767px) {
   .launcher {
     gap: 12px;
-    padding: 16px;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
   }
 
-  .launcher__row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+  /* La ligne reste horizontale : le champ occupe la largeur, l'action se
+     réduit à sa flèche. */
+  .launcher__row .composer__label {
+    display: none;
+  }
+
+  /* Les chips défilent au lieu de passer à la ligne (NO_WRAP + troncature
+     dans la maquette). */
+  .launcher__suggestions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .launcher__suggestions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .launcher__suggestions .wel-chip {
+    flex-shrink: 0;
   }
 }
 

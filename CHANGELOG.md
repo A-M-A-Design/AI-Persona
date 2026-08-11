@@ -71,7 +71,14 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
-- **L'icône de la carte contact ne s'affichait pas.** `.wel-icon-slot` ne
+- **Lanceur non conforme en mobile.** La maquette y abandonne la carte : le
+  champ et les chips reposent directement sur la page (ni fond, ni rayon, ni
+  ombre, ni retrait), l'action se réduit à une icône au bout du champ, les
+  chips défilent horizontalement au lieu de passer à la ligne, et le bloc ne
+  déborde plus sur l'illustration (gap à 0 contre −55). L'implémentation
+  empilait au contraire champ et bouton en colonne dans la carte. Ratio de
+  l'image porté à 3/2 et écart du titre à 16, comme la frame 375 ; le padding
+  de la carte passe à 16 en tablette. `.wel-icon-slot` ne
   fournit ni taille ni fond : c'est un `inline-flex` en `line-height: 0` qui
   attend un `<i>` ou un `<svg>` enfant, si bien qu'un caractère texte
   s'effondrait. Le slot reçoit un SVG et reprend la boîte de la maquette

@@ -88,6 +88,46 @@ test.describe("Panneau de conversation", () => {
   });
 });
 
+test.describe("Lanceur", () => {
+  test("mobile : pas de carte, action compacte, chips défilantes", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
+    await visit(page);
+
+    const launcher = page.locator(".launcher");
+    await expect(launcher).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(launcher).toHaveCSS("box-shadow", "none");
+    await expect(launcher).toHaveCSS("padding", "0px");
+
+    // La ligne reste horizontale et le libellé du bouton est masqué.
+    await expect(page.locator(".launcher__row")).toHaveCSS("flex-direction", "row");
+    await expect(page.locator(".launcher__row .composer__label")).toBeHidden();
+    // Le nom accessible du bouton survit au masquage du libellé.
+    await expect(page.locator(".launcher__row button[type=submit]")).toHaveAttribute(
+      "aria-label",
+      /.+/,
+    );
+
+    // Les chips défilent au lieu de passer à la ligne.
+    const chips = page.locator(".launcher__suggestions");
+    await expect(chips).toHaveCSS("flex-wrap", "nowrap");
+    const scrolls = await chips.evaluate((el) => el.scrollWidth > el.clientWidth);
+    expect(scrolls).toBe(true);
+
+    // Et le bloc ne déborde plus sur l'illustration.
+    await expect(page.locator(".hero__media")).toHaveCSS("margin-top", "0px");
+  });
+
+  test("desktop : la carte déborde sur l'illustration", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "spécifique au breakpoint desktop");
+    await visit(page);
+    await expect(page.locator(".launcher")).not.toHaveCSS("box-shadow", "none");
+    const margin = await page
+      .locator(".hero__media")
+      .evaluate((el) => parseFloat(getComputedStyle(el).marginTop));
+    expect(margin).toBeLessThan(0);
+  });
+});
+
 test.describe("Thèmes", () => {
   for (const persona of PERSONAS) {
     test(`${persona} — le texte des cards reste clair en mode sombre`, async ({ page }) => {
