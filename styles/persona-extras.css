@@ -15,6 +15,32 @@
   --chat-question-radius: 100px;
 }
 
+/* --- Bouton inactif ------------------------------------------------------
+   Le WDS efface le bouton entier (opacité 0.38 sur le fond ET le libellé),
+   ce qui ramène le label à 1,25:1 — illisible.
+
+   On garde le libellé pleinement opaque et on rend le FOND translucide :
+   l'arrière-plan transparaît légèrement, le bouton se lit toujours comme
+   inactif, et son libellé reste lisible. Le libellé passe sur la couleur de
+   texte de la surface, puisque c'est elle qui domine le mélange.
+
+   `pointer-events: none` (déjà posé par le WDS) est réaffirmé ici : un bouton
+   inactif ne doit produire aucune interaction au survol. Les sélecteurs
+   :hover sont listés pour que l'apparence inactive l'emporte quel que soit
+   l'ordre des feuilles. */
+.wel-button:disabled,
+.wel-button[aria-disabled="true"],
+.wel-button:disabled:hover,
+.wel-button[aria-disabled="true"]:hover,
+.wel-button-icon:disabled,
+.wel-button-icon[aria-disabled="true"] {
+  opacity: 1;
+  background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: transparent;
+  pointer-events: none;
+}
+
 /* Libellule : rendu rétro/16-bit */
 [data-persona="libellule"] {
   --chat-question-radius: 0;

@@ -59,6 +59,14 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **L'état inactif des boutons garde son libellé lisible.** Le WDS efface le
+  bouton entier (opacité 0,38 sur le fond *et* le libellé), soit 1,25:1. Le
+  libellé reste désormais pleinement opaque et c'est le fond qui devient
+  translucide — 24 % de la primaire, laissant transparaître l'arrière-plan :
+  8,88 à 9,78:1 selon les combinaisons, sans que le bouton cesse de se lire
+  comme inactif. `pointer-events: none` est réaffirmé, donc aucune interaction
+  au survol.
+
 - **Le bouton d'envoi n'est plus désactivé sur champ vide.** C'était l'état par
   défaut de la page, or le style désactivé du WDS repose sur une opacité de
   0,38 qui ramène le label à 1,25:1 : la CTA principale était illisible au
