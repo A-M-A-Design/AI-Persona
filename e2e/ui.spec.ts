@@ -2,11 +2,18 @@ import { expect, test } from "@playwright/test";
 import { openChat, PERSONAS, stubChat, visit } from "./helpers";
 
 test.describe("Accueil", () => {
-  test("rend le héro, les quatre cards et la carte contact", async ({ page }) => {
+  test("rend le héro, les six cards et la carte contact", async ({ page }) => {
     await visit(page);
     await expect(page.locator(".hero__title")).toBeVisible();
-    await expect(page.locator(".article-card")).toHaveCount(4);
+    await expect(page.locator(".article-card")).toHaveCount(6);
     await expect(page.locator(".connect-card")).toBeVisible();
+
+    // La carte contact a quitté la grille étroite, que les articles occupent
+    // désormais en entier : elle s'étend sous les deux grilles.
+    await expect(page.locator(".articles--secondary .connect-card")).toHaveCount(0);
+    const contact = await page.locator(".connect-card").boundingBox();
+    const grid = await page.locator(".articles--secondary").boundingBox();
+    expect(Math.round(contact?.width ?? 0)).toBe(Math.round(grid?.width ?? 0));
   });
 
   test("l'icône de la carte contact a une taille non nulle", async ({ page }) => {

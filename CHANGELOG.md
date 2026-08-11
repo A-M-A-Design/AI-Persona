@@ -8,6 +8,13 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **L'accueil compose les six articles** : deux grandes cards puis une rangée
+  de quatre cards étroites, d'après la maquette mise à jour. La carte contact
+  quitte la grille — elle en occupait deux colonnes — et s'étend désormais sur
+  toute la largeur sous les deux grilles.
+
 ### Added
 
 - **Deux articles ajoutés** : « Le design système au service de vos besoins en

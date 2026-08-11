@@ -598,25 +598,15 @@ img {
   row-gap: 28px;
 }
 
-/* Seconde grille : 4 colonnes en desktop, la carte contact occupe les deux
-   dernières de la première rangée — comme dans la maquette. */
+/* Seconde grille : quatre colonnes de cards étroites en desktop. La carte
+   contact n'y figure plus — elle suit les grilles sur toute la largeur. */
 .articles--secondary {
   grid-template-columns: repeat(4, 1fr);
-}
-
-.articles--secondary .connect-card {
-  grid-column: 3 / span 2;
-  grid-row: 1;
 }
 
 @media (max-width: 1279px) {
   .articles--secondary {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .articles--secondary .connect-card {
-    grid-column: 1 / span 2;
-    grid-row: auto;
   }
 }
 
@@ -624,10 +614,6 @@ img {
   .articles,
   .articles--secondary {
     grid-template-columns: 1fr;
-  }
-
-  .articles--secondary .connect-card {
-    grid-column: 1;
   }
 }
 
@@ -735,19 +721,21 @@ img {
 
 /* --- Card contact ------------------------------------------------------- */
 
+/* Carte contact : une bande sur toute la largeur, sous les deux grilles.
+   Elle occupait auparavant deux colonnes de la grille étroite, d'où un
+   `align-self` qui l'empêchait désormais de s'étendre. */
 .connect-card {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 12px;
-  align-self: start;
 }
 
 /* Boîte de l'icône : 76 px, radius 2 et fond accent, repris de la maquette.
    .wel-icon-slot ne fournit que le centrage. */
 .connect-card__icon {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   padding: 12px;
   flex-shrink: 0;
   border-radius: 2px;

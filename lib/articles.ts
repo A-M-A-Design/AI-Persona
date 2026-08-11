@@ -112,12 +112,6 @@ export const ARTICLES: Article[] = [
 /** Les deux premiers articles occupent les grandes cards de la maquette. */
 export const FEATURED_COUNT = 2;
 
-/**
- * Nombre d'articles composés dans la grille d'accueil. La maquette y dessine
- * quatre cards — deux grandes, deux étroites partageant la rangée avec la
- * carte contact —, alors que le carousel de fin d'article les propose tous.
- */
-export const HOME_COUNT = 4;
 
 export const LINKS = {
   linkedin: "https://www.linkedin.com/in/arthur-mathon/",

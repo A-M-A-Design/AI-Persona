@@ -47,7 +47,7 @@ test.describe("Cards de l'accueil", () => {
   test("mènent aux pages du site et non à LinkedIn", async ({ page }) => {
     await visit(page);
     const cards = page.locator(".article-card");
-    await expect(cards).toHaveCount(4);
+    await expect(cards).toHaveCount(ARTICLE_COUNT);
 
     for (const card of await cards.all()) {
       const href = await card.getAttribute("href");
