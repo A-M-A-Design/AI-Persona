@@ -69,20 +69,25 @@ function loadStablePrefix(): string {
   return stablePrefix;
 }
 
+// Partie stable (identité + garde-fous + KB) séparée de la partie variable
+// (persona + langue) : la stable porte un breakpoint de prompt caching côté
+// Anthropic (~90 % d'économie d'input dès la 2e requête, partagé entre les
+// 6 combinaisons persona×langue).
 export function buildSystemPrompt({
   persona,
   lang,
 }: {
   persona: PersonaId;
   lang: Lang;
-}): string {
+}): { stable: string; variable: string } {
   const p = getPersona(persona);
   const langInstruction =
     lang === "fr"
       ? "Réponds en français. Si l'utilisateur écrit dans une autre langue, suis la langue de l'utilisateur."
       : "Answer in English. If the user writes in another language, follow the user's language.";
 
-  return [loadStablePrefix(), section("persona_style", p.modulator[lang]), langInstruction].join(
-    "\n\n",
-  );
+  return {
+    stable: loadStablePrefix(),
+    variable: [section("persona_style", p.modulator[lang]), langInstruction].join("\n\n"),
+  };
 }
