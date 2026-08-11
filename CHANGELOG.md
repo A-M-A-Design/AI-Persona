@@ -10,6 +10,13 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Carousel en fin d'article** : les autres articles y défilent, trois par page
+  en desktop, deux en tablette, une en mobile, avec la pagination condensée de
+  la maquette (précédent · compteur · suivant). Le défilement est celui du
+  navigateur — `scroll-snap` — donc le geste tactile et le clavier fonctionnent
+  d'origine ; le nombre de pages se déduit de la géométrie des cartes et suit
+  les breakpoints sans les connaître. Le carousel occupe toute la largeur de
+  contenu, là où la colonne de lecture reste resserrée.
 - **Les quatre articles sont traduits en anglais** (`knowledge/content-library/en/`).
   La page sert la version correspondant à la langue choisie ; le titre, le
   surtitre et le chapô suivaient déjà ce réglage. Le sous-dossier `en/` n'entre

@@ -12,6 +12,7 @@ import type { Block } from "../../lib/article-body";
 import type { Article } from "../../lib/articles";
 import { t, type Lang } from "../../lib/i18n";
 import { useSettings } from "../useSettings";
+import ArticleCarousel from "./ArticleCarousel";
 
 /** Rend le gras markdown, seul balisage en ligne présent dans les articles. */
 function inline(text: string) {
@@ -28,13 +29,16 @@ export default function ArticleView({
   article,
   blocks,
   translated,
+  others,
 }: {
   article: Article;
   blocks: Record<Lang, Block[]>;
   /** Faux quand l'anglais retombe sur le texte français. */
   translated: boolean;
+  /** Les autres articles, proposés en fin de lecture. */
+  others: Article[];
 }) {
-  const { lang } = useSettings();
+  const { lang, persona } = useSettings();
   const body = blocks[lang];
   const inFrench = lang === "fr" || !translated;
 
@@ -100,6 +104,9 @@ export default function ArticleView({
           })}
         </div>
       </article>
+
+      {/* Hors de la colonne de lecture : le carousel occupe toute la largeur. */}
+      <ArticleCarousel articles={others} lang={lang} persona={persona} />
     </>
   );
 }

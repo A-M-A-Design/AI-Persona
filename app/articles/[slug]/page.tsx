@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import ArticleCarousel from "../../../components/article/ArticleCarousel";
 import ArticleView from "../../../components/article/ArticleView";
 import SiteHeader from "../../../components/header/SiteHeader";
 import { hasTranslation, readArticleBodies } from "../../../lib/article-body";
@@ -28,13 +29,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   const blocks = readArticleBodies(slug);
   const translated = hasTranslation(slug, "en");
+  // Le carousel de fin propose les autres articles — jamais celui qu'on lit.
+  const others = ARTICLES.filter((a) => a.slug !== slug);
 
   // La pilule « Retour » est portée par la barre de navigation.
   return (
     <>
       <SiteHeader withBackLink />
       <main className="page page--article">
-        <ArticleView article={article} blocks={blocks} translated={translated} />
+        <ArticleView article={article} blocks={blocks} translated={translated} others={others} />
       </main>
     </>
   );

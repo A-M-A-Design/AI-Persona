@@ -86,7 +86,9 @@ test.describe("Page article", () => {
 
   test("la colonne de lecture a la largeur de la maquette", async ({ page }, testInfo) => {
     await visitArticle(page);
-    const width = (await page.locator(".article").boundingBox())?.width;
+    // On mesure le texte lui-même : en mobile la colonne tient sa largeur d'un
+    // retrait interne, pas d'une largeur maximale.
+    const width = (await page.locator(".article__title").boundingBox())?.width;
     expect(Math.round(width ?? 0)).toBe(COLUMN[testInfo.project.name as keyof typeof COLUMN]);
   });
 
@@ -136,6 +138,60 @@ test.describe("Page article", () => {
         expect(body).not.toContain("Revoir le titre");
       }
     }
+  });
+});
+
+test.describe("Carousel de fin d'article", () => {
+  // Le carousel prend toute la largeur de contenu — la fenêtre moins les
+  // marges de page (64 / 32 / 16) — là où la colonne de lecture est resserrée.
+  // La largeur « tablette » de Playwright est 1000, la maquette en dessine 768 :
+  // la mise en page est fluide, la relation reste la même.
+  const FULL = { desktop: 1440 - 2 * 64, tablet: 1000 - 2 * 32, mobile: 375 - 2 * 16 };
+
+  test("occupe la pleine largeur et exclut l'article en cours", async ({ page }, testInfo) => {
+    await visitArticle(page);
+    const carousel = page.locator(".carousel");
+    await expect(carousel).toBeVisible();
+
+    const width = (await carousel.boundingBox())?.width;
+    expect(Math.round(width ?? 0)).toBe(FULL[testInfo.project.name as keyof typeof FULL]);
+
+    // Tous les autres articles, jamais celui qu'on lit.
+    const cards = page.locator(".carousel .article-card");
+    await expect(cards).toHaveCount(3);
+    for (const card of await cards.all()) {
+      expect(await card.getAttribute("href")).not.toBe(`/articles/${SLUG}`);
+    }
+  });
+
+  test("la pagination compte les pages, pas les cartes", async ({ page }, testInfo) => {
+    await visitArticle(page);
+    const counter = page.locator(".carousel__counter");
+
+    // En desktop les trois cartes tiennent : rien à paginer.
+    if (testInfo.project.name === "desktop") {
+      await expect(counter).toHaveCount(0);
+      return;
+    }
+    const pages = testInfo.project.name === "mobile" ? 3 : 2;
+    await expect(counter).toHaveText(`1 / ${pages}`);
+
+    const [prev, next] = [
+      page.locator(".carousel__step").first(),
+      page.locator(".carousel__step").last(),
+    ];
+    await expect(prev).toBeDisabled();
+    await next.click();
+    await expect(counter).toHaveText(`2 / ${pages}`);
+    await expect(prev).toBeEnabled();
+  });
+
+  test("une carte du carousel ouvre son article", async ({ page }) => {
+    await visitArticle(page);
+    const card = page.locator(".carousel .article-card").first();
+    const href = await card.getAttribute("href");
+    await card.click();
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
   });
 });
 

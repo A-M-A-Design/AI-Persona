@@ -837,21 +837,9 @@ img {
    cadre intérieur de même retrait, d'où le doublement du padding horizontal.
    La colonne de lecture est étroite et centrée (850 puis 550 px) ; en mobile
    elle occupe toute la largeur disponible, soit 311 px sur une base de 375. */
-.page--article {
-  padding-inline: 128px;
-}
-@media (max-width: 1279px) {
-  .page--article {
-    padding-inline: 64px;
-    gap: 20px;
-  }
-}
-@media (max-width: 767px) {
-  .page--article {
-    padding-inline: 32px;
-    gap: 16px;
-  }
-}
+/* La page article garde les marges communes : le carousel de fin occupe toute
+   la largeur de contenu (1312 / 704 / 343 dans la maquette), et seule la
+   colonne de lecture est resserrée. */
 
 /* La pilule de retour est portée par la barre de navigation, déjà collante.
    Posée au-dessus de l'article, elle recouvrait le texte dès que la colonne
@@ -884,11 +872,14 @@ img {
     padding: 32px 0 20px;
   }
 }
+/* En mobile la colonne n'est plus centrée par sa largeur : elle prend tout
+   l'espace disponible moins un retrait de 16 px — 311 px sur une base de 375,
+   là où l'illustration et le carousel restent à 343. */
 @media (max-width: 767px) {
   .article {
     max-width: none;
     gap: 28px;
-    padding: 24px 0 16px;
+    padding: 24px 16px 16px;
   }
 }
 
@@ -1024,4 +1015,98 @@ img {
   line-height: 1;
   cursor: pointer;
   box-shadow: 0 2px 6px rgb(7 5 24 / 24%);
+}
+
+/* --- Carousel de fin d'article ------------------------------------------ */
+
+/* Il occupe toute la largeur de contenu, pas la colonne de lecture : la
+   maquette le pose dans le wrapper de page (1312 / 704 / 343). */
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Le défilement est natif : scroll-snap cale les pages, sans position
+   calculée en JavaScript. Trois cartes visibles, deux en tablette, une en
+   mobile — la piste garde toujours un nombre entier de cartes par page. */
+.carousel__track {
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.carousel__track::-webkit-scrollbar {
+  display: none;
+}
+.carousel__track > * {
+  flex: 0 0 calc((100% - 2 * 28px) / 3);
+  scroll-snap-align: start;
+  aspect-ratio: 388 / 485;
+}
+
+.carousel__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.carousel__counter {
+  margin: 0;
+  min-width: 29px;
+  text-align: center;
+  font-size: var(--wel-sem-font-sizes-body-md);
+  line-height: var(--wel-sem-line-heights-body-md);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+.carousel__step {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pill-radius);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+/* En bout de course, le pas reste lisible : on baisse l'opacité du fond, pas
+   celle du chevron, qui doit garder son contraste. */
+.carousel__step:disabled {
+  cursor: default;
+  background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+@media (max-width: 1279px) {
+  .carousel {
+    gap: 12px;
+  }
+  .carousel__track {
+    gap: 16px;
+  }
+  .carousel__track > * {
+    flex-basis: calc((100% - 16px) / 2);
+    aspect-ratio: 340 / 604;
+  }
+}
+
+@media (max-width: 767px) {
+  .carousel__track {
+    gap: 12px;
+  }
+  .carousel__track > * {
+    flex-basis: 100%;
+    aspect-ratio: 311 / 553;
+  }
+  .carousel__step {
+    width: 40px;
+    height: 40px;
+  }
 }
