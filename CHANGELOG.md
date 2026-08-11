@@ -10,6 +10,21 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Chat streaming (M1)** : route `/api/chat` (Vercel AI SDK v7 → Anthropic,
+  modèle configurable via `CHAT_MODEL`), UI de chat complète (bulles WDS,
+  composer, questions suggérées, skeleton, erreurs), bornes serveur
+  (message ≤ 2000 caractères, historique ≤ 30 messages, sortie ≤ 1500 tokens).
+- Assemblage du system prompt (`lib/prompt.ts`) : identité + garde-fous
+  (ancrage factuel strict, rôle, confidentialité) + base de connaissance
+  balisée + modulateur de persona + langue — ordre pensé pour le prompt caching.
+- Définition des 3 personas (`personas/*.json`) : modulateur de ton et
+  questions suggérées FR/EN pour Ours 🐻, Corneille 🐦‍⬛, Libellule ✨.
+- `knowledge/` : structure de la base de connaissance (bio placeholder,
+  `_meta.md` avec les règles d'édition).
+- Page `/dev/kit` : audit visuel des composants WDS (l'accueil devient le chat).
+
+### Socle M0
+
 - Socle Next.js 16 (App Router, TypeScript) sans Tailwind — le styling repose
   entièrement sur le contrat de variables `--wel-*`.
 - `scripts/install-welds.mjs` : extraction locale des assets WDS (thème
