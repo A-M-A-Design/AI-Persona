@@ -1,6 +1,4 @@
-import ColorModeToggle from "../../../components/header/ColorModeToggle";
-import LangToggle from "../../../components/header/LangToggle";
-import PersonaSwitcher from "../../../components/header/PersonaSwitcher";
+import SettingsBar from "../../../components/header/SettingsBar";
 
 // Page kit (POC uniquement) : audit visuel des composants WDS.
 // En M3 : tous les composants × 3 personas × 2 modes.
@@ -9,12 +7,8 @@ export default function DevKit() {
     <main className="demo">
       <div className="demo__header">
         <h1>Kit — composants WDS</h1>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
-          <PersonaSwitcher />
-          <LangToggle />
-          <ColorModeToggle />
-        </div>
       </div>
+      <SettingsBar />
 
       <section>
         <h2>Boutons</h2>
