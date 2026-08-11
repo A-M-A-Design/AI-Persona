@@ -18,6 +18,9 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   par cette carte contact.
 - La conversation **remplace le héro** au premier message, avec un bouton
   « nouvelle conversation » pour revenir à l'état de repos.
+- **Visuels exportés de la maquette** : 3 illustrations de héro (`public/hero/`)
+  et 4 visuels d'articles (`public/articles/`). Servis par `next/image`, qui
+  les convertit en WebP à la volée — le héro tombe de 1,64 Mo à 88 Ko.
 
 - **Choix du provider de chat** (`lib/model.ts`) : `CHAT_PROVIDER` sélectionne
   `mistral` (défaut) ou `anthropic`. La route `/api/chat` ne connaît plus ni le

@@ -10,8 +10,8 @@ export type Article = {
   kicker: string;
   tags: string[];
   excerpt: string;
-  /** Visuel de fond de la card, servi depuis public/. */
-  image: string;
+  /** Visuel de fond de la card. Absent = aplat de thème (pas de visuel dans la maquette). */
+  image?: string;
   /** Absent = pas encore publié en ligne (ex. nouvelle version en cours). */
   href?: string;
 };
@@ -26,7 +26,7 @@ export const ARTICLES: Article[] = [
     tags: ["DesignOps", "OrgDesign", "Recherche"],
     excerpt:
       "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
-    image: "/articles/entreprise-traumatisee.webp",
+    image: "/articles/entreprise-traumatisee.jpg",
   },
   {
     slug: "roi-design-system",
@@ -35,7 +35,7 @@ export const ARTICLES: Article[] = [
     tags: ["Business", "DesignSystem"],
     excerpt:
       "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
-    image: "/articles/roi-design-system.webp",
+    image: "/articles/roi-design-system.jpg",
     href: LINKEDIN_ARTICLES,
   },
   {
@@ -45,7 +45,7 @@ export const ARTICLES: Article[] = [
     tags: ["DesignSystem", "Product"],
     excerpt:
       "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
-    image: "/articles/systeme-de-tokens.webp",
+    image: "/articles/systeme-de-tokens.jpg",
     href: LINKEDIN_ARTICLES,
   },
   {
@@ -55,7 +55,7 @@ export const ARTICLES: Article[] = [
     tags: ["Automation", "DesignOps"],
     excerpt:
       "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
-    image: "/articles/designops-outils-workflows.webp",
+    image: "/articles/designops-outils-workflows.jpg",
     href: LINKEDIN_ARTICLES,
   },
   {
@@ -65,7 +65,7 @@ export const ARTICLES: Article[] = [
     tags: ["Business", "DesignOps", "OrgDesign"],
     excerpt:
       "Une entreprise performante en 2024 n'est plus assurée de prospérer en 2025 — par la pensée systémique, le design peut développer la robustesse des organisations.",
-    image: "/articles/design-enjeux-entreprises.webp",
+    // Pas de visuel : cet article n'est pas dessiné dans la maquette.
     href: LINKEDIN_ARTICLES,
   },
 ];
@@ -78,9 +78,9 @@ export const LINKS = {
   email: "mailto:a.mathon@stratecollege.fr",
 };
 
-/** Illustration du héro, par persona (cf. maquette Figma). */
+/** Illustration du héro, par persona (exportée de la maquette Figma). */
 export const HERO_IMAGES: Record<string, string> = {
-  ours: "/hero/ours.webp",
-  corneille: "/hero/corneille.webp",
-  libellule: "/hero/libellule.webp",
+  ours: "/hero/ours.png",
+  corneille: "/hero/corneille.png",
+  libellule: "/hero/libellule.png",
 };

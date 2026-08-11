@@ -2,6 +2,7 @@
 
 // Card-image de la maquette : visuel en fond, dégradé de lisibilité, puis un
 // bloc voilé portant le surtitre, le titre et l'appel à l'action.
+import Image from "next/image";
 import type { Article } from "../lib/articles";
 import { t, type Lang } from "../lib/i18n";
 
@@ -10,13 +11,25 @@ type Props = {
   lang: Lang;
 };
 
+// Grande card = moitié de la grille ; card étroite = quart. On sert au plus
+// large des deux : l'écart ne justifie pas deux jeux de sources.
+const SIZES = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 644px";
+
 export default function ArticleCard({ article, lang }: Props) {
   const published = Boolean(article.href);
 
   const inner = (
     <>
       {/* Visuel décoratif : le sens est porté par le titre de la card. */}
-      <img className="article-card__image" src={article.image} alt="" loading="lazy" />
+      {article.image && (
+        <Image
+          className="article-card__image"
+          src={article.image}
+          alt=""
+          fill
+          sizes={SIZES}
+        />
+      )}
       <div className="article-card__body">
         <div className="article-card__fade" />
         <div className="article-card__content">
