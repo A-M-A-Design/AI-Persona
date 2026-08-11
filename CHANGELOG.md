@@ -23,6 +23,10 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
 - Les questions suggérées **se consomment** : une question déjà posée
   disparaît des chips, dans le héro comme dans le panneau.
+- Bouton **« Démarrer une nouvelle conversation »** dans l'en-tête du panneau :
+  il vide le fil et restaure les questions suggérées sans fermer le panneau.
+  Il n'apparaît qu'une fois la conversation entamée, et reste inactif pendant
+  une réponse en cours.
 - `npm run a11y:contrast` : audit WCAG AA des thèmes générés (3 personas × 2
   modes × 10 paires texte/fond), qui évalue les deux extrémités des dégradés et
   compose les fonds semi-transparents sur la surface. Sortie 1 en cas d'échec.

@@ -27,7 +27,7 @@ function messageText(parts: { type: string }[]): string {
 }
 
 export default function Chat({ personas }: Props) {
-  const { messages, sendMessage, status, error, clearError } = useChat({
+  const { messages, sendMessage, status, error, clearError, setMessages } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
   const settings = useSettings();
@@ -64,6 +64,14 @@ export default function Chat({ personas }: Props) {
     sendMessage({ text }, { body: { persona: s.persona, lang: s.lang } });
   }
 
+  // Repartir de zéro : le fil est vidé et les questions suggérées reviennent,
+  // le panneau reste ouvert sur son état d'accueil.
+  function reset() {
+    clearError();
+    setMessages([]);
+    setUsed([]);
+  }
+
   return (
     <>
       <Hero
@@ -82,6 +90,7 @@ export default function Chat({ personas }: Props) {
           error={Boolean(error)}
           onSend={send}
           onClose={() => setOpen(false)}
+          onReset={reset}
         />
       )}
     </>

@@ -14,7 +14,7 @@
   /* Débord de la barre de chat sur l'image du héro (gap -55 dans la maquette). */
   --hero-overlap: 55px;
   /* Pastille de la question posée : arrondi complet, sauf pour libellule. */
-  --chat-question-radius: 100px;
+  --pill-radius: 100px;
 }
 
 /* --- Bouton inactif ------------------------------------------------------
@@ -45,7 +45,7 @@
 
 /* Libellule : rendu rétro/16-bit */
 [data-persona="libellule"] {
-  --chat-question-radius: 0;
+  --pill-radius: 0;
 }
 
 [data-persona="libellule"] img {

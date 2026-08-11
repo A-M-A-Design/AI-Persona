@@ -359,9 +359,17 @@ img {
   padding-bottom: 16px;
 }
 
+/* Maquette : la pastille « nouvelle conversation » à gauche, la croix à
+   droite, sur la même ligne. */
 .chat-modal__actions {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.chat-modal__new {
+  border-radius: var(--pill-radius);
 }
 
 .chat-modal__close {
@@ -422,7 +430,7 @@ img {
 .chat-modal__question {
   margin: 0;
   padding: 10px 12px;
-  border-radius: var(--chat-question-radius);
+  border-radius: var(--pill-radius);
   background: var(--wel-sem-color-primary);
   color: var(--wel-sem-color-on-primary);
   max-width: 100%;

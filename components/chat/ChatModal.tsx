@@ -20,6 +20,8 @@ type Props = {
   error: boolean;
   onSend: (text: string) => void;
   onClose: () => void;
+  /** Vide le fil et restaure les questions suggérées, sans fermer le panneau. */
+  onReset: () => void;
 };
 
 const FOCUSABLE =
@@ -33,6 +35,7 @@ export default function ChatModal({
   error,
   onSend,
   onClose,
+  onReset,
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -99,6 +102,20 @@ export default function ChatModal({
       >
         <header className="chat-modal__header">
           <div className="chat-modal__actions">
+            {/* Rien à effacer tant que le fil est vide : le bouton n'apparaît
+                qu'une fois la conversation entamée. */}
+            {exchanges.length > 0 ? (
+              <button
+                type="button"
+                className="wel-button wel-button--secondary chat-modal__new"
+                onClick={onReset}
+                disabled={busy}
+              >
+                {t(lang, "newChat")}
+              </button>
+            ) : (
+              <span />
+            )}
             <button
               type="button"
               className="chat-modal__close"
