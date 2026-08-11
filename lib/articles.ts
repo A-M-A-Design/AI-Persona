@@ -58,17 +58,12 @@ export const ARTICLES: Article[] = [
     image: "/articles/designops-outils-workflows.jpg",
     href: LINKEDIN_ARTICLES,
   },
-  {
-    slug: "design-enjeux-entreprises",
-    title: "Comment le Design peut répondre aux enjeux actuels des entreprises ?",
-    kicker: "Business et Design",
-    tags: ["Business", "DesignOps", "OrgDesign"],
-    excerpt:
-      "Une entreprise performante en 2024 n'est plus assurée de prospérer en 2025 — par la pensée systémique, le design peut développer la robustesse des organisations.",
-    // Pas de visuel : cet article n'est pas dessiné dans la maquette.
-    href: LINKEDIN_ARTICLES,
-  },
 ];
+
+// « Comment le Design peut répondre aux enjeux actuels des entreprises ? » n'est
+// pas affiché : la maquette compose quatre cards, et l'article reste accessible
+// par le lien LinkedIn. Sa fiche demeure dans knowledge/content-library/, donc
+// le bot continue de pouvoir en parler.
 
 /** Les deux premiers articles occupent les grandes cards de la maquette. */
 export const FEATURED_COUNT = 2;

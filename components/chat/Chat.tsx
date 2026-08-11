@@ -9,7 +9,6 @@ import PersonaGlyph from "../PersonaGlyph";
 import { readCurrentSettings, useSettings } from "../useSettings";
 import Composer from "./Composer";
 import MessageBubble from "./MessageBubble";
-import SuggestedQuestions from "./SuggestedQuestions";
 
 // Données publiques des personas, passées depuis le serveur (lib/personas.ts
 // utilise fs et ne peut pas être importé côté client).
@@ -55,24 +54,17 @@ export default function Chat({ personas }: Props) {
   }
 
   // Au repos, la maquette ne montre que le héro et sa barre de chat. Les
-  // questions suggérées sont ajoutées dessous — elles n'existent pas dans la
-  // maquette mais viennent du M1, et disparaissent dès que la conversation
-  // démarre.
+  // questions suggérées y sont intégrées, sous le champ, et disparaissent dès
+  // que la conversation démarre.
   if (!started) {
     return (
-      <>
-        <Hero
-          lang={settings.lang}
-          persona={settings.persona}
-          disabled={busy}
-          onSend={send}
-        />
-        <SuggestedQuestions
-          label={t(settings.lang, "suggestions")}
-          questions={activePersona.suggestedQuestions[settings.lang]}
-          onPick={send}
-        />
-      </>
+      <Hero
+        lang={settings.lang}
+        persona={settings.persona}
+        disabled={busy}
+        questions={activePersona.suggestedQuestions[settings.lang]}
+        onSend={send}
+      />
     );
   }
 

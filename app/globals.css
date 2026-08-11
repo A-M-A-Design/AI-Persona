@@ -208,10 +208,12 @@ img {
 
 /* --- Lanceur de chat / composer ---------------------------------------- */
 
+/* Carte du lanceur : le champ et son bouton, puis les questions toutes faites
+   juste dessous — l'utilisateur peut partir d'une question sans rien saisir. */
 .launcher {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 16px;
   padding: 28px;
   border-radius: var(--wel-sem-border-radius-container-low);
   background: var(--wel-sem-color-surface);
@@ -219,12 +221,28 @@ img {
     var(--wel-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
 }
 
+.launcher__row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.launcher__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 @media (max-width: 767px) {
   .launcher {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .launcher__row {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-    padding: 16px;
   }
 }
 
