@@ -12,12 +12,12 @@ stratégique et un moteur de changement.
 ## Parcours
 
 - **Accor — Design System Manager** (mars 2025 – aujourd'hui, Paris).
-  Design system Welcome (WDS) : gestion de la librairie de composants core,
-  migration des composants vers les différentes stacks (Vue et AEM), mise en
-  place du multi-thème (une dizaine de marques hôtelières, light/dark,
-  multi-breakpoints), suivi de l'implémentation technique, synchronisation
-  Web et App. Il travaille aussi à l'outillage IA du design system (serveurs
-  MCP exposant tokens, composants et documentation aux agents IA).
+  Design system Welcome (WDS). Il accompagne les équipes techniques dans
+  l'intégration du design system, assure la QA, crée l'architecture de tokens
+  qui supporte le multi-marque (une dizaine de marques hôtelières, light/dark,
+  multi-breakpoints), et développe les outils et automatisations qui
+  industrialisent la maintenance, l'évolution et le déploiement du design
+  system — en s'appuyant sur l'IA.
 - **JEMS** (octobre 2020 – mars 2025, Paris — 4 ans et demi) :
   - **DesignOps Manager** (juillet 2023 – mars 2025) : workflows automatisés,
     processus QA (qualité, accessibilité, performance), normes et standards de

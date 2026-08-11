@@ -8,6 +8,20 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **Base de connaissance précisée par Arthur** sur cinq points : le poste chez
+  Accor (accompagnement des équipes techniques, QA, architecture de tokens
+  multi-marque, outils d'industrialisation appuyés sur l'IA), la définition
+  d'un bon design system (produit en évolution, gouvernance alignée sur les
+  objectifs business, IA et personnalisation en 2026), le travail avec les
+  développeurs (arbitrage entre réalités techniques et intentions de
+  conception) et l'usage de l'IA (à toutes les échelles de création de valeur).
+  Les attendus correspondants de `docs/eval-questions.md` suivent.
+- La KB ne nomme plus de provider de modèle : le chat est branché sur une API
+  configurable. Le développement mené en binôme avec Claude reste mentionné,
+  c'est un fait distinct.
+
 ### Added
 
 - **Interface refondue d'après la maquette Figma** : header à chips alignés à

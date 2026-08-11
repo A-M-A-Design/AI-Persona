@@ -7,16 +7,20 @@
 
 ## Missions
 
+- **Accompagnement des équipes techniques** dans l'intégration du design
+  system, sur les différentes stacks du groupe (Vue et Adobe Experience
+  Manager), avec suivi de l'implémentation.
+- **QA** du design system : conformité des intégrations, accessibilité,
+  cohérence entre les plateformes Web et App.
+- **Architecture de tokens supportant le multi-marque** : chaque marque est un
+  thème complet sur un contrat commun d'environ 870 variables (primitives →
+  sémantique → composants), avec light/dark et typographies responsives par
+  breakpoint.
+- **Outils et automatisations** pour industrialiser la maintenance, l'évolution
+  et le déploiement du design system, en s'appuyant sur l'IA — notamment des
+  serveurs MCP qui exposent tokens, composants, documentation et règles d'usage
+  aux agents IA.
 - Gestion de la **librairie de composants core** et de son cycle de vie.
-- **Migration des composants** vers les différentes stacks du groupe (Vue et
-  Adobe Experience Manager), avec suivi de l'implémentation technique.
-- Mise en place du **multi-thème** : chaque marque est un thème complet sur un
-  contrat commun d'environ 870 variables (primitives → sémantique →
-  composants), avec light/dark et typographies responsives par breakpoint.
-- Synchronisation des plateformes **Web et App**.
-- **Outillage IA** du design system : serveurs MCP qui exposent tokens,
-  composants, documentation et règles d'usage aux agents IA, pour outiller
-  designers et développeurs.
 
 ## Ce que ce projet illustre
 

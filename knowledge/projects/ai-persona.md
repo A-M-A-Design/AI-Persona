@@ -8,7 +8,8 @@
 
 ## Principe
 
-- Un chat en streaming avec la version IA d'Arthur (API Claude), nourrie
+- Un chat en streaming avec la version IA d'Arthur, branché sur une API de
+  modèle de langage — le provider est un réglage, pas une dépendance —, nourrie
   exclusivement d'une base de connaissance en markdown issue de son vrai
   portfolio, de ses articles et de son profil — maintenue comme un design
   system : modulaire, versionnée dans Git, chaque modification passant par une
