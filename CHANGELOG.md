@@ -10,6 +10,22 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Héro illustré + selects + articles + footer** : illustration héro façon
+  La Linea (un trait continu par avatar, couleur primaire du thème actif —
+  change avec l'avatar sélectionné, comme poulos.co) ; les 3 contrôles
+  deviennent des selects WDS sans emoji (« Avatar Type », « Language »,
+  « Color Mode ») ; bloc « Articles » sous le chat (une card WDS par article,
+  liens LinkedIn) ; footer avec liens LinkedIn et e-mail. L'avatar du chat
+  reprend le glyphe La Linea.
+
+### Changed
+
+- Article « entreprise traumatisée » remplacé par la **v2 enrichie** (docx),
+  nettoyée des notes de travail et annotations de relecture — dans la base de
+  connaissance et le bloc Articles.
+- La page devient scrollable (héro → chat à hauteur fixe → articles → footer) ;
+  suppression des anciens toggles chips au profit de la SettingsBar.
+
 - **i18n FR/EN (M4)** : dictionnaire maison typé (`lib/i18n.ts`), `LangToggle`
   (UI + `<html lang>` + langue du bot au message suivant), hook partagé
   `useSettings` (persona/langue/mode synchronisés entre tous les composants via

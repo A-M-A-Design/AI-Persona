@@ -1,16 +1,18 @@
+import PersonaGlyph from "../PersonaGlyph";
+
 type Props = {
   role: "user" | "assistant";
   text: string;
-  avatarEmoji?: string;
+  persona: string;
 };
 
-export default function MessageBubble({ role, text, avatarEmoji }: Props) {
+export default function MessageBubble({ role, text, persona }: Props) {
   const isUser = role === "user";
   return (
     <div className={`chat__row ${isUser ? "chat__row--user" : "chat__row--assistant"}`}>
       {!isUser && (
         <span className="chat__avatar" aria-hidden="true">
-          {avatarEmoji ?? "🐻"}
+          <PersonaGlyph persona={persona} className="chat__avatar-glyph" />
         </span>
       )}
       <div

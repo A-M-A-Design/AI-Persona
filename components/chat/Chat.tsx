@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useEffect, useRef } from "react";
 import { t } from "../../lib/i18n";
+import PersonaGlyph from "../PersonaGlyph";
 import { readCurrentSettings, useSettings } from "../useSettings";
 import Composer from "./Composer";
 import MessageBubble from "./MessageBubble";
@@ -58,7 +59,7 @@ export default function Chat({ personas }: Props) {
           <>
             <MessageBubble
               role="assistant"
-              avatarEmoji={activePersona.emoji}
+              persona={activePersona.id}
               text={t(settings.lang, "welcome")}
             />
             <SuggestedQuestions
@@ -73,7 +74,7 @@ export default function Chat({ personas }: Props) {
           <MessageBubble
             key={m.id}
             role={m.role === "user" ? "user" : "assistant"}
-            avatarEmoji={activePersona.emoji}
+            persona={activePersona.id}
             text={messageText(m.parts)}
           />
         ))}
@@ -81,7 +82,7 @@ export default function Chat({ personas }: Props) {
         {status === "submitted" && (
           <div className="chat__row chat__row--assistant">
             <span className="chat__avatar" aria-hidden="true">
-              {activePersona.emoji}
+              <PersonaGlyph persona={activePersona.id} className="chat__avatar-glyph" />
             </span>
             <div className="wel-skeleton chat__skeleton" aria-label={t(settings.lang, "thinking")} />
           </div>
