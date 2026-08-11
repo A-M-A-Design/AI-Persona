@@ -10,6 +10,10 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- `sessions-summary/` : un résumé versionné par session de travail
+  (décisions, livraisons, incidents, reste à faire) — documentation du
+  processus de fabrication du projet.
+
 - **Héro illustré + selects + articles + footer** : illustration héro façon
   La Linea (un trait continu par avatar, couleur primaire du thème actif —
   change avec l'avatar sélectionné, comme poulos.co) ; les 3 contrôles
