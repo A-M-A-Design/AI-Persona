@@ -63,3 +63,12 @@
 [data-persona="libellule"] .hero__title {
   letter-spacing: 0.02em;
 }
+
+/* Press Start 2P est un pixel monospace dont l'avance approche 1 em par
+   caractère : à la taille display-md les titres de card débordent de leur
+   bloc. On descend d'un palier du contrat (title-sm, 1 à 1,125 rem selon le
+   breakpoint) plutôt que de figer une taille — la responsivité est conservée. */
+[data-persona="libellule"] .article-card__title {
+  font-size: var(--wel-sem-font-sizes-title-sm);
+  line-height: var(--wel-sem-line-heights-title-sm);
+}

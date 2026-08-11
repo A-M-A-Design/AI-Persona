@@ -59,6 +59,16 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **L'icône de la carte contact ne s'affichait pas.** `.wel-icon-slot` ne
+  fournit ni taille ni fond : c'est un `inline-flex` en `line-height: 0` qui
+  attend un `<i>` ou un `<svg>` enfant, si bien qu'un caractère texte
+  s'effondrait. Le slot reçoit un SVG et reprend la boîte de la maquette
+  (76 px, radius 2, fond `accent-container-low`).
+- **Titres de cards débordants en thème libellule.** Press Start 2P est un
+  pixel monospace dont l'avance approche 1 em par caractère : à `display-md`
+  les titres sortaient de leur bloc. Ils descendent d'un palier du contrat
+  (`title-sm`), ce qui conserve la responsivité au lieu de figer une taille.
+
 - **Texte des cards article illisible en mode sombre.** Il consommait
   `on-primary`, qui s'inverse d'un mode à l'autre : en sombre le libellé
   devenait quasi noir sur un voile noir (`#0f0800` pour l'ours). Les liaisons de
