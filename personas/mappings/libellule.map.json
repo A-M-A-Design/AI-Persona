@@ -25,6 +25,8 @@
     "--wel-sem-number-shadow-down-wide-y": "6px",
     "--wel-sem-font-sizes-body-md": "1.2rem",
     "--wel-sem-font-sizes-input-md": "1.2rem",
-    "--wel-sem-font-sizes-display-sm": "1.4rem"
+    "--wel-sem-font-sizes-display-sm": "1.4rem",
+    "--wel-sem-font-sizes-display-md": "1rem",
+    "--wel-sem-line-heights-display-md": "1.5rem"
   }
 }

@@ -66,8 +66,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   (76 px, radius 2, fond `accent-container-low`).
 - **Titres de cards débordants en thème libellule.** Press Start 2P est un
   pixel monospace dont l'avance approche 1 em par caractère : à `display-md`
-  les titres sortaient de leur bloc. Ils descendent d'un palier du contrat
-  (`title-sm`), ce qui conserve la responsivité au lieu de figer une taille.
+  les titres sortaient de leur bloc. La marque libellule abaisse désormais la
+  **valeur de son token** `display-md` (1 rem) dans son mapping, plutôt que de
+  le surcharger depuis le CSS applicatif — c'est le mécanisme par lequel une
+  marque Accor pose ses propres valeurs bSem, `brands/movenpickWIP.json`
+  portant par exemple `display.md = 34` là où `brands/all.json` est à 32.
 
 - **Texte des cards article illisible en mode sombre.** Il consommait
   `on-primary`, qui s'inverse d'un mode à l'autre : en sombre le libellé
