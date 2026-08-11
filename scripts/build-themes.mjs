@@ -4,10 +4,14 @@
  * personas/mappings/<id>.map.json.
  *
  * Principe : le template est 100 % aplati (aucun var() interne), on transforme
- * donc chaque littéral de couleur via des règles de teinte HSL (la luminance
- * n'est jamais modifiée → les contrastes light/dark du système sont préservés),
- * on remplace les familles de polices, on applique des overrides de variables,
- * puis on rescope :root → [data-persona="<id>"].
+ * donc chaque littéral de couleur via des règles de teinte HSL, on remplace les
+ * familles de polices, on applique des overrides de variables, puis on rescope
+ * :root → [data-persona="<id>"].
+ *
+ * Chaque couleur transformée est ramenée à la luminance relative WCAG de la
+ * couleur d'origine : les ratios de contraste du système sont donc préservés
+ * par construction, pour toutes les paires texte/fond à la fois. Vérifiable
+ * avec `npm run a11y:contrast`.
  *
  * Usage : npm run themes:build
  */
@@ -71,7 +75,40 @@ function hslToRgb(h, s, l) {
  *    (S ≤ maxSat) teintées vers t avec S portée à v minimum.
  * "saturateAll" : multiplicateur global de saturation appliqué à la fin.
  */
+/** Luminance relative WCAG — la grandeur qui détermine les ratios de contraste. */
+function relLuminance([r, g, b]) {
+  const f = (c) => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+
+/**
+ * Retrouve la clarté HSL qui restitue une luminance relative cible, à teinte et
+ * saturation données. La luminance croît de façon monotone avec la clarté, donc
+ * une recherche binaire converge.
+ *
+ * C'est ce qui rend les contrastes réellement invariants : conserver la clarté
+ * HSL ne suffit pas, puisque le vert pèse 0,7152 dans la luminance contre 0,0722
+ * pour le bleu — tourner un bleu vers le cyan éclaircit la couleur à clarté
+ * constante, et fait chuter le contraste d'un texte clair posé dessus.
+ */
+function atLuminance(h, s, target) {
+  let lo = 0;
+  let hi = 1;
+  let rgb = hslToRgb(h, s, 0.5);
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    rgb = hslToRgb(h, s, mid);
+    if (relLuminance(rgb) < target) lo = mid;
+    else hi = mid;
+  }
+  return rgb;
+}
+
 function transformRgb([r, g, b], rules) {
+  const targetLum = relLuminance([r, g, b]);
   let [h, s, l] = rgbToHsl(r, g, b);
   for (const rule of rules.hueRules ?? []) {
     if (rule.maxSat !== undefined) {
@@ -95,7 +132,10 @@ function transformRgb([r, g, b], rules) {
     }
   }
   if (rules.saturateAll) s = Math.min(1, s * rules.saturateAll);
-  return hslToRgb(h, s, l);
+  // Les gris restent des gris : rien à corriger, et la recherche binaire
+  // introduirait un arrondi inutile.
+  if (s === 0) return hslToRgb(h, s, l);
+  return atLuminance(h, s, targetLum);
 }
 
 const hex2 = (v) => v.toString(16).padStart(2, "0");

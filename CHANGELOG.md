@@ -23,6 +23,9 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
 - Les questions suggérées **se consomment** : une question déjà posée
   disparaît des chips, dans le héro comme dans le panneau.
+- `npm run a11y:contrast` : audit WCAG AA des thèmes générés (3 personas × 2
+  modes × 10 paires texte/fond), qui évalue les deux extrémités des dégradés et
+  compose les fonds semi-transparents sur la surface. Sortie 1 en cas d'échec.
 - **Titres et surtitres d'articles bilingues** : `title` et `kicker` passent en
   `Record<Lang, string>` et suivent la bascule FR/EN, comme le reste de l'UI.
 - Transition d'ouverture et de fermeture du panneau de conversation (fondu du
@@ -55,6 +58,16 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   reprend le glyphe La Linea.
 
 ### Fixed
+
+- **Contraste insuffisant sur les boutons de certains thèmes.** La
+  transformation de teinte conservait la *clarté HSL*, pas la *luminance
+  relative WCAG* — deux grandeurs différentes, le vert pesant 0,7152 dans la
+  seconde contre 0,0722 pour le bleu. Une rotation bleu → cyan éclaircissait
+  donc la couleur à clarté constante. Deux paires tombaient sous AA en
+  libellule clair : bouton primaire à 4,24:1 (extrémité claire de son dégradé)
+  et lien à 2,97:1. Chaque couleur transformée est désormais ramenée à la
+  luminance de l'originale, ce qui préserve tous les ratios par construction ;
+  les mêmes paires montent à 7,15:1 et 7,45:1.
 
 - **Le fil de conversation ne défilait pas** quand il dépassait la hauteur du
   panneau : `justify-content: flex-end` sur un conteneur en `overflow: auto`

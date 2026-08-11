@@ -63,6 +63,23 @@ fonctionne pas.
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
 | `npm run welds:install` | Extraction des assets WDS depuis le zip |
 | `npm run themes:build` | Génération des 3 thèmes persona (M3) |
+| `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
+
+### Contraste des thèmes
+
+Les thèmes sont obtenus par rotation de teinte du template WDS. Chaque couleur
+transformée est **ramenée à la luminance relative WCAG de l'originale** : les
+ratios de contraste du système sont donc préservés par construction, pour
+toutes les paires texte/fond à la fois.
+
+Conserver la clarté HSL ne suffirait pas — le vert pèse 0,7152 dans la
+luminance relative contre 0,0722 pour le bleu, si bien qu'une rotation
+bleu → cyan éclaircit fortement la couleur à clarté constante et fait chuter
+le contraste d'un texte clair posé dessus.
+
+Après toute modification de `personas/mappings/*.map.json`, relancer
+`npm run themes:build` puis `npm run a11y:contrast` : le script échoue (code 1)
+si une paire passe sous 4,5:1, dégradés et fonds semi-transparents compris.
 
 ## Règle d'or (workflow git)
 

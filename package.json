@@ -9,7 +9,8 @@
     "start": "next start",
     "check": "tsc --noEmit",
     "welds:install": "node scripts/install-welds.mjs",
-    "themes:build": "node scripts/build-themes.mjs"
+    "themes:build": "node scripts/build-themes.mjs",
+    "a11y:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.37",
