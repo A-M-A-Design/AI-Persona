@@ -7,9 +7,20 @@ type Props = {
   placeholder: string;
   sendLabel: string;
   onSend: (text: string) => void;
+  /** Classe du formulaire : « launcher » dans le héro, « chat__composer » en conversation. */
+  className?: string;
+  /** Focus au montage — utilisé au passage héro → conversation. */
+  autoFocus?: boolean;
 };
 
-export default function Composer({ disabled, placeholder, sendLabel, onSend }: Props) {
+export default function Composer({
+  disabled,
+  placeholder,
+  sendLabel,
+  onSend,
+  className = "chat__composer",
+  autoFocus = false,
+}: Props) {
   const [value, setValue] = useState("");
 
   function submit(e: FormEvent) {
@@ -21,8 +32,8 @@ export default function Composer({ disabled, placeholder, sendLabel, onSend }: P
   }
 
   return (
-    <form className="chat__composer" onSubmit={submit}>
-      <div className="wel-input-text chat__composer-field">
+    <form className={className} onSubmit={submit}>
+      <div className="wel-input-text composer__field">
         <div className="wel-input-text__wrapper">
           <input
             className="wel-input-text__input"
@@ -31,15 +42,28 @@ export default function Composer({ disabled, placeholder, sendLabel, onSend }: P
             placeholder={placeholder}
             maxLength={2000}
             aria-label={placeholder}
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- transfert de focus héro → conversation
+            autoFocus={autoFocus}
           />
         </div>
       </div>
+      {/*
+        Désactivé tant qu'il n'y a rien à envoyer, ou pendant une requête.
+        L'état inactif est lisible (fond translucide, libellé opaque — cf.
+        styles/persona-extras.css) et ne réagit pas au survol, contrairement au
+        rendu par défaut du WDS qui effaçait le libellé à 1,25:1.
+      */}
       <button
         type="submit"
-        className="wel-button wel-button--primary"
+        className="wel-button wel-button--primary wel-button--icon-right"
         disabled={disabled || value.trim().length === 0}
+        // En mobile la maquette réduit l'action à une icône posée dans le
+        // champ : le libellé est masqué visuellement, jamais retiré du nom
+        // accessible.
+        aria-label={sendLabel}
       >
-        {sendLabel}
+        <span className="composer__label">{sendLabel}</span>
+        <span aria-hidden="true"> →</span>
       </button>
     </form>
   );

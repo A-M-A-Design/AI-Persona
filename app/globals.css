@@ -1,4 +1,10 @@
-/* Base du site — consomme exclusivement le contrat de variables --wel-* */
+/* Mise en page reprise de la maquette Figma.
+   Le CSS applicatif ne consomme que --wel-sem-* et --wel-comp-*.
+
+   Les tailles de texte ne sont jamais écrites ici : les tokens WDS portent
+   déjà l'échelle responsive (display-2xl vaut 62/54/48/38 px selon le
+   breakpoint). Les media queries ci-dessous ne pilotent que la mise en page,
+   et reprennent les breakpoints du thème : 1280 / 1024 / 768. */
 
 *,
 *::before,
@@ -21,186 +27,713 @@ body {
   min-height: 100dvh;
 }
 
-/* --- Page de chat --- */
-
-.chat-page {
-  display: flex;
-  flex-direction: column;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--wel-sem-spacing-static-inset-md, 1rem);
-  gap: var(--wel-sem-spacing-static-stack-lg, 1.5rem);
+img {
+  max-width: 100%;
 }
 
-/* --- Héro (illustration La Linea + titre + selects) --- */
+/* --- Ossature de page --------------------------------------------------- */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 44px 64px;
+}
+
+@media (max-width: 1279px) {
+  .page {
+    gap: 20px;
+    padding: 40px 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .page {
+    gap: 16px;
+    padding: 32px 16px;
+  }
+}
+
+/* --- Barre de navigation collante --------------------------------------- */
+
+/* Pleine largeur avec une ombre portée, elle reste en haut au défilement.
+   z-index sous le panneau de conversation (10), qui doit la recouvrir. */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--wel-sem-color-surface);
+  box-shadow: 0 2px 6px rgb(7 5 24 / 20%);
+}
+
+/* Le contenu suit les marges de la page : la barre déborde, pas ses contrôles. */
+.site-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  height: 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-inline: 64px;
+}
+
+@media (max-width: 1279px) {
+  .site-nav__inner {
+    padding-inline: 32px;
+  }
+}
+
+/* La maquette ne dessine la barre qu'en desktop : 80 px y mangeraient trop de
+   hauteur sur un petit écran. */
+@media (max-width: 767px) {
+  .site-nav__inner {
+    height: 64px;
+    padding-inline: 16px;
+  }
+}
+
+/* Le chip WDS est un bouton : on neutralise l'apparence native du select
+   qu'il enveloppe, pour garder le composant et son accessibilité. */
+.site-nav__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-nav__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.site-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 100px;
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  cursor: pointer;
+}
+
+.site-nav__toggle:focus-visible {
+  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+/* --- Héro --------------------------------------------------------------- */
 
 .hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
-  padding-top: var(--wel-sem-spacing-static-stack-md, 1rem);
+  gap: 44px;
+  padding-top: 56px;
 }
 
-.hero__illustration {
-  width: min(100%, 420px);
+@media (max-width: 767px) {
+  .hero {
+    gap: 28px;
+    padding-top: 24px;
+  }
 }
 
-.hero__glyph {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.chat-page__title {
-  margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-sm, 1.75rem);
-  line-height: var(--wel-sem-line-heights-display-sm, 1.2);
-}
-
-.settings-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--wel-sem-spacing-static-inline-md, 0.75rem);
-  margin-top: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
-}
-
-.settings-bar__select {
-  min-width: 10rem;
-  text-align: left;
-}
-
-.chat-page__subtitle {
-  margin: 0.25rem 0 0;
-  color: var(--wel-sem-color-on-surface-mid);
-  font-size: var(--wel-sem-font-sizes-body-sm, 0.875rem);
-}
-
-/* --- Bloc Articles --- */
-
-.articles__title {
-  margin: 0 0 var(--wel-sem-spacing-static-stack-md, 1rem);
-  font-family: var(--wel-sem-font-families-title), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-title-lg, 1.5rem);
-}
-
-.articles__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--wel-sem-spacing-static-inline-md, 0.75rem);
-}
-
-.articles__card {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* --- Footer --- */
-
-.site-footer {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--wel-sem-spacing-static-inset-md, 1rem);
+.hero__heading {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
+  gap: 28px;
+  text-align: center;
+  max-width: 866px;
 }
 
-.site-footer__separator {
-  width: 100%;
+@media (max-width: 767px) {
+  .hero__heading {
+    gap: 16px;
+  }
 }
 
-.site-footer__links {
-  display: flex;
-  gap: var(--wel-sem-spacing-static-inline-lg, 1.5rem);
-}
-
-.site-footer__note {
+.hero__title {
   margin: 0;
-  color: var(--wel-sem-color-on-surface-low);
-  font-size: var(--wel-sem-font-sizes-body-sm, 0.875rem);
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-2xl);
+  line-height: var(--wel-sem-line-heights-display-2xl);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
-.chat {
+.hero__subtitle {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-style: italic;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+/* La scène : barre de chat posée en débord sur l'image (gap -55 dans la
+   maquette, porté ici par --hero-overlap). */
+.hero__stage {
   display: flex;
   flex-direction: column;
-  height: min(65dvh, 620px);
-  min-height: 380px;
-  gap: var(--wel-sem-spacing-static-stack-md, 1rem);
-}
-
-.chat__messages {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  gap: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
-  padding-block: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
-}
-
-.chat__row {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--wel-sem-spacing-static-inline-xs, 0.5rem);
-}
-
-.chat__row--user {
-  justify-content: flex-end;
-}
-
-.chat__row--assistant {
-  justify-content: flex-start;
-}
-
-.chat__avatar {
-  flex-shrink: 0;
-  width: 56px;
-}
-
-.chat__avatar-glyph {
-  display: block;
+  align-items: center;
   width: 100%;
-  height: auto;
 }
 
-.chat__bubble {
-  max-width: 85%;
+.hero__bar {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-inline: 64px;
 }
 
-.chat__bubble-text {
-  white-space: pre-wrap;
+@media (max-width: 1279px) {
+  .hero__bar {
+    padding-inline: 32px;
+  }
 }
 
-.chat__skeleton {
-  width: 40%;
-  height: 3rem;
-  border-radius: var(--wel-sem-border-radius-container-low, 0.5rem);
+@media (max-width: 767px) {
+  .hero__bar {
+    padding-inline: 0;
+  }
 }
 
-.chat__suggestions {
+.hero__media {
+  position: relative;
+  width: 100%;
+  margin-top: calc(var(--hero-overlap) * -1);
+  aspect-ratio: 1312 / 596;
+  overflow: hidden;
+  /* Fond tenu avant le chargement de l'image — et tant que les visuels
+     Figma ne sont pas exportés. */
+  background: var(--wel-sem-color-surface-container-mid);
+}
+
+/* Mobile : pas de débord — la maquette met le gap du bloc héro à 0 — et
+   l'image passe en 3/2 (343 × 229). */
+@media (max-width: 767px) {
+  .hero__media {
+    margin-top: 0;
+    aspect-ratio: 343 / 229;
+  }
+}
+
+.hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--media-veil);
+  pointer-events: none;
+}
+
+/* --- Lanceur de chat / composer ---------------------------------------- */
+
+/* Carte du lanceur : le champ et son bouton, puis les questions toutes faites
+   juste dessous — l'utilisateur peut partir d'une question sans rien saisir. */
+.launcher {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-surface);
+  box-shadow: 0 var(--wel-sem-number-shadow-down-y, 2px)
+    var(--wel-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
+}
+
+.launcher__row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.launcher__suggestions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--wel-sem-spacing-static-inline-xs, 0.5rem);
-  padding-inline-start: 2rem;
+  gap: 8px;
+}
+
+/* Tablette : même carte, padding réduit (16 dans la maquette contre 28). */
+@media (max-width: 1279px) {
+  .launcher {
+    padding: 16px;
+  }
+}
+
+/* Mobile : la maquette abandonne la carte. Le champ et les chips reposent
+   directement sur la page — ni fond, ni rayon, ni ombre, ni retrait — et
+   l'action se réduit à une icône au bout du champ. */
+@media (max-width: 767px) {
+  .launcher {
+    gap: 12px;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  /* La ligne reste horizontale : le champ occupe la largeur, l'action se
+     réduit à sa flèche. */
+  .launcher__row .composer__label {
+    display: none;
+  }
+
+  /* Les chips défilent au lieu de passer à la ligne (NO_WRAP + troncature
+     dans la maquette). */
+  .launcher__suggestions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .launcher__suggestions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .launcher__suggestions .wel-chip {
+    flex-shrink: 0;
+  }
+}
+
+/* Champ du composer, dans le héro comme en conversation. */
+.composer__field {
+  flex: 1;
+  min-width: 0;
 }
 
 .chat__composer {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: var(--wel-sem-spacing-static-inline-sm, 0.5rem);
-  padding-bottom: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
 }
 
-.chat__composer-field {
+/* --- Panneau de conversation ------------------------------------------- */
+
+.chat-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  padding-block: 20px;
+  background: var(--modal-scrim);
+  animation: modal-scrim-in 200ms ease-in-out both;
+}
+
+.chat-modal__panel {
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+  max-width: 100%;
+  height: 100%;
+  padding: 28px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-surface);
+  animation: modal-panel-in 240ms ease-in-out both;
+}
+
+.chat-modal--closing {
+  animation: modal-scrim-out 180ms ease-in-out both;
+}
+
+.chat-modal--closing .chat-modal__panel {
+  animation: modal-panel-out 180ms ease-in-out both;
+}
+
+@keyframes modal-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-scrim-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes modal-panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Mouvement réduit : on garde une durée non nulle, sinon animationend ne se
+   déclenche pas et le panneau ne se démonterait jamais. */
+@media (prefers-reduced-motion: reduce) {
+  .chat-modal,
+  .chat-modal__panel,
+  .chat-modal--closing,
+  .chat-modal--closing .chat-modal__panel {
+    animation-duration: 1ms;
+  }
+
+  @keyframes modal-panel-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes modal-panel-out {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* Tablette et mobile : le panneau occupe tout l'écran. */
+@media (max-width: 1279px) {
+  .chat-modal {
+    padding-block: 0;
+  }
+
+  .chat-modal__panel {
+    width: 100%;
+    border-radius: 0;
+  }
+}
+
+.chat-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 16px;
+}
+
+/* Maquette : la pastille « nouvelle conversation » à gauche, la croix à
+   droite, sur la même ligne. */
+.chat-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.chat-modal__new {
+  border-radius: var(--pill-radius);
+}
+
+.chat-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--wel-sem-color-on-surface-hi);
+  cursor: pointer;
+}
+
+.chat-modal__close:focus-visible {
+  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+.chat-modal__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-title), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-title-lg);
+  line-height: var(--wel-sem-line-heights-title-lg);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+/* Le fil s'ancre en bas et les blocs sont alignés à droite.
+   L'ancrage passe par une marge auto sur le premier enfant, jamais par
+   justify-content: flex-end — qui ferait déborder le contenu au-dessus de la
+   zone scrollable, hors d'atteinte de la barre de défilement. */
+.chat-modal__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   flex: 1;
+  min-height: 0;
+  gap: 28px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
-/* --- Mise en page de la démo /dev/kit --- */
+.chat-modal__body > *:first-child {
+  margin-top: auto;
+}
+
+.chat-modal__exchange {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 100%;
+}
+
+/* Question posée : pastille sombre. Le rayon passe par une variable pour que
+   libellule garde ses angles droits. */
+.chat-modal__question {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--pill-radius);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  max-width: 100%;
+}
+
+.chat-modal__answer {
+  margin: 0;
+  max-width: 100%;
+  color: var(--wel-sem-color-on-surface-hi);
+  white-space: pre-wrap;
+}
+
+.chat-modal__answer--pending {
+  color: var(--wel-sem-color-on-surface-low);
+}
+
+.chat-modal__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 68px;
+}
+
+@media (max-width: 767px) {
+  .chat-modal__footer {
+    padding-top: 24px;
+  }
+}
+
+.chat-modal__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat-modal__composer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 767px) {
+  .chat-modal__composer {
+    gap: 12px;
+  }
+}
+
+/* --- Grilles d'articles ------------------------------------------------- */
+
+.articles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 24px;
+  row-gap: 28px;
+}
+
+/* Seconde grille : 4 colonnes en desktop, la carte contact occupe les deux
+   dernières de la première rangée — comme dans la maquette. */
+.articles--secondary {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.articles--secondary .connect-card {
+  grid-column: 3 / span 2;
+  grid-row: 1;
+}
+
+@media (max-width: 1279px) {
+  .articles--secondary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .articles--secondary .connect-card {
+    grid-column: 1 / span 2;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .articles,
+  .articles--secondary {
+    grid-template-columns: 1fr;
+  }
+
+  .articles--secondary .connect-card {
+    grid-column: 1;
+  }
+}
+
+/* --- Card article ------------------------------------------------------- */
+
+.article-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-surface-container-mid);
+  text-decoration: none;
+}
+
+/* Les cards étroites de la seconde grille sont hautes en desktop uniquement. */
+@media (min-width: 1280px) {
+  .articles--secondary .article-card {
+    aspect-ratio: 310 / 551;
+  }
+}
+
+.article-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-card__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+/* Dégradé de lisibilité au-dessus du bloc de texte. */
+.article-card__fade {
+  flex: 1;
+  background: linear-gradient(to bottom, transparent, var(--media-veil-strong));
+}
+
+.article-card__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 28px 28px;
+  background: var(--media-veil-strong);
+}
+
+@media (max-width: 767px) {
+  .article-card__content {
+    padding: 0 20px 20px;
+  }
+}
+
+.article-card__texts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Les deux textes prennent on-surface-hi, qui résout ses valeurs sombres grâce
+   au data-color-mode posé sur .article-card__body.
+
+   La maquette lie le surtitre à on-surface-low : sur le voile, cela donne
+   2,21:1 sur une image claire, et on-surface-mid ne monte qu'à 3,18:1. Aucun
+   palier intermédiaire n'atteint AA sans pousser le voile à 80 %, ce qui
+   rendrait le bas des cards presque opaque. La hiérarchie reste portée par la
+   taille, l'italique et les capitales plutôt que par la couleur. */
+.article-card__kicker {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-body-xs, 0.75rem);
+  line-height: var(--wel-sem-line-heights-body-xs, 1rem);
+  font-style: italic;
+  text-transform: uppercase;
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.article-card__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-md);
+  line-height: var(--wel-sem-line-heights-display-md);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.article-card:focus-visible {
+  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+/* --- Card contact ------------------------------------------------------- */
+
+.connect-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  align-self: start;
+}
+
+/* Boîte de l'icône : 76 px, radius 2 et fond accent, repris de la maquette.
+   .wel-icon-slot ne fournit que le centrage. */
+.connect-card__icon {
+  width: 76px;
+  height: 76px;
+  padding: 12px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  background: var(--wel-sem-color-accent-container-low);
+  color: var(--wel-sem-color-on-accent-container);
+}
+
+.connect-card__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.connect-card__texts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.connect-card__title {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-title-sm);
+  line-height: var(--wel-sem-line-heights-title-sm);
+}
+
+.connect-card__text {
+  margin: 4px 0 0;
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.connect-card__links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+/* --- Mise en page de la démo /dev/kit ---------------------------------- */
 
 .demo {
   max-width: 720px;
@@ -216,6 +749,19 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+/* SettingsBar n'est plus utilisé par l'accueil (remplacé par SiteHeader) mais
+   reste le sélecteur de la page kit. */
+.settings-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wel-sem-spacing-static-inline-md, 0.75rem);
+}
+
+.settings-bar__select {
+  min-width: 10rem;
+  text-align: left;
 }
 
 .demo h1 {

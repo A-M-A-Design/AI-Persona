@@ -1,9 +1,54 @@
 /* Effets hors contrat de variables — volontairement minuscule pour ne pas
    créer un « deuxième thème » parallèle. */
 
+/* Voiles posés sur les médias. Le WDS n'a pas d'équivalent sémantique : ce
+   sont des couleurs de lisibilité d'image, pas des couleurs de surface.
+   Valeurs reprises de la maquette (#070518 à 30 % et 54 %). */
+:root {
+  --media-veil: rgba(7, 5, 24, 0.3);
+  /* La maquette pose ce voile à 54 %, ce qui laisse le titre à 4,15:1 sur une
+     image claire. 60 % le fait passer à 5,15:1 pour un écart visuel minime. */
+  --media-veil-strong: rgba(7, 5, 24, 0.6);
+  /* Scrim du panneau de conversation (#070518 à 70 % dans la maquette). */
+  --modal-scrim: rgba(7, 5, 24, 0.7);
+  /* Débord de la barre de chat sur l'image du héro (gap -55 dans la maquette). */
+  --hero-overlap: 55px;
+  /* Pastille de la question posée : arrondi complet, sauf pour libellule. */
+  --pill-radius: 100px;
+}
+
+/* --- Bouton inactif ------------------------------------------------------
+   Le WDS efface le bouton entier (opacité 0.38 sur le fond ET le libellé),
+   ce qui ramène le label à 1,25:1 — illisible.
+
+   On garde le libellé pleinement opaque et on rend le FOND translucide :
+   l'arrière-plan transparaît légèrement, le bouton se lit toujours comme
+   inactif, et son libellé reste lisible. Le libellé passe sur la couleur de
+   texte de la surface, puisque c'est elle qui domine le mélange.
+
+   `pointer-events: none` (déjà posé par le WDS) est réaffirmé ici : un bouton
+   inactif ne doit produire aucune interaction au survol. Les sélecteurs
+   :hover sont listés pour que l'apparence inactive l'emporte quel que soit
+   l'ordre des feuilles. */
+.wel-button:disabled,
+.wel-button[aria-disabled="true"],
+.wel-button:disabled:hover,
+.wel-button[aria-disabled="true"]:hover,
+.wel-button-icon:disabled,
+.wel-button-icon[aria-disabled="true"] {
+  opacity: 1;
+  background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);
+  color: var(--wel-sem-color-on-surface-hi);
+  border-color: transparent;
+  pointer-events: none;
+}
+
 /* Libellule : rendu rétro/16-bit */
-[data-persona="libellule"] img,
-[data-persona="libellule"] .chat__avatar {
+[data-persona="libellule"] {
+  --pill-radius: 0;
+}
+
+[data-persona="libellule"] img {
   image-rendering: pixelated;
 }
 
@@ -15,6 +60,11 @@
   border-style: solid;
 }
 
-[data-persona="libellule"] .chat-page__title {
+[data-persona="libellule"] .hero__title {
   letter-spacing: 0.02em;
 }
+
+/* La taille des titres de card ne se règle pas ici : Press Start 2P étant un
+   pixel monospace, c'est la marque libellule qui abaisse la valeur de son
+   token display-md, dans personas/mappings/libellule.map.json — comme une
+   marque Accor pose ses propres valeurs bSem. */

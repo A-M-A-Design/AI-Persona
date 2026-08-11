@@ -10,6 +10,47 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Interface refondue d'après la maquette Figma** : header à chips alignés à
+  droite (avatar, langue) et toggle clair/sombre ; héro avec titre, sous-titre
+  et barre de chat posée en débord sur l'illustration du persona ; deux grilles
+  d'articles en cards-image (deux grandes carrées, puis des cards étroites
+  partageant la rangée avec la carte contact). Le footer disparaît, remplacé
+  par cette carte contact.
+- La conversation s'ouvre dans un **panneau modal** (`ChatModal`) : 640 px
+  centré sur un scrim en desktop, plein écran en tablette et mobile. Le fil
+  s'ancre en bas, la question posée est une pastille sombre et la réponse du
+  texte simple. Échap et clic sur le scrim ferment, le focus est piégé dans le
+  panneau puis rendu à l'élément d'origine, et la page ne défile plus derrière.
+- Les questions suggérées **se consomment** : une question déjà posée
+  disparaît des chips, dans le héro comme dans le panneau.
+- **Barre de navigation collante** (`aem.header-navigation`) : pleine largeur,
+  80 px, fond de surface et ombre portée, elle reste en haut au défilement et
+  porte les trois contrôles (avatar, langue, mode). Ses contrôles suivent les
+  marges de la page ; le panneau de conversation la recouvre.
+- Bouton **« Démarrer une nouvelle conversation »** dans l'en-tête du panneau :
+  il vide le fil et restaure les questions suggérées sans fermer le panneau.
+  Il n'apparaît qu'une fois la conversation entamée, et reste inactif pendant
+  une réponse en cours.
+- **Tests end-to-end Playwright** (`npm run test:e2e`) : 13 scénarios × 3
+  largeurs (1440 / 1000 / 375), couvrant les régressions rencontrées — icône du
+  slot, bouton inactif et son survol, ouverture du panneau, bouton nouvelle
+  conversation, défilement du fil, Échap, lisibilité des cards en mode sombre,
+  débordement des titres en libellule. Les réponses du chat sont simulées, donc
+  aucun quota consommé.
+- `npm run shots` : captures d'écran de l'app pour comparaison avec les frames
+  Figma.
+- `npm run a11y:contrast` : audit WCAG AA des thèmes générés (3 personas × 2
+  modes × 10 paires texte/fond), qui évalue les deux extrémités des dégradés et
+  compose les fonds semi-transparents sur la surface. Sortie 1 en cas d'échec.
+- **Titres et surtitres d'articles bilingues** : `title` et `kicker` passent en
+  `Record<Lang, string>` et suivent la bascule FR/EN, comme le reste de l'UI.
+- Transition d'ouverture et de fermeture du panneau de conversation (fondu du
+  scrim, fondu + glissement du panneau, `ease-in-out`), neutralisée sous
+  `prefers-reduced-motion`.
+- **Visuels exportés de la maquette** : 3 illustrations de héro (`public/hero/`)
+  et 4 visuels d'articles (`public/articles/`). Servis par `next/image`, qui
+  les convertit en WebP à la volée — le héro tombe de 1,64 Mo à 88 Ko.
+
 - **Choix du provider de chat** (`lib/model.ts`) : `CHAT_PROVIDER` sélectionne
   `mistral` (défaut) ou `anthropic`. La route `/api/chat` ne connaît plus ni le
   SDK du provider, ni le nom de sa variable de clé, ni sa capacité de cache.
@@ -32,7 +73,83 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   liens LinkedIn) ; footer avec liens LinkedIn et e-mail. L'avatar du chat
   reprend le glyphe La Linea.
 
+### Fixed
+
+- **Lanceur non conforme en mobile.** La maquette y abandonne la carte : le
+  champ et les chips reposent directement sur la page (ni fond, ni rayon, ni
+  ombre, ni retrait), l'action se réduit à une icône au bout du champ, les
+  chips défilent horizontalement au lieu de passer à la ligne, et le bloc ne
+  déborde plus sur l'illustration (gap à 0 contre −55). L'implémentation
+  empilait au contraire champ et bouton en colonne dans la carte. Ratio de
+  l'image porté à 3/2 et écart du titre à 16, comme la frame 375 ; le padding
+  de la carte passe à 16 en tablette. `.wel-icon-slot` ne
+  fournit ni taille ni fond : c'est un `inline-flex` en `line-height: 0` qui
+  attend un `<i>` ou un `<svg>` enfant, si bien qu'un caractère texte
+  s'effondrait. Le slot reçoit un SVG et reprend la boîte de la maquette
+  (76 px, radius 2, fond `accent-container-low`).
+- **Titres de cards débordants en thème libellule.** Press Start 2P est un
+  pixel monospace dont l'avance approche 1 em par caractère : à `display-md`
+  les titres sortaient de leur bloc. La marque libellule abaisse désormais la
+  **valeur de son token** `display-md` (1 rem) dans son mapping, plutôt que de
+  le surcharger depuis le CSS applicatif — c'est le mécanisme par lequel une
+  marque Accor pose ses propres valeurs bSem, `brands/movenpickWIP.json`
+  portant par exemple `display.md = 34` là où `brands/all.json` est à 32.
+
+- **Texte des cards article illisible en mode sombre.** Il consommait
+  `on-primary`, qui s'inverse d'un mode à l'autre : en sombre le libellé
+  devenait quasi noir sur un voile noir (`#0f0800` pour l'ours). Les liaisons de
+  la maquette sont `on-surface-hi` pour le titre et `on-surface-low` pour le
+  surtitre ; le contenu de la card force désormais le mode sombre localement
+  (`data-persona` + `data-color-mode` sur `.article-card__body`), puisqu'il
+  repose toujours sur un voile foncé quel que soit le mode de la page — c'est
+  ce que fait la maquette, où le titre vaut `#f7f9fb` en clair comme en sombre.
+- Voile du bloc de texte des cards porté de 54 % à 60 % : à 54 % le titre
+  tombait à 4,15:1 sur une image claire. Le surtitre prend `on-surface-hi` au
+  lieu de `on-surface-low` (2,21:1) — `on-surface-mid` ne monte qu'à 3,18:1, et
+  atteindre AA avec `low` demanderait un voile à 80 %. La hiérarchie reste
+  portée par la taille, l'italique et les capitales.
+
+- **L'état inactif des boutons garde son libellé lisible.** Le WDS efface le
+  bouton entier (opacité 0,38 sur le fond *et* le libellé), soit 1,25:1. Le
+  libellé reste désormais pleinement opaque et c'est le fond qui devient
+  translucide — 24 % de la primaire, laissant transparaître l'arrière-plan :
+  8,88 à 9,78:1 selon les combinaisons, sans que le bouton cesse de se lire
+  comme inactif. `pointer-events: none` est réaffirmé, donc aucune interaction
+  au survol.
+
+- **Contraste insuffisant sur les boutons de certains thèmes.** La
+  transformation de teinte conservait la *clarté HSL*, pas la *luminance
+  relative WCAG* — deux grandeurs différentes, le vert pesant 0,7152 dans la
+  seconde contre 0,0722 pour le bleu. Une rotation bleu → cyan éclaircissait
+  donc la couleur à clarté constante. Deux paires tombaient sous AA en
+  libellule clair : bouton primaire à 4,24:1 (extrémité claire de son dégradé)
+  et lien à 2,97:1. Chaque couleur transformée est désormais ramenée à la
+  luminance de l'originale, ce qui préserve tous les ratios par construction ;
+  les mêmes paires montent à 7,15:1 et 7,45:1.
+
+- **Le fil de conversation ne défilait pas** quand il dépassait la hauteur du
+  panneau : `justify-content: flex-end` sur un conteneur en `overflow: auto`
+  fait déborder le contenu au-dessus de la zone scrollable, hors d'atteinte de
+  la barre de défilement. L'ancrage en bas passe désormais par une marge
+  automatique sur le premier enfant.
+
 ### Changed
+
+- **La typographie responsive passe par les tokens WDS.** Les tailles de la
+  maquette (titre 62/48/38 px, radius 6 px) sont exactement les valeurs de
+  `--wel-sem-font-sizes-display-2xl` et `--wel-sem-border-radius-container-low`
+  selon les breakpoints du thème : aucune media query de texte n'est écrite,
+  seules les grilles et les marges en ont.
+- `lib/articles.ts` porte désormais un surtitre et un visuel par article ;
+  `ArticlesSection` rend les deux grilles de la maquette.
+
+### Removed
+
+- `SiteFooter`, `HeaderSubtitle`, `HeroIllustration` et `MessageBubble` : la
+  maquette ne les utilise plus. Le panneau de conversation n'affiche pas
+  d'avatar, `PersonaGlyph` n'est donc plus référencé (conservé sur demande).
+- Clés i18n devenues sans emploi : `subtitle`, `welcome`, `placeholder`,
+  `send`, `newChat`, `articlesTitle`, `readOnLinkedIn`, `footerEmail`.
 
 - **Le prompt caching devient spécifique à Anthropic.** Le provider Mistral
   n'expose aucun breakpoint de cache : sous `CHAT_PROVIDER=mistral`, les
