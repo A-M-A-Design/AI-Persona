@@ -1,5 +1,5 @@
-import { anthropic } from "@ai-sdk/anthropic";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { buildInstructions, resolveProvider } from "@/lib/model";
 import { isPersonaId } from "@/lib/personas";
 import { buildSystemPrompt } from "@/lib/prompt";
 
@@ -16,11 +16,15 @@ function textLength(message: UIMessage): number {
 }
 
 export async function POST(req: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
-      { error: "ANTHROPIC_API_KEY manquante — copier .env.example en .env.local" },
-      { status: 500 },
-    );
+  let provider;
+  try {
+    provider = resolveProvider();
+  } catch (error) {
+    console.error("[/api/chat]", error);
+    return Response.json({ error: (error as Error).message }, { status: 500 });
+  }
+  if (provider.missingKey) {
+    return Response.json({ error: provider.missingKey }, { status: 500 });
   }
 
   let payload: { messages?: UIMessage[]; persona?: unknown; lang?: unknown };
@@ -48,17 +52,8 @@ export async function POST(req: Request) {
 
   const prompt = buildSystemPrompt({ persona, lang });
   const result = streamText({
-    model: anthropic(process.env.CHAT_MODEL ?? "claude-opus-5"),
-    instructions: [
-      {
-        role: "system",
-        content: prompt.stable,
-        // Breakpoint de prompt caching : la KB (le gros du prompt) est mise en
-        // cache côté Anthropic et partagée entre les combinaisons persona×langue.
-        providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
-      },
-      { role: "system", content: prompt.variable },
-    ],
+    model: provider.model,
+    instructions: buildInstructions(provider, prompt),
     messages: await convertToModelMessages(messages),
     maxOutputTokens: 1500,
     onError: ({ error }) => {

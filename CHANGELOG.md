@@ -10,6 +10,16 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Choix du provider de chat** (`lib/model.ts`) : `CHAT_PROVIDER` sélectionne
+  `mistral` (défaut) ou `anthropic`. La route `/api/chat` ne connaît plus ni le
+  SDK du provider, ni le nom de sa variable de clé, ni sa capacité de cache.
+  Motif : le tier Experiment de Mistral est gratuit (~1 Md tokens/mois), ce qui
+  permet de déployer le portfolio sans coût récurrent.
+- Garde-fou de configuration : un `CHAT_MODEL` appartenant visiblement à l'autre
+  provider (`claude-*` avec `CHAT_PROVIDER=mistral`, et réciproquement) échoue
+  avec un message explicite au lieu d'un 400 opaque de l'API. Un identifiant
+  inconnu passe, pour ne pas bloquer sur un modèle plus récent que ce code.
+
 - `sessions-summary/` : un résumé versionné par session de travail
   (décisions, livraisons, incidents, reste à faire) — documentation du
   processus de fabrication du projet.
@@ -23,6 +33,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   reprend le glyphe La Linea.
 
 ### Changed
+
+- **Le prompt caching devient spécifique à Anthropic.** Le provider Mistral
+  n'expose aucun breakpoint de cache : sous `CHAT_PROVIDER=mistral`, les
+  ~22 000 tokens du prefix stable (identité + garde-fous + base de
+  connaissance) repartent en entier à chaque requête. Sur le tier gratuit
+  c'est du quota, pas du coût — environ 45 000 requêtes par mois. Le
+  breakpoint `cacheControl` n'est plus posé que sur le chemin Anthropic.
+- `.env.example` documente les deux providers ; `CHAT_MODEL` est désormais
+  relatif au `CHAT_PROVIDER` actif.
 
 - Article « entreprise traumatisée » remplacé par la **v2 enrichie** (docx),
   nettoyée des notes de travail et annotations de relecture — dans la base de
