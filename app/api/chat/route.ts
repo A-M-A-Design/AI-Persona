@@ -46,9 +46,19 @@ export async function POST(req: Request) {
   const persona = isPersonaId(payload.persona) ? payload.persona : "ours";
   const lang = payload.lang === "en" ? "en" : "fr";
 
+  const prompt = buildSystemPrompt({ persona, lang });
   const result = streamText({
     model: anthropic(process.env.CHAT_MODEL ?? "claude-opus-5"),
-    system: buildSystemPrompt({ persona, lang }),
+    instructions: [
+      {
+        role: "system",
+        content: prompt.stable,
+        // Breakpoint de prompt caching : la KB (le gros du prompt) est mise en
+        // cache côté Anthropic et partagée entre les combinaisons persona×langue.
+        providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
+      },
+      { role: "system", content: prompt.variable },
+    ],
     messages: await convertToModelMessages(messages),
     maxOutputTokens: 1500,
     onError: ({ error }) => {

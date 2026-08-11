@@ -10,6 +10,21 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Base de connaissance réelle (M2)** : bio, expertise, philosophie, façon de
+  travailler, FAQ et tone of voice curés depuis l'export Notion, le profil
+  LinkedIn (PDF) et les articles ; 6 fiches projets (Accor WDS, Jems ×2,
+  SIAAP, Gaumont, AI Persona) ; 5 articles complets dans `content-library/`.
+- **Prompt caching Anthropic** : la partie stable du system prompt (KB) porte
+  un breakpoint `cacheControl` — ~90 % d'économie d'input dès la 2e requête,
+  partagée entre les 6 combinaisons persona×langue.
+- `docs/eval-questions.md` : 20 golden questions (faits, pièges, ton, langues)
+  et `docs/test-plan.md` : checklists de validation par milestone.
+
+### Changed
+
+- Modèle du chat par défaut du projet : `claude-haiku-4-5` (maîtrise des
+  coûts, choix utilisateur) — configurable via `CHAT_MODEL`.
+
 - **Chat streaming (M1)** : route `/api/chat` (Vercel AI SDK v7 → Anthropic,
   modèle configurable via `CHAT_MODEL`), UI de chat complète (bulles WDS,
   composer, questions suggérées, skeleton, erreurs), bornes serveur
