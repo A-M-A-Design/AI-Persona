@@ -28,7 +28,7 @@ npm run dev                  # http://localhost:3000
 ## Scripts
 
 | Commande | Rôle |
-|---|---|
+| --- | --- |
 | `npm run dev` | Serveur de développement |
 | `npm run build` / `start` | Build et serveur de prod |
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
@@ -58,6 +58,6 @@ git push -u origin kb/maj-projets   # puis ouvrir la PR
 - `components/` — UI (chat, header, providers)
 - `knowledge/` — base de connaissance markdown (la matière du bot)
 - `personas/` — définition des 3 personas (ton, questions suggérées, mapping de thème)
-- `styles/` — `welds-src/` (extrait localement, gitignoré) · `generated/` (thèmes persona) 
+- `styles/` — `welds-src/` (extrait localement, gitignoré) · `generated/` (thèmes persona)
 - `scripts/` — outillage Node (`.mjs`)
 - `docs/` — plan de test et golden questions

@@ -21,7 +21,109 @@ body {
   min-height: 100dvh;
 }
 
-/* --- Mise en page de la démo M0 (remplacée par le chat en M1) --- */
+/* --- Page de chat --- */
+
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+  height: 100dvh;
+  margin: 0 auto;
+  padding: var(--wel-sem-spacing-static-inset-md, 1rem);
+  gap: var(--wel-sem-spacing-static-stack-md, 1rem);
+}
+
+.chat-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.chat-page__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-sm, 1.75rem);
+  line-height: var(--wel-sem-line-heights-display-sm, 1.2);
+}
+
+.chat-page__subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--wel-sem-color-on-surface-mid);
+  font-size: var(--wel-sem-font-sizes-body-sm, 0.875rem);
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--wel-sem-spacing-static-stack-md, 1rem);
+}
+
+.chat__messages {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  gap: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
+  padding-block: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
+}
+
+.chat__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--wel-sem-spacing-static-inline-xs, 0.5rem);
+}
+
+.chat__row--user {
+  justify-content: flex-end;
+}
+
+.chat__row--assistant {
+  justify-content: flex-start;
+}
+
+.chat__avatar {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.chat__bubble {
+  max-width: 85%;
+}
+
+.chat__bubble-text {
+  white-space: pre-wrap;
+}
+
+.chat__skeleton {
+  width: 40%;
+  height: 3rem;
+  border-radius: var(--wel-sem-border-radius-container-low, 0.5rem);
+}
+
+.chat__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wel-sem-spacing-static-inline-xs, 0.5rem);
+  padding-inline-start: 2rem;
+}
+
+.chat__composer {
+  display: flex;
+  align-items: stretch;
+  gap: var(--wel-sem-spacing-static-inline-sm, 0.5rem);
+  padding-bottom: var(--wel-sem-spacing-static-stack-sm, 0.75rem);
+}
+
+.chat__composer-field {
+  flex: 1;
+}
+
+/* --- Mise en page de la démo /dev/kit --- */
 
 .demo {
   max-width: 720px;

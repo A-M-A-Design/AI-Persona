@@ -12,6 +12,9 @@
     "themes:build": "node scripts/build-themes.mjs"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.37",
+    "@ai-sdk/react": "^4.0.62",
+    "ai": "^7.0.59",
     "next": "^16.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
