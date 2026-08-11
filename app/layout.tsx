@@ -1,8 +1,53 @@
-import "../styles/welds-src/template.theme.css";
+import "../styles/generated/ours.css";
+import "../styles/generated/corneille.css";
+import "../styles/generated/libellule.css";
 import "../styles/welds-src/components.css";
+import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import {
+  Cormorant_Garamond,
+  Fraunces,
+  Nunito_Sans,
+  Press_Start_2P,
+  VT323,
+  Work_Sans,
+} from "next/font/google";
+
+// Fonts par persona, exposées en variables CSS consommées par les thèmes générés.
+const oursDisplay = Fraunces({ subsets: ["latin"], variable: "--font-ours-display", display: "swap" });
+const oursBody = Nunito_Sans({ subsets: ["latin"], variable: "--font-ours-body", display: "swap" });
+const corneilleDisplay = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-corneille-display",
+  display: "swap",
+});
+const corneilleBody = Work_Sans({ subsets: ["latin"], variable: "--font-corneille-body", display: "swap" });
+const libelluleDisplay = Press_Start_2P({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-libellule-display",
+  display: "swap",
+});
+const libelluleBody = VT323({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-libellule-body",
+  display: "swap",
+});
+
+const fontVariables = [
+  oursDisplay,
+  oursBody,
+  corneilleDisplay,
+  corneilleBody,
+  libelluleDisplay,
+  libelluleBody,
+]
+  .map((f) => f.variable)
+  .join(" ");
 
 export const metadata: Metadata = {
   title: "Arthur Mathon — AI Persona",
@@ -19,21 +64,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="fr"
       data-persona="ours"
       data-color-mode="light"
+      className={fontVariables}
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        {/* M0 : fonts du thème brandbook chargées par nom littéral.
-            M3 : remplacées par les fonts persona via next/font + mappings. */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;700&family=Unna:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
         <script dangerouslySetInnerHTML={{ __html: settingsScript }} />
       </head>
       <body>{children}</body>

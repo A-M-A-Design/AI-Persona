@@ -47,6 +47,9 @@ export default function Chat({ personas }: Props) {
 
   useEffect(() => {
     setSettings(currentSettings());
+    const update = () => setSettings(currentSettings());
+    window.addEventListener("ai-persona:settings", update);
+    return () => window.removeEventListener("ai-persona:settings", update);
   }, []);
 
   useEffect(() => {

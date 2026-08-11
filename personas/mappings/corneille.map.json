@@ -1,0 +1,16 @@
+{
+  "$comment": "Corneille — mystérieuse, posée : les bleus deviennent indigo profond, les neutres se refroidissent, la saturation générale est contenue.",
+  "colors": {
+    "hueRules": [
+      { "from": [180, 270], "to": 262, "saturate": 0.85, "spread": 0.3 },
+      { "from": [270, 335], "to": 268, "saturate": 0.8 },
+      { "maxSat": 0.1, "tintHue": 250, "tintSat": 0.04 }
+    ],
+    "saturateAll": 0.92
+  },
+  "fonts": {
+    "Montserrat": "var(--font-corneille-display)",
+    "Unna": "var(--font-corneille-display)",
+    "Roboto": "var(--font-corneille-body)"
+  }
+}

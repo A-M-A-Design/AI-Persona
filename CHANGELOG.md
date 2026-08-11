@@ -10,6 +10,24 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Theming des 3 personas (M3)** : `scripts/build-themes.mjs` génère un thème
+  complet par persona depuis le template WDS — transformation des couleurs par
+  règles de teinte HSL (luminance préservée → contrastes light/dark intacts,
+  teintes sémantiques rouge/vert/jaune conservées), remplacement des familles
+  de polices, overrides de variables, rescope `[data-persona]` ×
+  `[data-color-mode]` (6 combinaisons).
+- Fonts par persona via `next/font` : Fraunces + Nunito Sans (Ours),
+  Cormorant Garamond + Work Sans (Corneille), Press Start 2P + VT323
+  (Libellule).
+- `PersonaSwitcher` (radiogroup) sur l'accueil et `/dev/kit` ; le chat suit le
+  persona actif en direct (questions suggérées, avatar, voix au prochain
+  message).
+- Libellule rétro/16-bit via le contrat : radius 0, ombres dures sans flou,
+  corps de texte agrandi ; extras hors contrat minimes (`persona-extras.css` :
+  pixelated, bordures 2px).
+- Règle tokens documentée : le CSS applicatif ne consomme que `--wel-sem-*` /
+  `--wel-comp-*` (jamais prim/bsem/bcomp).
+
 - **Base de connaissance réelle (M2)** : bio, expertise, philosophie, façon de
   travailler, FAQ et tone of voice curés depuis l'export Notion, le profil
   LinkedIn (PDF) et les articles ; 6 fiches projets (Accor WDS, Jems ×2,
