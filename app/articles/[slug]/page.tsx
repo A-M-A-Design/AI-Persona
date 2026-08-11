@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import ArticleView from "../../../components/article/ArticleView";
 import SiteHeader from "../../../components/header/SiteHeader";
-import { readArticleBody } from "../../../lib/article-body";
+import { hasTranslation, readArticleBodies } from "../../../lib/article-body";
 import { ARTICLES } from "../../../lib/articles";
 
 // Les quatre articles de la grille sont connus au build : leurs pages sont
@@ -26,15 +26,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const article = ARTICLES.find((a) => a.slug === slug);
   if (!article) notFound();
 
-  const blocks = readArticleBody(slug);
+  const blocks = readArticleBodies(slug);
+  const translated = hasTranslation(slug, "en");
 
-  // En mobile, la pilule « Retour » est logée dans la barre de navigation —
-  // c'est le seul endroit où elle apparaît à cette largeur.
+  // La pilule « Retour » est portée par la barre de navigation.
   return (
     <>
       <SiteHeader withBackLink />
       <main className="page page--article">
-        <ArticleView article={article} blocks={blocks} />
+        <ArticleView article={article} blocks={blocks} translated={translated} />
       </main>
     </>
   );

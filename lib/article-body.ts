@@ -10,8 +10,24 @@
 // analyseur complet ne servirait rien de plus ici.
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Lang } from "./i18n";
 
 const DIR = join(process.cwd(), "knowledge", "content-library");
+
+// Les traductions vivent dans un sous-dossier : lib/prompt.ts ne lit que les
+// `.md` à la racine de content-library, la base de connaissance du bot reste
+// donc inchangée (le modèle traduit à la volée, cf. garde-fou 7).
+const EN_DIR = join(DIR, "en");
+
+function sourcePath(slug: string, lang: Lang): string | null {
+  const candidates = lang === "en" ? [join(EN_DIR, `${slug}.md`), join(DIR, `${slug}.md`)] : [join(DIR, `${slug}.md`)];
+  return candidates.find(existsSync) ?? null;
+}
+
+/** Vrai si l'article existe dans cette langue — faux quand on retombe sur le français. */
+export function hasTranslation(slug: string, lang: Lang): boolean {
+  return lang === "fr" || existsSync(join(EN_DIR, `${slug}.md`));
+}
 
 export type Block =
   | { type: "heading"; text: string }
@@ -23,9 +39,19 @@ export function hasArticleBody(slug: string): boolean {
   return existsSync(join(DIR, `${slug}.md`));
 }
 
-export function readArticleBody(slug: string): Block[] {
-  const path = join(DIR, `${slug}.md`);
-  if (!existsSync(path)) return [];
+/**
+ * Corps de l'article dans les deux langues. La langue d'affichage vit côté
+ * client (réglage persisté), alors que la lecture des fichiers est côté
+ * serveur : la page transmet donc les deux versions et le composant choisit,
+ * comme le fait déjà lib/articles.ts pour le titre et le chapô.
+ */
+export function readArticleBodies(slug: string): Record<Lang, Block[]> {
+  return { fr: readArticleBody(slug, "fr"), en: readArticleBody(slug, "en") };
+}
+
+export function readArticleBody(slug: string, lang: Lang = "fr"): Block[] {
+  const path = sourcePath(slug, lang);
+  if (!path) return [];
 
   const blocks: Block[] = [];
   let para: string[] = [];

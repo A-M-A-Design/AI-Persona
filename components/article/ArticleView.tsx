@@ -10,7 +10,7 @@
 import Image from "next/image";
 import type { Block } from "../../lib/article-body";
 import type { Article } from "../../lib/articles";
-import { t } from "../../lib/i18n";
+import { t, type Lang } from "../../lib/i18n";
 import { useSettings } from "../useSettings";
 
 /** Rend le gras markdown, seul balisage en ligne présent dans les articles. */
@@ -24,8 +24,19 @@ function inline(text: string) {
   );
 }
 
-export default function ArticleView({ article, blocks }: { article: Article; blocks: Block[] }) {
+export default function ArticleView({
+  article,
+  blocks,
+  translated,
+}: {
+  article: Article;
+  blocks: Record<Lang, Block[]>;
+  /** Faux quand l'anglais retombe sur le texte français. */
+  translated: boolean;
+}) {
   const { lang } = useSettings();
+  const body = blocks[lang];
+  const inFrench = lang === "fr" || !translated;
 
   // La pilule « Retour » vit dans la barre de navigation, à toutes les
   // largeurs : posée au-dessus de l'article, elle recouvrait le texte dès que
@@ -54,12 +65,14 @@ export default function ArticleView({ article, blocks }: { article: Article; blo
           </div>
         )}
 
-        {/* Les articles ont été écrits en français ; seule l'interface est
-            traduite. On le dit plutôt que de laisser la surprise au lecteur. */}
-        {lang === "en" && <p className="article__notice">{t(lang, "articleFrenchOnly")}</p>}
+        {/* L'avertissement ne sert que si l'article n'a pas de traduction et
+            retombe sur le français : inutile de le montrer sinon. */}
+        {lang === "en" && !translated && (
+          <p className="article__notice">{t(lang, "articleFrenchOnly")}</p>
+        )}
 
-        <div className="article__body" lang="fr">
-          {blocks.map((block, i) => {
+        <div className="article__body" lang={inFrench ? "fr" : "en"}>
+          {body.map((block, i) => {
             if (block.type === "heading") {
               return (
                 <h2 key={i} className="article__h2">

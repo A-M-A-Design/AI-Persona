@@ -78,11 +78,47 @@ test.describe("Page article", () => {
     expect(res?.status()).toBe(404);
   });
 
-  test("l'anglais traduit l'interface et signale un article en français", async ({ page }) => {
+  test("l'anglais rend le corps traduit, sans avertissement", async ({ page }) => {
     await visitArticle(page, "en");
     await expect(page.locator(".article__kicker")).toHaveText("Ops and Design System");
-    await expect(page.locator(".article__notice")).toBeVisible();
-    await expect(page.locator(".article__body")).toHaveAttribute("lang", "fr");
+    await expect(page.locator(".article__body")).toHaveAttribute("lang", "en");
+    // L'avertissement ne sert qu'aux articles sans traduction.
+    await expect(page.locator(".article__notice")).toHaveCount(0);
+
+    const body = await page.locator(".article__body").innerText();
+    expect(body).toContain("return on investment");
+    expect(body).not.toContain("retour sur investissement");
+  });
+
+  test("les deux langues ont la même structure de corps", async ({ page }) => {
+    await visitArticle(page, "fr");
+    const fr = {
+      h2: await page.locator(".article__h2").count(),
+      li: await page.locator(".article__list li").count(),
+    };
+    await visitArticle(page, "en");
+    expect(await page.locator(".article__h2").count()).toBe(fr.h2);
+    expect(await page.locator(".article__list li").count()).toBe(fr.li);
+  });
+
+  test("aucun commentaire de relecture ne subsiste dans le corps", async ({ page }) => {
+    for (const slug of ["designops-outils-workflows", "systeme-de-tokens"]) {
+      for (const lang of ["fr", "en"]) {
+        await page.addInitScript(
+          (l) =>
+            localStorage.setItem(
+              "ai-persona:settings",
+              JSON.stringify({ persona: "ours", colorMode: "light", lang: l }),
+            ),
+          lang,
+        );
+        await page.goto(`/articles/${slug}`);
+        const body = await page.locator(".article__body").innerText();
+        expect(body).not.toContain("Commented [");
+        expect(body).not.toContain("Rajouter");
+        expect(body).not.toContain("Revoir le titre");
+      }
+    }
   });
 });
 

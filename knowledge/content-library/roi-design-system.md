@@ -40,10 +40,18 @@ Pour un design system, il peut s'agir d'un taux de productivité accru, d'une me
 ## Effet sur le code
 
 - Quantité de code que les développeurs modifient à chaque version.
-- Nombre de class CSS différentes nécessaires au développement de vos produits Effet sur la conception
+- Nombre de class CSS différentes nécessaires au développement de vos produits
+
+## Effet sur la conception
+
 - Nombre de composants et de styles créés de toute pièce par vos équipes
 - Nombre de contributeurs et de visiteurs de votre design système
-- Nombre de projet incluant l’exploitation de votre design système Voici un lien vers quelques design systèmes remarquables : https://siw- grinaker.medium.com/top-12-design-systems-b598368be5a6 Références
+- Nombre de projet incluant l’exploitation de votre design système
+
+Voici un lien vers quelques design systèmes remarquables : https://siw-grinaker.medium.com/top-12-design-systems-b598368be5a6
+
+## Références
+
 - https://siw-grinaker.medium.com/top-12-design-systems-b598368be5a6
 - https://www.uxpin.com/studio/blog/design-roi-calculations/
 - https://bradfrost.com

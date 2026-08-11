@@ -10,6 +10,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Les quatre articles sont traduits en anglais** (`knowledge/content-library/en/`).
+  La page sert la version correspondant à la langue choisie ; le titre, le
+  surtitre et le chapô suivaient déjà ce réglage. Le sous-dossier `en/` n'entre
+  pas dans la base de connaissance du bot, qui ne lit que la racine — le modèle
+  continue de traduire à la volée.
 - **Une page par article**, générée statiquement (`/articles/<slug>`), d'après
   les trois frames de la maquette. Les boutons « Lire l'article » de l'accueil
   mènent désormais au site et non plus au profil LinkedIn. Colonne de lecture
@@ -26,6 +31,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 - En thème Libellule, la police d'affichage — une pixel font très large —
   faisait déborder le titre d'article hors de la colonne mobile de 311 px et
   provoquait un défilement horizontal de toute la page.
+- **Des commentaires de relecture Word s'affichaient dans les articles.**
+  L'extraction PDF avait laissé sept annotations (« Commented [MA1] : … »,
+  « Revoir le titre », « Rajouter les références ») dans le corps du texte, ainsi
+  qu'un « Bouton » resté en placeholder. Retirés, avec les césures cassées par
+  l'export (« ci- dessous ») et quatre titres de section absorbés dans des
+  paragraphes ou des listes.
 
 - **Le bot ne suivait pas la langue de l'utilisateur.** Une question posée en
   anglais avec l'interface en français obtenait une réponse en français, la
