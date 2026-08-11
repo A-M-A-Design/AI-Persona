@@ -9,7 +9,7 @@ import ConnectCard from "./ConnectCard";
 import { useSettings } from "./useSettings";
 
 export default function ArticlesSection() {
-  const { lang } = useSettings();
+  const { lang, persona } = useSettings();
   const featured = ARTICLES.slice(0, FEATURED_COUNT);
   const rest = ARTICLES.slice(FEATURED_COUNT);
 
@@ -17,13 +17,13 @@ export default function ArticlesSection() {
     <>
       <section className="articles">
         {featured.map((a) => (
-          <ArticleCard key={a.slug} article={a} lang={lang} />
+          <ArticleCard key={a.slug} article={a} lang={lang} persona={persona} />
         ))}
       </section>
 
       <section className="articles articles--secondary">
         {rest.map((a) => (
-          <ArticleCard key={a.slug} article={a} lang={lang} />
+          <ArticleCard key={a.slug} article={a} lang={lang} persona={persona} />
         ))}
         <ConnectCard lang={lang} />
       </section>

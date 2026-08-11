@@ -6,7 +6,9 @@
    Valeurs reprises de la maquette (#070518 à 30 % et 54 %). */
 :root {
   --media-veil: rgba(7, 5, 24, 0.3);
-  --media-veil-strong: rgba(7, 5, 24, 0.54);
+  /* La maquette pose ce voile à 54 %, ce qui laisse le titre à 4,15:1 sur une
+     image claire. 60 % le fait passer à 5,15:1 pour un écart visuel minime. */
+  --media-veil-strong: rgba(7, 5, 24, 0.6);
   /* Scrim du panneau de conversation (#070518 à 70 % dans la maquette). */
   --modal-scrim: rgba(7, 5, 24, 0.7);
   /* Débord de la barre de chat sur l'image du héro (gap -55 dans la maquette). */

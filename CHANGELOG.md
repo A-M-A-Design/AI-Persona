@@ -59,6 +59,20 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Texte des cards article illisible en mode sombre.** Il consommait
+  `on-primary`, qui s'inverse d'un mode à l'autre : en sombre le libellé
+  devenait quasi noir sur un voile noir (`#0f0800` pour l'ours). Les liaisons de
+  la maquette sont `on-surface-hi` pour le titre et `on-surface-low` pour le
+  surtitre ; le contenu de la card force désormais le mode sombre localement
+  (`data-persona` + `data-color-mode` sur `.article-card__body`), puisqu'il
+  repose toujours sur un voile foncé quel que soit le mode de la page — c'est
+  ce que fait la maquette, où le titre vaut `#f7f9fb` en clair comme en sombre.
+- Voile du bloc de texte des cards porté de 54 % à 60 % : à 54 % le titre
+  tombait à 4,15:1 sur une image claire. Le surtitre prend `on-surface-hi` au
+  lieu de `on-surface-low` (2,21:1) — `on-surface-mid` ne monte qu'à 3,18:1, et
+  atteindre AA avec `low` demanderait un voile à 80 %. La hiérarchie reste
+  portée par la taille, l'italique et les capitales.
+
 - **L'état inactif des boutons garde son libellé lisible.** Le WDS efface le
   bouton entier (opacité 0,38 sur le fond *et* le libellé), soit 1,25:1. Le
   libellé reste désormais pleinement opaque et c'est le fond qui devient

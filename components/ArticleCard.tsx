@@ -9,13 +9,17 @@ import { t, type Lang } from "../lib/i18n";
 type Props = {
   article: Article;
   lang: Lang;
+  /** Nécessaire au scope local : les thèmes sont en sélecteur composé
+      [data-persona][data-color-mode], les deux attributs doivent donc être
+      portés par le même élément. */
+  persona: string;
 };
 
 // Grande card = moitié de la grille ; card étroite = quart. On sert au plus
 // large des deux : l'écart ne justifie pas deux jeux de sources.
 const SIZES = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 644px";
 
-export default function ArticleCard({ article, lang }: Props) {
+export default function ArticleCard({ article, lang, persona }: Props) {
   const published = Boolean(article.href);
 
   const inner = (
@@ -30,7 +34,17 @@ export default function ArticleCard({ article, lang }: Props) {
           sizes={SIZES}
         />
       )}
-      <div className="article-card__body">
+      {/*
+        Le contenu repose toujours sur un voile foncé, quel que soit le mode de
+        la page : on force donc le mode sombre localement, comme la maquette où
+        le titre vaut #f7f9fb en clair comme en sombre. Sans ça, on-surface-hi
+        s'inverserait et rendrait du texte foncé sur fond foncé.
+      */}
+      <div
+        className="article-card__body"
+        data-persona={persona}
+        data-color-mode="dark"
+      >
         <div className="article-card__fade" />
         <div className="article-card__content">
           <div className="article-card__texts">

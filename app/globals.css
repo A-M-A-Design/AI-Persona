@@ -521,7 +521,6 @@ img {
   overflow: hidden;
   border-radius: var(--wel-sem-border-radius-container-low);
   background: var(--wel-sem-color-surface-container-mid);
-  color: var(--wel-sem-color-on-primary);
   text-decoration: none;
 }
 
@@ -577,12 +576,21 @@ img {
   min-width: 0;
 }
 
+/* Les deux textes prennent on-surface-hi, qui résout ses valeurs sombres grâce
+   au data-color-mode posé sur .article-card__body.
+
+   La maquette lie le surtitre à on-surface-low : sur le voile, cela donne
+   2,21:1 sur une image claire, et on-surface-mid ne monte qu'à 3,18:1. Aucun
+   palier intermédiaire n'atteint AA sans pousser le voile à 80 %, ce qui
+   rendrait le bas des cards presque opaque. La hiérarchie reste portée par la
+   taille, l'italique et les capitales plutôt que par la couleur. */
 .article-card__kicker {
   margin: 0;
   font-size: var(--wel-sem-font-sizes-body-xs, 0.75rem);
   line-height: var(--wel-sem-line-heights-body-xs, 1rem);
   font-style: italic;
   text-transform: uppercase;
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
 .article-card__title {
@@ -590,6 +598,7 @@ img {
   font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
   font-size: var(--wel-sem-font-sizes-display-md);
   line-height: var(--wel-sem-line-heights-display-md);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
 .article-card:focus-visible {

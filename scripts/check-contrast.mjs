@@ -46,6 +46,18 @@ const PAIRS = [
   ["Lien", "--wel-sem-color-link", "--wel-sem-color-surface"],
 ];
 
+// Le contenu des cards article repose sur un voile posé au-dessus d'une image.
+// Le fond n'est donc pas un token : on évalue le pire cas, une image blanche
+// sous le voile. Ces paires résolvent toujours les valeurs du mode sombre, le
+// voile étant foncé quel que soit le mode de la page (cf. ArticleCard).
+const VEIL = { color: [7, 5, 24], alpha: 0.6 };
+const CARD_PAIRS = [
+  ["Card · titre", "--wel-sem-color-on-surface-hi"],
+  // La maquette lie le surtitre à on-surface-low (2,21:1 ici) ; on-surface-hi
+  // est le seul palier conforme sans épaissir le voile — cf. app/globals.css.
+  ["Card · surtitre", "--wel-sem-color-on-surface-hi"],
+];
+
 function blocks(css) {
   const out = { base: {}, light: {}, dark: {} };
   const re = /\[data-persona="[^"]+"\](\[data-color-mode="(light|dark)"\])?\s*\{([^}]*)\}/g;
@@ -125,6 +137,20 @@ for (const persona of PERSONAS) {
       }
     }
     lines.splice(lines.length - PAIRS.length, 0, `\n${persona} / ${mode}`);
+  }
+
+  // Cards article : évaluées une fois par persona (valeurs du mode sombre),
+  // sur le pire fond possible — une image blanche sous le voile.
+  const darkToken = (t) => b.dark[t] ?? b.base[t];
+  const veilOnWhite = over([...VEIL.color, VEIL.alpha], [255, 255, 255]);
+  lines.push(`\n${persona} / cards (voile ${Math.round(VEIL.alpha * 100)} % sur image blanche)`);
+  for (const [label, fgToken] of CARD_PAIRS) {
+    const fg = rgba(darkToken(fgToken));
+    if (!fg) continue;
+    const r = ratio(over(fg, veilOnWhite), veilOnWhite);
+    const ok = r >= AA;
+    lines.push(`  ${ok ? "✔" : "✘"} ${label.padEnd(26)} ${r.toFixed(2)}:1`);
+    if (!ok) failures.push({ persona, mode: "cards", label, ratio: r, fg: darkToken(fgToken), bg: `voile ${VEIL.alpha} sur blanc` });
   }
 }
 
