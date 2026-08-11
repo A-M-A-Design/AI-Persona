@@ -27,6 +27,14 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   il vide le fil et restaure les questions suggérées sans fermer le panneau.
   Il n'apparaît qu'une fois la conversation entamée, et reste inactif pendant
   une réponse en cours.
+- **Tests end-to-end Playwright** (`npm run test:e2e`) : 13 scénarios × 3
+  largeurs (1440 / 1000 / 375), couvrant les régressions rencontrées — icône du
+  slot, bouton inactif et son survol, ouverture du panneau, bouton nouvelle
+  conversation, défilement du fil, Échap, lisibilité des cards en mode sombre,
+  débordement des titres en libellule. Les réponses du chat sont simulées, donc
+  aucun quota consommé.
+- `npm run shots` : captures d'écran de l'app pour comparaison avec les frames
+  Figma.
 - `npm run a11y:contrast` : audit WCAG AA des thèmes générés (3 personas × 2
   modes × 10 paires texte/fond), qui évalue les deux extrémités des dégradés et
   compose les fonds semi-transparents sur la surface. Sortie 1 en cas d'échec.

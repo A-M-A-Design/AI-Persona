@@ -10,7 +10,10 @@
     "check": "tsc --noEmit",
     "welds:install": "node scripts/install-welds.mjs",
     "themes:build": "node scripts/build-themes.mjs",
-    "a11y:contrast": "node scripts/check-contrast.mjs"
+    "a11y:contrast": "node scripts/check-contrast.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "shots": "node scripts/capture.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.37",
@@ -22,6 +25,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

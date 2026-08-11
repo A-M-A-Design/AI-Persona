@@ -64,6 +64,20 @@ fonctionne pas.
 | `npm run welds:install` | Extraction des assets WDS depuis le zip |
 | `npm run themes:build` | Génération des 3 thèmes persona (M3) |
 | `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
+| `npm run test:e2e` | Tests Playwright (3 largeurs : 1440 / 1000 / 375) |
+| `npm run shots` | Captures d'écran dans `e2e/__screenshots__/` (`-- --all` pour 3 personas × 2 modes × 3 largeurs) |
+
+### Tests end-to-end
+
+Première utilisation : `npx playwright install chromium`.
+
+Les tests visent `http://localhost:3000` et **non** `127.0.0.1` : Next 16 restreint
+les origines autorisées en développement et renvoie 403 sur `/_next/*` aux
+autres. Les chunks ne se chargent alors pas, la page n'hydrate jamais, et tout
+paraît inerte sans qu'aucune erreur ne soit visible côté serveur.
+
+Les réponses du chat sont simulées (`e2e/helpers.ts`) : les tests ne consomment
+pas le quota du provider et ne dépendent pas d'une réponse non déterministe.
 
 ### Contraste des thèmes
 

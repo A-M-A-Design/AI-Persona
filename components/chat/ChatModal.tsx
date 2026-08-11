@@ -107,7 +107,10 @@ export default function ChatModal({
             {exchanges.length > 0 ? (
               <button
                 type="button"
-                className="wel-button wel-button--secondary chat-modal__new"
+                // Tertiaire et non secondaire : la maquette montre une pastille
+                // contournée sur fond transparent, ce que porte le variant
+                // tertiaire (bg transparent, bordure et libellé sombres).
+                className="wel-button wel-button--tertiary chat-modal__new"
                 onClick={onReset}
                 disabled={busy}
               >
