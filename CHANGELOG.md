@@ -10,6 +10,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Deux articles ajoutés** : « Le design système au service de vos besoins en
+  data visualisation » (texte fourni par Arthur, visuel exporté de la maquette)
+  et « Comment le Design peut répondre aux enjeux actuels des entreprises ? »,
+  dont le texte était déjà dans la base de connaissance sans être affiché.
+  Six articles au total, tous traduits en anglais. La grille d'accueil en
+  compose quatre, comme la maquette ; le carousel les propose tous.
 - **Carousel en fin d'article** : les autres articles y défilent, trois par page
   en desktop, deux en tablette, une en mobile, avec la pagination condensée de
   la maquette (précédent · compteur · suivant). Le défilement est celui du
@@ -45,6 +51,16 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 - En thème Libellule, la police d'affichage — une pixel font très large —
   faisait déborder le titre d'article hors de la colonne mobile de 311 px et
   provoquait un défilement horizontal de toute la page.
+- **Le titre d'une card sans visuel était invisible.** Son contenu est composé
+  en mode sombre — ce qui le rend lisible sur une photo — mais sans image
+  dessous il se retrouvait en clair sur la surface claire de la page, soit un
+  contraste de 1:1. Ces cards portent désormais l'aplat de thème prévu :
+  19,15:1.
+- **La ligne de crédit s'affichait en tête des articles traduits.** Le
+  découpage du markdown ne filtrait que sa forme française, si bien que
+  « Article written by Arthur Mathon… » ouvrait le corps des six versions
+  anglaises. La parité de structure FR/EN est désormais testée sur les
+  paragraphes, pas seulement sur les titres et les listes.
 - **Des commentaires de relecture Word s'affichaient dans les articles.**
   L'extraction PDF avait laissé sept annotations (« Commented [MA1] : … »,
   « Revoir le titre », « Rajouter les références ») dans le corps du texte, ainsi

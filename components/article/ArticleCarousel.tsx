@@ -41,7 +41,13 @@ export default function ArticleCarousel({ articles, lang, persona }: Props) {
 
     stepRef.current = perPage * card;
     setPages(total);
-    setPage(Math.min(total - 1, Math.round(el.scrollLeft / stepRef.current)));
+
+    // La dernière page est souvent partielle : la piste bute avant la position
+    // théorique de son début, et un rapport à la largeur de page y resterait
+    // bloqué sur l'avant-dernière. On rapporte donc la position à la course
+    // réellement disponible.
+    const travel = el.scrollWidth - el.clientWidth;
+    setPage(travel <= 1 ? 0 : Math.round((el.scrollLeft / travel) * (total - 1)));
   }, []);
 
   useEffect(() => {

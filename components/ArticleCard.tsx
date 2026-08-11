@@ -59,8 +59,13 @@ export default function ArticleCard({ article, lang, persona }: Props) {
   );
 
   // Chaque article a désormais sa page : la card mène au site, plus à LinkedIn.
+  // Sans visuel, la card porte un aplat de thème : son texte est clair, il lui
+  // faut un fond sombre sous lui.
   return (
-    <Link className="article-card" href={articlePath(article.slug)}>
+    <Link
+      className={`article-card${article.image ? "" : " article-card--flat"}`}
+      href={articlePath(article.slug)}
+    >
       {inner}
     </Link>
   );

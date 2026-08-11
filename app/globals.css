@@ -672,6 +672,14 @@ img {
   background: linear-gradient(to bottom, transparent, var(--media-veil-strong));
 }
 
+/* Article sans visuel : le contenu de la card reste en mode sombre — c'est ce
+   qui le rend lisible sur une photo — mais sans image dessous, il se retrouvait
+   en clair sur la surface claire de la page, soit un contraste de 1:1. Le bloc
+   portant déjà le mode sombre, sa propre surface fournit l'aplat attendu. */
+.article-card--flat .article-card__body {
+  background: var(--wel-sem-color-surface);
+}
+
 .article-card__content {
   display: flex;
   flex-wrap: wrap;

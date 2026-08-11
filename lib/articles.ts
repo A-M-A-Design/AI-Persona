@@ -52,18 +52,18 @@ export const ARTICLES: Article[] = [
     image: "/articles/roi-design-system.jpg",
   },
   {
-    slug: "systeme-de-tokens",
+    slug: "dataviz-design-system",
     title: {
-      fr: "Pourquoi et comment créer un système de tokens applicable à vos produits digitaux",
-      en: "Why and how to build a token system for your digital products",
+      fr: "Le design système au service de vos besoins en data visualisation",
+      en: "Design System tailored to your data visualization needs",
     },
-    kicker: { fr: "Design System et Product", en: "Design System and Product" },
-    tags: ["DesignSystem", "Product"],
+    kicker: { fr: "Ops et Design System", en: "Ops and Design System" },
+    tags: ["DesignOps", "Dashboard", "Dataviz", "DesignSystem"],
     lede: {
-      fr: "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
-      en: "From the 1990s to today: how tokens finally reconcile designers and developers in the industrialization of design.",
+      fr: "Prototyper un tableau de bord sur de vraies données plutôt que sur des maquettes : ce que change une librairie de graphiques pensée comme un design system.",
+      en: "Prototyping a dashboard on real data rather than on mockups: what changes when the chart library is built as a design system.",
     },
-    image: "/articles/systeme-de-tokens.jpg",
+    image: "/articles/dataviz-design-system.jpg",
   },
   {
     slug: "designops-outils-workflows",
@@ -79,14 +79,44 @@ export const ARTICLES: Article[] = [
     },
     image: "/articles/designops-outils-workflows.jpg",
   },
+  {
+    slug: "systeme-de-tokens",
+    title: {
+      fr: "Pourquoi et comment créer un système de tokens applicable à vos produits digitaux",
+      en: "Why and how to build a token system for your digital products",
+    },
+    kicker: { fr: "Design System et Product", en: "Design System and Product" },
+    tags: ["DesignSystem", "Product"],
+    lede: {
+      fr: "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
+      en: "From the 1990s to today: how tokens finally reconcile designers and developers in the industrialization of design.",
+    },
+    image: "/articles/systeme-de-tokens.jpg",
+  },
+  {
+    slug: "design-enjeux-entreprises",
+    title: {
+      fr: "Comment le Design peut répondre aux enjeux actuels des entreprises ?",
+      en: "How can design answer the challenges companies face today?",
+    },
+    kicker: { fr: "Société et Organisation", en: "Society and Organisation" },
+    tags: ["Business", "DesignOps", "OrgDesign", "Recherche"],
+    lede: {
+      fr: "Pensée systémique et vulnérabilité assumée : deux leviers par lesquels le design peut agir sur la structure des organisations, et non plus seulement sur leurs produits.",
+      en: "Systems thinking and acknowledged vulnerability: two levers through which design can act on the structure of organisations, not merely on their products.",
+    },
+  },
 ];
-
-// « Comment le Design peut répondre aux enjeux actuels des entreprises ? » n'est
-// pas affiché : la maquette compose quatre cards. Sa fiche demeure dans
-// knowledge/content-library/, donc le bot continue de pouvoir en parler.
 
 /** Les deux premiers articles occupent les grandes cards de la maquette. */
 export const FEATURED_COUNT = 2;
+
+/**
+ * Nombre d'articles composés dans la grille d'accueil. La maquette y dessine
+ * quatre cards — deux grandes, deux étroites partageant la rangée avec la
+ * carte contact —, alors que le carousel de fin d'article les propose tous.
+ */
+export const HOME_COUNT = 4;
 
 export const LINKS = {
   linkedin: "https://www.linkedin.com/in/arthur-mathon/",

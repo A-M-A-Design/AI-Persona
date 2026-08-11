@@ -8,6 +8,9 @@ const SLUG = "roi-design-system";
 // 375 moins les deux retraits de 32 px imbriqués.
 const COLUMN = { desktop: 850, tablet: 550, mobile: 311 };
 
+/** Articles publiés — le carousel en propose tous sauf celui qu'on lit. */
+const ARTICLE_COUNT = 6;
+
 /** Ouvre une page article en appliquant les réglages avant le premier rendu. */
 async function visitArticle(page: import("@playwright/test").Page, lang = "fr") {
   await page.addInitScript(
@@ -110,14 +113,26 @@ test.describe("Page article", () => {
   });
 
   test("les deux langues ont la même structure de corps", async ({ page }) => {
-    await visitArticle(page, "fr");
-    const fr = {
+    const count = async () => ({
       h2: await page.locator(".article__h2").count(),
       li: await page.locator(".article__list li").count(),
-    };
+      // Le compte des paragraphes est ce qui révèle une ligne parasite : la
+      // ligne de crédit anglaise s'affichait en tête du corps traduit.
+      p: await page.locator(".article__body p").count(),
+    });
+    await visitArticle(page, "fr");
+    const fr = await count();
     await visitArticle(page, "en");
-    expect(await page.locator(".article__h2").count()).toBe(fr.h2);
-    expect(await page.locator(".article__list li").count()).toBe(fr.li);
+    expect(await count()).toEqual(fr);
+  });
+
+  test("la ligne de crédit ne s'affiche dans aucune des deux langues", async ({ page }) => {
+    for (const lang of ["fr", "en"]) {
+      await visitArticle(page, lang);
+      const body = await page.locator(".article__body").innerText();
+      expect(body).not.toContain("Article rédigé par");
+      expect(body).not.toContain("Article written by");
+    }
   });
 
   test("aucun commentaire de relecture ne subsiste dans le corps", async ({ page }) => {
@@ -158,7 +173,7 @@ test.describe("Carousel de fin d'article", () => {
 
     // Tous les autres articles, jamais celui qu'on lit.
     const cards = page.locator(".carousel .article-card");
-    await expect(cards).toHaveCount(3);
+    await expect(cards).toHaveCount(ARTICLE_COUNT - 1);
     for (const card of await cards.all()) {
       expect(await card.getAttribute("href")).not.toBe(`/articles/${SLUG}`);
     }
@@ -168,12 +183,9 @@ test.describe("Carousel de fin d'article", () => {
     await visitArticle(page);
     const counter = page.locator(".carousel__counter");
 
-    // En desktop les trois cartes tiennent : rien à paginer.
-    if (testInfo.project.name === "desktop") {
-      await expect(counter).toHaveCount(0);
-      return;
-    }
-    const pages = testInfo.project.name === "mobile" ? 3 : 2;
+    // Cartes visibles par page : 3 en desktop, 2 en tablette, 1 en mobile.
+    const perPage = { desktop: 3, tablet: 2, mobile: 1 }[testInfo.project.name] ?? 1;
+    const pages = Math.ceil((ARTICLE_COUNT - 1) / perPage);
     await expect(counter).toHaveText(`1 / ${pages}`);
 
     const [prev, next] = [
@@ -184,6 +196,37 @@ test.describe("Carousel de fin d'article", () => {
     await next.click();
     await expect(counter).toHaveText(`2 / ${pages}`);
     await expect(prev).toBeEnabled();
+  });
+
+  test("une card sans visuel garde un texte lisible", async ({ page }) => {
+    await visitArticle(page);
+
+    // Le contenu des cards est toujours composé en mode sombre, pour tenir sur
+    // une photo. Sans image dessous, il lui faut un aplat sombre : autrement le
+    // titre se retrouve clair sur la surface claire de la page.
+    const contrast = await page.evaluate(() => {
+      const card = [...document.querySelectorAll(".carousel .article-card")].find(
+        (c) => !c.querySelector("img"),
+      );
+      if (!card) return null;
+      const title = card.querySelector(".article-card__title") as HTMLElement;
+      const body = card.querySelector(".article-card__body") as HTMLElement;
+      const parse = (v: string) => (v.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+      const lum = (rgb: number[]) => {
+        const [r, g, bl] = rgb.map((c) => {
+          const s = c / 255;
+          return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+      };
+      const a = lum(parse(getComputedStyle(title).color));
+      const b = lum(parse(getComputedStyle(body).backgroundColor));
+      return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+    });
+
+    // Aucune card sans visuel : rien à vérifier.
+    if (contrast === null) return;
+    expect(contrast).toBeGreaterThanOrEqual(4.5);
   });
 
   test("une carte du carousel ouvre son article", async ({ page }) => {

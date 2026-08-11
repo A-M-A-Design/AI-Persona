@@ -77,7 +77,9 @@ export function readArticleBody(slug: string, lang: Lang = "fr"): Block[] {
 
     // Le H1 et la ligne de crédit servent la base de connaissance ; la page
     // tient son titre de lib/articles.ts, qui le porte dans les deux langues.
-    if (line.startsWith("# ") || /^Article rédigé par/.test(line)) continue;
+    // La ligne de crédit est reconnue dans les deux langues : ne filtrer que le
+    // français la laissait s'afficher en tête du corps des articles traduits.
+    if (line.startsWith("# ") || /^Article (rédigé par|written by)/.test(line)) continue;
 
     if (!line) {
       flushList();
