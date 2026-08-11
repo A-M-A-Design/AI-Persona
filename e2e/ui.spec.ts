@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openChat, PERSONAS, stubChat, visit } from "./helpers";
+import { MODES, openChat, PERSONAS, stubChat, visit } from "./helpers";
 
 test.describe("Accueil", () => {
   test("rend le héro, les six cards et la carte contact", async ({ page }) => {
@@ -133,7 +133,9 @@ test.describe("Lanceur", () => {
     const launcher = page.locator(".launcher");
     await expect(launcher).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(launcher).toHaveCSS("box-shadow", "none");
-    await expect(launcher).toHaveCSS("padding", "0px");
+    // Plus de carte : ni fond, ni ombre, ni retrait — sauf en bas, où la
+    // maquette laisse 28 px avant l'illustration.
+    await expect(launcher).toHaveCSS("padding", "0px 0px 28px");
 
     // La ligne reste horizontale et le libellé du bouton est masqué.
     await expect(page.locator(".launcher__row")).toHaveCSS("flex-direction", "row");
@@ -151,6 +153,18 @@ test.describe("Lanceur", () => {
     const scrolls = await chips.evaluate((el) => el.scrollWidth > el.clientWidth);
     expect(scrolls).toBe(true);
     await expect(page.locator(".suggestions__next")).toBeVisible();
+
+    // Un masque estompe la rangée sous le bouton, et disparaît avec lui une
+    // fois la fin atteinte : sinon les chips passent derrière en restant nettes.
+    await expect(chips).toHaveCSS("mask-image", /linear-gradient/);
+    await chips.evaluate((el) => {
+      el.scrollLeft = el.scrollWidth;
+    });
+    await expect(page.locator(".suggestions__next")).toHaveCount(0);
+    await expect(chips).toHaveCSS("mask-image", "none");
+
+    // Retrait bas du bloc, avant l'illustration.
+    await expect(launcher).toHaveCSS("padding-bottom", "28px");
   });
 
   test("mobile : champ en pilule, flèche à l'intérieur, image pleine largeur", async ({
@@ -240,6 +254,31 @@ test.describe("Thèmes", () => {
         .locator(".hero__image")
         .evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0);
       expect(charge).toBe(true);
+    });
+  }
+
+  for (const mode of MODES) {
+    test(`${mode} — le bouton de défilement des chips garde un contour visible`, async ({
+      page,
+    }, testInfo) => {
+      test.skip(testInfo.project.name !== "mobile", "le bouton ne sert qu'en mobile");
+      await visit(page, { mode });
+
+      // Régression : le fond du bouton valait celui de la page et l'ombre
+      // portée est invisible sur fond sombre — il ne restait que le chevron,
+      // sans forme ni rayon perceptibles.
+      const vu = await page.locator(".suggestions__next").evaluate((el) => {
+        const c = getComputedStyle(el);
+        return {
+          fond: c.backgroundColor,
+          page: getComputedStyle(document.body).backgroundColor,
+          radius: c.borderRadius,
+          bordure: c.borderStyle,
+        };
+      });
+      expect(vu.fond).not.toBe(vu.page);
+      expect(vu.bordure).toBe("solid");
+      expect(vu.radius).toBe("100px");
     });
   }
 

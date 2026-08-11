@@ -286,7 +286,9 @@ img {
      reste, tandis que l'illustration reste pleine largeur : 311 contre 343. */
   .launcher {
     gap: 12px;
-    padding: 0;
+    /* 28 px sous les chips, comme le retrait bas du bloc dans la maquette :
+       l'illustration suit immédiatement, sans quoi elle les touche. */
+    padding: 0 0 28px;
     margin-inline: 16px;
     border-radius: 0;
     background: none;
@@ -993,6 +995,15 @@ img {
   position: relative;
   min-width: 0;
 }
+
+/* Tant qu'il reste des chips à droite, la rangée s'estompe sous le bouton de
+   défilement : sans ce masque, elles passent derrière lui en restant nettes et
+   le bord de la rangée paraît coupé net. Le masque disparaît en fin de course,
+   avec le bouton. */
+.suggestions--more .launcher__suggestions {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
+}
 .suggestions__next {
   position: absolute;
   right: 0;
@@ -1003,9 +1014,13 @@ img {
   width: 36px;
   height: 36px;
   padding: 0;
-  border: 0;
+  /* Le fond de surface se confondait avec celui de la page, et l'ombre portée
+     est invisible sur fond sombre : le bouton se réduisait alors à son chevron,
+     sans forme ni rayon perceptibles. Une surface surélevée et la bordure des
+     chips lui donnent un contour dans les deux modes. */
+  border: var(--wel-sem-border-width-thin, 1px) solid var(--wel-sem-color-outline-hi);
   border-radius: var(--pill-radius);
-  background: var(--wel-sem-color-surface);
+  background: var(--wel-sem-color-surface-container-mid);
   color: var(--wel-sem-color-on-surface-hi);
   font-size: 1.25rem;
   line-height: 1;

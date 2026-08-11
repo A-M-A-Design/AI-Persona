@@ -37,7 +37,7 @@ export const ARTICLES: Article[] = [
       fr: "Trauma organisationnel, résilience et tenségrité : ce que les neurosciences et le vivant nous apprennent pour libérer une organisation figée.",
       en: "Organizational trauma, resilience and tensegrity: what neuroscience and living systems teach us about freeing a frozen organization.",
     },
-    image: "/articles/entreprise-traumatisee.jpg",
+    image: "/articles/entreprise-traumatisee.webp",
   },
   {
     slug: "roi-design-system",
@@ -51,7 +51,7 @@ export const ARTICLES: Article[] = [
       fr: "Indicateurs qualitatifs et quantitatifs, KPI à suivre : rendre tangible la valeur d'un design system auprès du comité exécutif.",
       en: "Qualitative and quantitative indicators, KPIs to track: making a design system's value tangible to the executive committee.",
     },
-    image: "/articles/roi-design-system.jpg",
+    image: "/articles/roi-design-system.webp",
   },
   {
     slug: "dataviz-design-system",
@@ -65,7 +65,7 @@ export const ARTICLES: Article[] = [
       fr: "Prototyper un tableau de bord sur de vraies données plutôt que sur des maquettes : ce que change une librairie de graphiques pensée comme un design system.",
       en: "Prototyping a dashboard on real data rather than on mockups: what changes when the chart library is built as a design system.",
     },
-    image: "/articles/dataviz-design-system.jpg",
+    image: "/articles/dataviz-design-system.webp",
   },
   {
     slug: "designops-outils-workflows",
@@ -79,7 +79,7 @@ export const ARTICLES: Article[] = [
       fr: "Les outils sont aux équipes ce qu'est l'huile pour le moteur : des facilitateurs de transfert, jamais des objectifs en soi.",
       en: "Tools are to a team what oil is to an engine: facilitators of transfer, never goals in themselves.",
     },
-    image: "/articles/designops-outils-workflows.jpg",
+    image: "/articles/designops-outils-workflows.webp",
   },
   {
     slug: "systeme-de-tokens",
@@ -93,7 +93,7 @@ export const ARTICLES: Article[] = [
       fr: "Des années 1990 à aujourd'hui : comment les tokens réconcilient enfin designers et développeurs dans l'industrialisation de la conception.",
       en: "From the 1990s to today: how tokens finally reconcile designers and developers in the industrialization of design.",
     },
-    image: "/articles/systeme-de-tokens.jpg",
+    image: "/articles/systeme-de-tokens.webp",
   },
   {
     slug: "design-enjeux-entreprises",
@@ -107,7 +107,7 @@ export const ARTICLES: Article[] = [
       fr: "Pensée systémique et vulnérabilité assumée : deux leviers par lesquels le design peut agir sur la structure des organisations, et non plus seulement sur leurs produits.",
       en: "Systems thinking and acknowledged vulnerability: two levers through which design can act on the structure of organisations, not merely on their products.",
     },
-    image: "/articles/design-enjeux-entreprises.jpg",
+    image: "/articles/design-enjeux-entreprises.webp",
   },
 ];
 
@@ -127,7 +127,7 @@ export const LINKS = {
  * Exportées de Figma.
  */
 export const HERO_IMAGES: Record<string, Record<ColorMode, string>> = {
-  ours: { light: "/hero/ours-light.jpg", dark: "/hero/ours-dark.jpg" },
-  corneille: { light: "/hero/corneille-light.jpg", dark: "/hero/corneille-dark.jpg" },
-  libellule: { light: "/hero/libellule-light.jpg", dark: "/hero/libellule-dark.jpg" },
+  ours: { light: "/hero/ours-light.webp", dark: "/hero/ours-dark.webp" },
+  corneille: { light: "/hero/corneille-light.webp", dark: "/hero/corneille-dark.webp" },
+  libellule: { light: "/hero/libellule-light.webp", dark: "/hero/libellule-dark.webp" },
 };

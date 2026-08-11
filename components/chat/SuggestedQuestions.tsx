@@ -62,7 +62,7 @@ export default function SuggestedQuestions({
   if (!scrollable) return row;
 
   return (
-    <div className="suggestions">
+    <div className={`suggestions${hasMore ? " suggestions--more" : ""}`}>
       {row}
       {hasMore && (
         <button

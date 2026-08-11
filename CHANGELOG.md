@@ -10,6 +10,8 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Images servies en WebP** : les douze visuels (héros et articles) passent de
+  PNG/JPEG à WebP — 1 854 Ko à 1 002 Ko, soit 46 % de moins.
 - **L'illustration du héro suit le mode de couleur.** La maquette dessine deux
   scènes distinctes par persona, pas une variation de traitement : l'ours
   contemple la montagne de jour en clair et sous la lune en sombre. Six visuels
@@ -49,6 +51,8 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- La rangée de chips s'estompe sous son bouton de défilement, et le bloc
+  reprend le retrait bas de 28 px de la maquette avant l'illustration.
 - **Le héro mobile ne suivait pas la maquette.** Le champ de saisie était
   rectangulaire avec un bouton rond posé à côté, sur toute la largeur ; la
   maquette dessine un champ en pilule occupant 311 px, la flèche d'envoi
@@ -63,6 +67,18 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 - En thème Libellule, la police d'affichage — une pixel font très large —
   faisait déborder le titre d'article hors de la colonne mobile de 311 px et
   provoquait un défilement horizontal de toute la page.
+- **Le premier affichage d'une illustration prenait plus d'une minute.** Next
+  propose par défaut l'AVIF, que tout navigateur récent réclame via son en-tête
+  `Accept` ; l'encodage AVIF d'une illustration de 2624 × 1248 dépassait la
+  minute, et le visiteur attendait d'autant. `images.formats` est restreint au
+  WebP : 5 ms mesurées contre plus de 60 s, pour un gain de poids marginal sur
+  des sources déjà en WebP. Le symptôme s'est manifesté en test, par des
+  chargements de page qui n'aboutissaient jamais en mode sombre — le mode dont
+  les visuels n'avaient pas encore été encodés.
+- **Le bouton de défilement des chips disparaissait en mode sombre.** Son fond
+  reprenait la surface de la page et l'ombre portée y est invisible : il ne
+  restait que le chevron, sans forme, rayon ni retrait perceptibles. Il porte
+  désormais une surface surélevée et la bordure des chips.
 - **Le titre d'une card sans visuel était invisible.** Son contenu est composé
   en mode sombre — ce qui le rend lisible sur une photo — mais sans image
   dessous il se retrouvait en clair sur la surface claire de la page, soit un
