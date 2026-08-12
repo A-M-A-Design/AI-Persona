@@ -45,6 +45,29 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   `GUARDRAILS` dans le source plutôt que de les recopier — un doublon dériverait
   en silence. Il avertit aussi quand un article n'a pas de ligne `Idées clés :`.
 
+### Fixed
+
+- **Un nom de persona était détecté au milieu d'un mot** : dans « je réponds
+  toujours », les quatre lettres `ours` devenaient un bouton de bascule, au
+  beau milieu du texte. Le motif de détection n'avait aucune frontière de mot ;
+  l'anglais était exposé de la même façon (`crow` dans « crowd », `bear` dans
+  « beard »).
+
+  Les frontières sont posées en lettres Unicode (`(?<![\p{L}\p{N}])`) et non
+  avec `\b` : `\b` s'appuie sur `[A-Za-z0-9_]`, d'où les lettres accentuées sont
+  exclues — sur du texte français, il se déclenche au mauvais endroit.
+
+  Second garde-fou : un « ours » en minuscule et **sans article** reste du
+  texte. Le bot nomme toujours le persona avec son article (« l'Ours ») ou sa
+  majuscule ; le mot nu, lui, désigne l'animal.
+
+  Le découpage quitte le composant pour `lib/persona-mention.ts`, où il se teste
+  sans navigateur — même raison que `lib/detect-lang.ts` : une logique subtile
+  sur du français mérite ses cas écrits. `e2e/persona-mention.spec.ts` couvre
+  les pièges (« toujours », « pourtour », « ourson », « crowd », « beard »), les
+  détections légitimes dans les deux langues, le gras markdown, et le fait qu'un
+  titre d'article l'emporte sur le nom de persona qu'il contient.
+
 ### Changed
 
 - **Déduplication de la base**, à information constante : la liste des six
