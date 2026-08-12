@@ -14,7 +14,7 @@
  * Usage : npm run tokens:check
  */
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -345,50 +345,40 @@ for (const persona of PERSONAS) {
   }
 }
 
-// ---------- audit de la couche d'alias --wel-* ----------
+// ---------- le contrat est unique ----------
 
 /**
- * `styles/welds-src/components.css` consomme `var(--wel-…)` en dur : les thèmes
- * émettent donc `--wel-x: var(--ama-x)` à côté de chaque source.
+ * Plus rien ne doit consommer `--wel-*`. Les composants WDS le faisaient en dur ;
+ * `scripts/install-welds.mjs` aligne désormais leur préfixe à l'extraction, ce
+ * qui a permis de supprimer la couche d'alias que les thèmes émettaient — 358 Ko
+ * pour les trois personas.
  *
- * Ce que cet audit protège : l'alias doit exister **dans le bloc même** où la
- * source est déclarée. Une propriété personnalisée est substituée sur l'élément
- * qui la déclare — un alias posé une seule fois sur `:root` serait figé sur la
- * valeur qui y règne, et `ArticleCard`, qui porte `data-persona` et
- * `data-color-mode="dark"` sur un descendant, perdrait son thème sombre.
- *
- * À supprimer avec la couche elle-même, quand les composants seront réécrits.
+ * Cette garde protège la suppression : rétablir un ancien `install-welds.mjs`,
+ * ou coller du CSS Accor à la main, réintroduirait des `var(--wel-…)` que plus
+ * aucun thème ne définit. Les composants perdraient leurs couleurs en silence,
+ * sans qu'aucun test de contraste ne bronche — il ne mesure que ce qui est
+ * peint, pas ce qui a disparu.
  */
-let aliasChecked = 0;
-for (const persona of PERSONAS) {
-  const scopes = parseGenerated(readFileSync(join(generatedDir, `${persona}.css`), "utf8"), persona);
-  for (const [scopeKey, cssVars] of scopes) {
-    for (const [name, value] of cssVars) {
-      if (!name.startsWith("ama-")) continue;
-      const alias = `wel-${name.slice(4)}`;
-      const actual = cssVars.get(alias);
-      if (actual === undefined) {
-        report.push(`✘ [${persona}/${scopeKey}] --${alias} : alias absent du bloc de sa source`);
-        mismatches++;
-        continue;
-      }
-      if (actual !== `var(--${name})`) {
-        report.push(
-          `✘ [${persona}/${scopeKey}] --${alias}\n      attendu : var(--${name})\n      trouvé  : ${actual}`,
-        );
-        mismatches++;
-        continue;
-      }
-      aliasChecked++;
-    }
-    // et l'inverse : aucun --wel-* orphelin, qui ne suivrait plus rien
-    for (const name of cssVars.keys()) {
-      if (!name.startsWith("wel-")) continue;
-      if (cssVars.has(`ama-${name.slice(4)}`)) continue;
-      report.push(`✘ [${persona}/${scopeKey}] --${name} : alias sans source --ama-*`);
-      mismatches++;
-    }
-  }
+const CONTRACT_FILES = [
+  ...PERSONAS.map((p) => join(generatedDir, `${p}.css`)),
+  join(root, "styles", "welds-src", "components.css"),
+  join(root, "styles", "persona-extras.css"),
+  join(root, "app", "globals.css"),
+];
+
+let contractFilesChecked = 0;
+for (const file of CONTRACT_FILES) {
+  // components.css est gitignoré : absent tant que welds:install n'a pas tourné
+  if (!existsSync(file)) continue;
+  contractFilesChecked++;
+  const stray = readFileSync(file, "utf8").match(/--wel-[a-z0-9-]+/g);
+  if (!stray) continue;
+  const uniques = [...new Set(stray)];
+  report.push(
+    `✘ ${relative(root, file)} : ${stray.length} référence(s) à --wel-* alors que` +
+      ` plus aucun thème ne le définit\n      ex. ${uniques.slice(0, 3).join(", ")}`,
+  );
+  mismatches++;
 }
 
 // ---------- verdict ----------
@@ -399,7 +389,7 @@ if (report.length > 80) console.log(`   … et ${report.length - 80} autres lign
 console.log(
   `\n${checked} valeurs comparées · ${mismatches} divergence(s) · ${uncovered} variable(s) CSS sans token` +
     `\n${amaOnly} primitive(s) propres à AMa, déclarées et hors comparaison` +
-    `\n${aliasChecked} alias --wel-* vérifiés dans le bloc de leur source`,
+    `\n${contractFilesChecked} fichier(s) CSS vérifiés sans aucune référence à --wel-*`,
 );
 
 if (mismatches || uncovered) {

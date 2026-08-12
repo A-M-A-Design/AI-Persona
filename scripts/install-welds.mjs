@@ -48,16 +48,33 @@ if (!theme) {
 writeFileSync(join(outDir, "template.theme.css"), zip.readAsText(theme));
 console.log(`✔ template.theme.css (${THEME})`);
 
+/**
+ * Les composants WDS consomment `var(--wel-…)` en dur. Plutôt que de faire
+ * émettre aux thèmes une couche d'alias `--wel-*: var(--ama-*)` — 358 Ko pour
+ * les trois personas —, on aligne le contrat à l'extraction : le fichier est de
+ * toute façon un artefact local, gitignoré et reconstruit par cette commande,
+ * exactement comme `build-themes.mjs` dérive les thèmes du template.
+ *
+ * C'est un renommage de préfixe, définitions comprises (`.wel-modal` déclare une
+ * variable à lui) : rien d'autre n'est touché dans le CSS d'Accor. Les noms de
+ * classes `.wel-*` restent ceux du paquet, puisque c'est lui qui les fournit.
+ */
+const toAmaContract = (css) => css.replace(/--wel-/g, "--ama-");
+
 let componentsCss = "";
+let renamed = 0;
 for (const name of COMPONENTS) {
   const entry = zip.getEntry(`private/install/css/${name}.css`);
   if (!entry) {
     console.warn(`⚠ composant absent du zip : ${name}`);
     continue;
   }
-  componentsCss += `\n/* === ${name} === */\n` + zip.readAsText(entry);
+  const raw = zip.readAsText(entry);
+  renamed += (raw.match(/--wel-/g) ?? []).length;
+  componentsCss += `\n/* === ${name} === */\n` + toAmaContract(raw);
   console.log(`✔ ${name}.css`);
 }
 writeFileSync(join(outDir, "components.css"), componentsCss);
 
 console.log(`\n→ Assets WDS extraits dans ${outDir} (gitignoré).`);
+console.log(`  ${renamed} références --wel-* alignées sur le contrat --ama-*.`);

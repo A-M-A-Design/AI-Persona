@@ -66,25 +66,24 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
-- **Le contrat CSS bascule sur `--ama-*`.** Les thèmes émettent la valeur sous
-  `--ama-*` et un alias `--wel-*: var(--ama-*)` à côté ; le CSS applicatif — 191
-  occurrences dans `app/`, `components/`, `persona-extras.css` et
-  `check-contrast.mjs` — ne consomme plus que `--ama-*`.
+- **Le contrat CSS bascule sur `--ama-*`, sans couche d'alias.** Tout ce que sert
+  le navigateur consomme `--ama-*` : le CSS applicatif (191 occurrences dans
+  `app/`, `components/`, `persona-extras.css`, `check-contrast.mjs`) comme les
+  composants WDS.
 
-  `--wel-*` ne subsiste que pour `styles/welds-src/components.css`, régénéré par
-  `npm run welds:install` et qui consomme `var(--wel-…)` **en dur** : on ne peut
-  pas le migrer, seulement le remplacer par des composants réécrits. La couche
-  disparaîtra ce jour-là — elle pèse pour moitié dans les thèmes (210 → 568 Ko
-  brut, 23 → 50 Ko gzip).
+  Les composants d'Accor consommaient `var(--wel-…)` **en dur**, ce qui semblait
+  imposer une couche d'alias `--wel-*: var(--ama-*)` dans les thèmes jusqu'à leur
+  réécriture — 358 Ko pour les trois personas. Fausse contrainte : un renommage
+  ne serait détruit à la réinstallation que s'il était fait **à la main**.
+  `install-welds.mjs` aligne donc le préfixe **à l'extraction**, sur les 1188
+  références du fichier, qui est de toute façon un artefact local et gitignoré.
+  Les thèmes restent à 210 Ko brut / 23 Ko gzip, et il n'y a qu'un seul contrat.
 
-  **L'alias est émis dans le bloc même où la source est déclarée**, jamais une
-  seule fois sur `:root` : une propriété personnalisée est substituée sur
-  l'élément qui la déclare, et `ArticleCard` porte `data-persona` +
-  `data-color-mode="dark"` sur un descendant. Un alias unique à la racine aurait
-  fait perdre son thème à toutes les cards sombres. `tokens:check` audite les
-  4875 alias et refuse cette situation ; les trois modes de défaillance — alias
-  manquant, alias figé sur une valeur, alias orphelin — sont vérifiés par
-  mutation.
+  `tokens:check` refuse tout `--wel-*` dans les six fichiers du contrat : s'il en
+  revenait un, plus aucun thème ne le définirait et les composants perdraient
+  leurs couleurs **en silence** — un test de contraste ne mesure que ce qui est
+  peint, pas ce qui a disparu. Les deux voies de retour en arrière sont vérifiées
+  par mutation.
 - **La transformation de teinte des personas passe dans
   `scripts/lib/persona-color.mjs`**, partagée par le générateur de thèmes et
   celui de tokens. Les deux chaînes doivent rendre la même couleur au bit près,

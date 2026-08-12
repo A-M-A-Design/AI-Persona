@@ -23,35 +23,44 @@ C'est un **artefact parallèle**. Les thèmes servis au navigateur —
 partir du `theme.css` du paquet WDS installé. `tokens/` ne les alimente pas
 encore ; `tokens:check` prouve seulement que les deux chaînes coïncident.
 
-En revanche le **contrat CSS a basculé** : `--ama-*` est désormais la source, et
-`--wel-*` une couche d'alias. Voir « La double émission » plus bas.
+En revanche le **contrat CSS a basculé** : `--ama-*` est la seule source, et
+`--wel-*` n'existe plus nulle part.
 
-## La double émission
+## Un seul contrat, `--ama-*`
 
-```css
-[data-persona="ours"][data-color-mode="dark"] {
-  --ama-sem-color-surface: #0a0702;
-  --wel-sem-color-surface: var(--ama-sem-color-surface);
-}
+Tout ce que sert le navigateur consomme `--ama-*` : le CSS applicatif (`app/`,
+`components/`, `persona-extras.css`) comme les composants WDS.
+
+Les composants d'Accor consommaient pourtant `var(--wel-…)` **en dur**. Le
+réflexe était de faire émettre aux thèmes une couche d'alias
+`--wel-x: var(--ama-x)` en attendant leur réécriture — 358 Ko pour les trois
+personas, et un piège de portée CSS à désamorcer. C'était une fausse contrainte :
+
+> « Un renommage dans `components.css` serait détruit à la prochaine
+> installation. »
+
+Vrai d'une **édition à la main**. Faux si c'est **l'installateur** qui le fait.
+`scripts/install-welds.mjs` aligne donc le préfixe à l'extraction, sur les 1188
+références du fichier :
+
+```js
+const toAmaContract = (css) => css.replace(/--wel-/g, "--ama-");
 ```
 
-Le CSS applicatif (`app/`, `components/`, `persona-extras.css`) consomme
-**`--ama-*` uniquement**. `--wel-*` n'existe plus que pour
-`styles/welds-src/components.css`, régénéré par `npm run welds:install` et qui
-consomme `var(--wel-…)` **en dur** : on ne peut pas le migrer, seulement le
-remplacer par des composants réécrits. Cette couche disparaîtra ce jour-là.
+Le fichier est de toute façon un artefact local, gitignoré et reconstruit par
+cette commande — exactement comme `build-themes.mjs` dérive les thèmes du
+`theme.css`. Aucun autre changement dans le CSS d'Accor ; les noms de classes
+`.wel-*` restent les siens, puisque c'est lui qui les fournit.
 
-**L'alias est émis dans le bloc même où la source est déclarée**, jamais une
-seule fois sur `:root`. Ce n'est pas une précaution théorique : une propriété
-personnalisée est substituée sur l'élément qui la déclare, donc un alias posé à
-la racine serait figé sur la valeur qui y règne. Or `ArticleCard` porte
-`data-persona` et `data-color-mode="dark"` sur un **descendant** — une card
-sombre dans une page claire. Un alias unique à la racine leur ferait toutes
-perdre leur thème. `tokens:check` refuse cette situation, et le test de mutation
-le vérifie.
+**Ce qu'il ne faut pas réintroduire.** Si un `--wel-*` revient — ancien
+`install-welds.mjs` rétabli, CSS Accor collé à la main —, plus aucun thème ne le
+définit : les composants perdent leurs couleurs **en silence**, et aucun test de
+contraste ne bronche, puisqu'il mesure ce qui est peint, pas ce qui a disparu.
+`tokens:check` refuse tout `--wel-*` dans les six fichiers du contrat, et les
+deux voies de retour en arrière sont vérifiées par mutation.
 
-Coût de la couche : **210 → 568 Ko brut, 23 → 50 Ko gzip** pour les trois
-thèmes. Temporaire, et c'est la moitié du poids qui part avec elle.
+Cela laisse les thèmes à **210 Ko brut, 23 Ko gzip** — le poids d'avant la
+migration.
 
 ## La chaîne
 
@@ -99,7 +108,7 @@ pour toutes les paires texte/fond à la fois.
 ```
 4875 valeurs comparées · 0 divergence(s) · 0 variable(s) CSS sans token
 6 primitive(s) propres à AMa, déclarées et hors comparaison
-4875 alias --wel-* vérifiés dans le bloc de leur source
+6 fichier(s) CSS vérifiés sans aucune référence à --wel-*
 ```
 
 Le préfixe comparé est réglable par `TOKENS_CSS_PREFIX` (`ama` par défaut) :
@@ -203,11 +212,16 @@ dans git », qui vaut toujours pour `styles/welds-src/` et les zips.
 
 ## Reste à faire
 
-- **Retirer la couche d'alias `--wel-*`** quand les composants WDS seront
-  réécrits : supprimer `addWelAliases` de `build-themes.mjs` et l'audit
-  correspondant de `check-tokens.mjs`. C'est la moitié du poids des thèmes.
 - Brancher le pipeline sur `tokens/` — les thèmes sortent encore du `theme.css`
   WDS, pas de l'export.
+- **Réécrire les composants WDS.** Le contrat de tokens est migré, mais le CSS
+  des composants reste celui d'Accor : 125 Ko pour les six réellement utilisés
+  (`button`, `chip`, `message`, `inputtext`, `select`, `skeleton`), plus 47 Ko
+  pour les six extraits sans être employés — `avatar`, `segmentedcontrol`,
+  `separator`, `link`, `badge`, `card`, à retirer de `COMPONENTS` dans
+  `install-welds.mjs` si personne ne les réclame. La réécriture est un chantier
+  à part : elle ne sert plus à débloquer le contrat, seulement à ne plus
+  dépendre de l'IP Accor.
 - Retirer les familles de primitives héritées (`ama.prim.color.leg.*`, 130
   tokens) une fois qu'aucun composant ne les référence. Elles sont conservées
   pour l'instant parce que le CSS généré les émet, et que le vérificateur exige
