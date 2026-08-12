@@ -163,14 +163,13 @@ test.describe("Pied de page", () => {
     );
   });
 
-  test("a la hauteur de la maquette", async ({ page }, testInfo) => {
-    // Il fait le pendant de la barre de navigation : 80 px, 64 en mobile. Les
-    // deux boutons, eux, gardent leurs 40 px à toutes les largeurs.
-    const mobile = testInfo.project.name === "mobile";
+  test("a la hauteur de la maquette", async ({ page }) => {
+    // 64 px à toutes les largeurs, contrairement à la barre de navigation qui
+    // descend de 80 à 64 en mobile. Les deux boutons gardent leurs 40 px.
     await visit(page);
 
     const barre = await page.locator(".site-footer__inner").boundingBox();
-    expect(Math.round(barre?.height ?? 0)).toBe(mobile ? 64 : 80);
+    expect(Math.round(barre?.height ?? 0)).toBe(64);
 
     for (const lien of await page.locator(".site-footer__link").all()) {
       const box = await lien.boundingBox();

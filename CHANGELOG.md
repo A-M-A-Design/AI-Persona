@@ -13,8 +13,9 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 - **Pied de page collant**, présent sur toutes les pages : « Discutons ! »
   suivi des boutons LinkedIn et e-mail. Il fait le pendant de la barre de
   navigation — mêmes retraits, même ombre, projetée vers le haut — et vaut
-  80 px de haut, 64 en mobile. `position: sticky` plutôt que `fixed` : la barre
-  garde sa place dans le flux, donc rien n'est masqué en bas de page.
+  64 px de haut à toutes les largeurs, là où la barre descend de 80 à 64 en
+  mobile. `position: sticky` plutôt que `fixed` : la barre garde sa place dans
+  le flux, donc rien n'est masqué en bas de page.
 
 ### Changed
 
