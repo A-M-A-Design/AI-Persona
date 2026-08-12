@@ -97,6 +97,27 @@ paraît inerte sans qu'aucune erreur ne soit visible côté serveur.
 Les réponses du chat sont simulées (`e2e/helpers.ts`) : les tests ne consomment
 pas le quota du provider et ne dépendent pas d'une réponse non déterministe.
 
+#### Une vague de timeouts à 30,0 s n'est pas une régression
+
+`reuseExistingServer: true` récupère le serveur de développement déjà lancé — y
+compris celui d'un run précédent, avec son cache périmé. Après un changement de
+CSS ou de configuration un peu large, cela se manifeste par une trentaine
+d'échecs groupés sur les pages articles et les tests de thème, **tous à
+exactement 30,0 s**, ce qui ressemble trait pour trait à une régression du code.
+
+Le signal, c'est la durée ronde et identique, pas le contenu des assertions.
+Avant de conclure quoi que ce soit :
+
+```bash
+# le PID du port 3000, puis Stop-Process — TaskStop ne tue que le wrapper npm
+rm -rf .next
+NODE_EXTRA_CA_CERTS="$HOME/.certs/corporate-ca.pem" npx playwright test
+```
+
+Vécu le 2026-08-12 pendant la bascule vers `--ama-*`, qui triplait le poids des
+thèmes : 252 passés au lieu de 287, alors que le CSS était valide et l'export
+vérifié. Après ménage, 287 passés en 1,2 min.
+
 ### Contraste des thèmes
 
 Les thèmes sont obtenus par rotation de teinte du template WDS. Chaque couleur
