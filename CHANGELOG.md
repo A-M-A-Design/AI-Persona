@@ -8,8 +8,26 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **La barre de navigation et le pied de page passent sur
+  `surface-alternative`** : ils se détachent de la page sans dépendre de leur
+  seule ombre portée. Le token existe dans la bibliothèque Figma et dans
+  l'export 2.2.2 mais pas dans le `theme.css` du paquet WDS installé ; il est
+  donc injecté dans le pipeline de thèmes, à retirer quand le paquet le
+  livrera. En clair il vaut la valeur brandbook ; en sombre, où l'export lui
+  donne exactement celle de `surface`, il est dérivé du fond sombre avec le
+  même écart de luminance qu'en clair — 1,071 à 1,078 sur les trois personas,
+  dans les deux modes.
+
 ### Fixed
 
+- **Le titre du pied de page écrasait les boutons sur la libellule.** Press
+  Start 2P est une pixel font à chasse fixe : chaque glyphe occupe un em plein,
+  et « Discutons ! » y faisait 286 px contre 136 pour le même texte en
+  Fraunces, ne laissant que 15 px de marge sur 343 en mobile.
+  `subtitle-lg` passe à 1 rem pour ce seul persona, comme `display-md` et
+  `display-sm` le font déjà pour la même raison.
 - **Audit d'accessibilité complet** (WCAG 2.2 AA), consigné dans
   `docs/accessibilite.md` — treize anomalies corrigées. Les trois bloquantes :
   la réponse du chat était ré-annoncée en entier à chaque token reçu, faute
