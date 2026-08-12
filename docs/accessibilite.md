@@ -161,6 +161,29 @@ premiers arrêts un nom accessible et un anneau de focus visible.
   survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
   panneau s'ouvre.
 
+### Les raccourcis clavier du carrousel
+
+Les flèches gauche et droite changent de slide, **uniquement quand le focus est
+dans le carrousel**. C'est la troisième échappatoire de **WCAG 2.1.4 Character
+Key Shortcuts** : le raccourci n'existe pas ailleurs dans la page, ce qui
+dispense d'un mécanisme de désactivation ou de remappage.
+
+Deux réserves, délibérées :
+
+- **Les flèches sont rendues au champ de saisie** dès que le focus s'y trouve —
+  il vit dans le carrousel, et sans cette réserve on ne pourrait plus y déplacer
+  le curseur. Même chose pour les `select` et tout champ éditable.
+- **Pas de raccourci sur l'espace** pour la lecture, pour la même raison : dans
+  un champ de texte, l'espace sert à écrire.
+
+Les deux boutons portent `aria-keyshortcuts`, qui déclare le raccourci sans
+l'activer — le comportement reste porté par le gestionnaire.
+
+Ce périmètre volontairement étroit évite le risque principal des raccourcis à
+touche unique : en mode exploration, les lecteurs d'écran réservent les lettres
+à leur propre navigation, et un raccourci global n'atteindrait pas la page ou
+entrerait en collision.
+
 ### Les liens dans les réponses
 
 Le nom d'un persona cité devient un **bouton** de bascule, le titre d'un article

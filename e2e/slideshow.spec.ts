@@ -136,6 +136,39 @@ test.describe("Slideshow", () => {
     expect(await persona(page)).toBe(fige);
   });
 
+  test("les flèches changent de slide quand le focus est dans le carrousel", async ({ page }) => {
+    // Troisième échappatoire de WCAG 2.1.4 : le raccourci n'existe que là où le
+    // focus se trouve, ce qui dispense d'un réglage de désactivation.
+    await visit(page);
+    await page.locator(".slideshow__play").focus();
+
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(500);
+    expect(await persona(page)).toBe("corneille");
+
+    await page.keyboard.press("ArrowLeft");
+    await page.waitForTimeout(500);
+    expect(await persona(page)).toBe("ours");
+
+    await expect(
+      page.getByRole("button", { name: /Persona suivant|Next persona/ }),
+    ).toHaveAttribute("aria-keyshortcuts", "ArrowRight");
+  });
+
+  test("les flèches restent au champ de saisie", async ({ page }) => {
+    // Le champ vit dans le carrousel : sans cette réserve, on ne pourrait plus
+    // y déplacer le curseur.
+    await visit(page);
+    await page.locator(".launcher__row input").fill("bonjour");
+    await page.locator(".launcher__row input").focus();
+
+    const avant = await persona(page);
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(400);
+    expect(await persona(page)).toBe(avant);
+  });
+
   test("le panneau de conversation fige le persona", async ({ page }) => {
     // Sinon il changerait tout seul sous une conversation en cours, et la voix
     // du bot avec.

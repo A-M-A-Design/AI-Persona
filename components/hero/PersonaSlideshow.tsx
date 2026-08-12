@@ -174,6 +174,22 @@ export default function PersonaSlideshow({
       // voir le persona changer sous lui.
       onFocus={() => setSurvol(true)}
       onBlur={() => setSurvol(false)}
+      /*
+        Raccourcis actifs uniquement quand le focus est dans le carrousel :
+        c'est la troisième échappatoire de WCAG 2.1.4, celle qui dispense d'un
+        réglage de désactivation — la touche n'existe pas ailleurs dans la page.
+
+        Les flèches seulement. Le champ de saisie vit dans ce même carrousel,
+        et l'espace y servirait à écrire ; les flèches elles-mêmes sont donc
+        rendues au champ dès que le focus s'y trouve.
+      */
+      onKeyDown={(e) => {
+        if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+        const cible = e.target as HTMLElement;
+        if (cible.closest("input, textarea, select, [contenteditable]")) return;
+        e.preventDefault();
+        allerA(index + (e.key === "ArrowRight" ? 1 : -1));
+      }}
     >
       {/* Focalisable : les slides inactives sont `inert`, la piste n'a donc
           aucun contenu atteignable au clavier. Sans ce point d'entrée, elle ne
@@ -244,6 +260,7 @@ export default function PersonaSlideshow({
             type="button"
             className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm"
             aria-label={t(lang, "previousPersona")}
+            aria-keyshortcuts="ArrowLeft"
             onClick={() => allerA(index - 1)}
           >
             <ArrowLeftIcon />
@@ -252,6 +269,7 @@ export default function PersonaSlideshow({
             type="button"
             className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm"
             aria-label={t(lang, "nextPersona")}
+            aria-keyshortcuts="ArrowRight"
             onClick={() => allerA(index + 1)}
           >
             <ArrowRightIcon />
