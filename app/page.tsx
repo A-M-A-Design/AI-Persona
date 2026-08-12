@@ -8,6 +8,9 @@ export default function Home() {
   const personas: PersonaPublic[] = Object.values(getPersonas()).map((p) => ({
     id: p.id,
     emoji: p.emoji,
+    name: p.name,
+    tagline: p.tagline,
+    chatHeading: p.chatHeading,
     suggestedQuestions: p.suggestedQuestions,
   }));
 
@@ -18,11 +21,18 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      {/* `tabIndex={-1}` : sans lui, certains navigateurs déplacent la vue
+      {/* Le slideshow est pleine largeur, comme la barre et le pied de page :
+          il sort donc du conteneur à marges, qui ne cadre plus que les
+          articles. `main` l'englobe quand même — c'est le contenu principal,
+          et le lien d'évitement doit y mener, pas le sauter.
+
+          `tabIndex={-1}` : sans lui, certains navigateurs déplacent la vue
           sans déplacer le focus, et la tabulation suivante repart du début. */}
-      <main className="page" id="contenu" tabIndex={-1}>
+      <main id="contenu" tabIndex={-1}>
         <Chat personas={personas} />
-        <ArticlesSection />
+        <div className="page">
+          <ArticlesSection />
+        </div>
       </main>
       <SiteFooter />
     </>

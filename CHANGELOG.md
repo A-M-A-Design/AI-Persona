@@ -8,6 +8,25 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Chaque persona porte un domaine** : l'ours le design system, la corneille
+  le produit, la libellule l'IA et les operations. Le domaine vit dans
+  `personas/*.json` — sous-titre du héro, intitulé du lanceur et questions
+  suggérées en découlent. Le bot répond à tout, mais cadre ses réponses selon
+  son domaine, et **invite à basculer vers le bon persona** quand la question
+  relève d'un autre, en disant comment. Une seule invitation par réponse : sans
+  ce garde-fou, la redirection devient un tic de fin de message.
+- **Le héro devient un slideshow**, une slide par persona, d'après la maquette
+  v2. Reprend le comportement du composant slideshow du WDS : lecture
+  automatique au moment où le carrousel entre dans la fenêtre, 5 s entre deux
+  slides, boucle infinie. Changer de slide change le thème et le sélecteur de
+  la barre ; changer au sélecteur fait défiler la piste **et met la lecture en
+  pause** — agir dans le carrousel ne l'interrompt pas, le quitter pour la
+  barre si. La lecture s'arrête aussi quand l'onglet passe en arrière-plan,
+  quand le panneau de conversation s'ouvre, et `prefers-reduced-motion` la
+  neutralise entièrement.
+
 ### Changed
 
 - **La barre de navigation et le pied de page passent sur

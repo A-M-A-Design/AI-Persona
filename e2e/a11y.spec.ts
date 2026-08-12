@@ -168,7 +168,9 @@ test.describe("Annonce de la réponse", () => {
 
     await expect(page.locator(".chat-modal__body")).not.toHaveAttribute("aria-live", /./);
 
-    const statut = page.locator("[role=status]");
+    // Le slideshow porte lui aussi une région de statut, pour annoncer le
+    // persona actif : on vise celle du panneau.
+    const statut = page.locator(".chat-modal [role=status]");
     await expect(statut).toHaveCount(1);
     await expect(statut).toContainText("Réponse simulée");
   });

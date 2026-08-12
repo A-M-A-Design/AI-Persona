@@ -309,48 +309,96 @@ img {
   text-decoration: none;
 }
 
-/* --- Héro --------------------------------------------------------------- */
+/* --- Slideshow du héro --------------------------------------------------- */
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 44px;
-  padding-top: 56px;
+/* Une slide par persona, pleine largeur. Le défilement est celui du
+   navigateur — `scroll-snap` sur la piste, comme le carousel d'articles : le
+   geste tactile, la molette et le clavier fonctionnent d'origine. */
+.slideshow {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  overflow: hidden;
+  background: var(--wel-sem-color-surface-container-mid);
 }
 
 @media (max-width: 767px) {
-  .hero {
-    gap: 28px;
-    padding-top: 24px;
+  .slideshow {
+    height: 600px;
   }
 }
 
-.hero__heading {
+.slideshow__track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.slideshow__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* La piste est un point d'entrée clavier : son anneau doit se voir, posé sur
+   une image et non sur la surface de la page. */
+.slideshow__track:focus-visible {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: -4px;
+}
+
+.slideshow__slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+}
+
+.slideshow__image {
+  object-fit: cover;
+}
+
+/* Voile fort repris de la maquette (`overlay-strong`) : le titre et le
+   lanceur se posent dessus, il leur faut un fond tenu. */
+.slideshow__slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--media-veil-strong);
+  pointer-events: none;
+}
+
+.slideshow__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 28px;
+  padding: 150px 28px 56px;
   text-align: center;
-  max-width: 866px;
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {
-  .hero__heading {
-    gap: 16px;
+  .slideshow__content {
+    padding: 150px 12px 24px;
   }
 }
 
-.hero__title {
+.slideshow__title {
   margin: 0;
+  max-width: 866px;
   font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
   font-size: var(--wel-sem-font-sizes-display-2xl);
   line-height: var(--wel-sem-line-heights-display-2xl);
   color: var(--wel-sem-color-on-surface-hi);
 }
 
-.hero__subtitle {
+.slideshow__tagline {
   margin: 0;
+  max-width: 866px;
   font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
   font-style: italic;
   font-size: var(--wel-sem-font-sizes-display-sm);
@@ -358,67 +406,55 @@ img {
   color: var(--wel-sem-color-on-surface-mid);
 }
 
-/* La scène : barre de chat posée en débord sur l'image (gap -55 dans la
-   maquette, porté ici par --hero-overlap). */
-.hero__stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.hero__bar {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding-inline: 64px;
-}
-
-@media (max-width: 1279px) {
-  .hero__bar {
-    padding-inline: 32px;
-  }
-}
-
-@media (max-width: 767px) {
-  .hero__bar {
-    padding-inline: 0;
-  }
-}
-
-.hero__media {
-  position: relative;
-  width: 100%;
-  margin-top: calc(var(--hero-overlap) * -1);
-  aspect-ratio: 1312 / 596;
-  overflow: hidden;
-  /* Fond tenu avant le chargement de l'image — et tant que les visuels
-     Figma ne sont pas exportés. */
-  background: var(--wel-sem-color-surface-container-mid);
-}
-
-/* Mobile : pas de débord — la maquette met le gap du bloc héro à 0 — et
-   l'image passe en 3/2 (343 × 229). */
-@media (max-width: 767px) {
-  .hero__media {
-    margin-top: 0;
-    aspect-ratio: 343 / 229;
-  }
-}
-
-.hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.hero__media::after {
-  content: "";
+/* Contrôles en haut de l'image : bascule de lecture à gauche, pas à pas à
+   droite. Ils survolent la piste, d'où le z-index. */
+.slideshow__controls {
   position: absolute;
-  inset: 0;
-  background: var(--media-veil);
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px var(--wel-sem-sizing-grid-margins, 64px);
+}
+
+@media (max-width: 767px) {
+  .slideshow__controls {
+    padding: 12px var(--wel-sem-sizing-grid-margins, 16px);
+  }
+}
+
+.slideshow__steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slideshow__controls .wel-button-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* Le lanceur ne défile pas avec les slides : il est unique, et son intitulé
+   comme ses questions suivent le persona affiché. */
+.slideshow__launcher {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 0 var(--wel-sem-sizing-grid-margins, 64px)
+    var(--wel-sem-sizing-grid-margins, 64px);
+}
+
+@media (max-width: 767px) {
+  .slideshow__launcher {
+    padding: 0 var(--wel-sem-sizing-grid-margins, 16px)
+      var(--wel-sem-sizing-grid-margins, 16px);
+  }
 }
 
 /* --- Lanceur de chat / composer ---------------------------------------- */
@@ -434,6 +470,22 @@ img {
   background: var(--wel-sem-color-surface);
   box-shadow: 0 var(--wel-sem-number-shadow-down-y, 2px)
     var(--wel-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
+}
+
+/* Variante v2 : le lanceur est posé sur l'image du slideshow. Il porte donc
+   le mode sombre localement — les deux attributs sur le même élément, les
+   thèmes étant scopés `[data-persona][data-color-mode]` — et sa propre
+   surface fournit l'aplat sur lequel le texte reste lisible. */
+.launcher--hero {
+  gap: 20px;
+  padding: 28px;
+}
+
+.launcher__heading {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-title-sm);
+  line-height: var(--wel-sem-line-heights-title-sm);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
 .launcher__row {
@@ -470,6 +522,17 @@ img {
     border-radius: 0;
     background: none;
     box-shadow: none;
+  }
+
+  /* La v2 garde le panneau à toutes les largeurs — la maquette lui donne le
+     même aplat en mobile qu'en desktop. Seules les règles internes du champ
+     ci-dessous restent partagées : flèche dans la pilule, chips défilantes. */
+  .launcher--hero {
+    gap: 20px;
+    padding: 28px;
+    margin-inline: 0;
+    border-radius: var(--wel-sem-border-radius-container-low);
+    background: var(--wel-sem-color-surface);
   }
 
   /* L'action n'est pas posée à côté du champ mais dedans, à droite : une

@@ -300,6 +300,6 @@ test.describe("Retour à l'accueil", () => {
     await visitArticle(page);
     await page.locator(".site-nav .site-nav__home").click();
     await expect(page).toHaveURL(/\/$/, { timeout: NAVIGATION });
-    await expect(page.locator(".hero__title")).toBeVisible();
+    await expect(page.locator(".slideshow__slide:not([inert]) .slideshow__title")).toBeVisible();
   });
 });
