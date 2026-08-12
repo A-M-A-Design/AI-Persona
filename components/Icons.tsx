@@ -117,6 +117,20 @@ export function DaylightIcon({ className }: IconProps) {
   );
 }
 
+/**
+ * `dark-mode`, tracé repris tel quel. Son repère d'origine est en 24, où
+ * l'encre n'occupe qu'une moitié — rendue à 16 px, la lune paraissait deux
+ * fois plus petite que le soleil de l'autre état. Le repère est donc resserré
+ * autour du tracé, sans y toucher : les deux états gardent la même masse.
+ */
+export function NightIcon({ className }: IconProps) {
+  return (
+    <Icon className={className} viewBox="6 4 14 14">
+      <path d="M11.0569 5.52344C11.201 5.52344 11.3131 5.58748 11.3932 5.71558C11.4732 5.82766 11.4892 5.94775 11.4412 6.07584C11.217 6.62024 11.105 7.21267 11.105 7.85313C11.105 8.71776 11.3371 9.54236 11.8015 10.3269C12.2818 11.0955 12.9063 11.7199 13.6748 12.2003C14.4594 12.6646 15.284 12.8968 16.1486 12.8968C16.7731 12.8968 17.3655 12.7847 17.926 12.5606C18.0861 12.4965 18.2222 12.5285 18.3343 12.6566C18.4624 12.7687 18.5024 12.9048 18.4543 13.0649C18.0541 14.1217 17.3735 14.9543 16.4128 15.5627C15.4521 16.1711 14.3713 16.4754 13.1705 16.4754C12.1457 16.4594 11.201 16.2032 10.3364 15.7068C9.47178 15.1945 8.78328 14.514 8.27091 13.6654C7.77455 12.8007 7.52637 11.856 7.52637 10.8313C7.52637 9.63043 7.83059 8.54964 8.43903 7.58894C9.04748 6.62824 9.88008 5.95575 10.9368 5.57147C10.9689 5.55546 11.0089 5.53945 11.0569 5.52344Z" />
+    </Icon>
+  );
+}
+
 /** Croix de fermeture, reprise telle quelle — son tracé est en repère 24. */
 export function CloseIcon({ className }: IconProps) {
   return (
