@@ -23,7 +23,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   (`lib/article-body.ts`) est préservé : les **idées clés vivent dans l'article
   lui-même**, en tête, sur une ligne `Idées clés :` que le rendu de page écarte
   — comme il écarte déjà le H1 et la ligne de crédit. Le plan, lui, est dérivé
-  des titres de section, donc toujours en phase avec le texte.
+  des titres de section, donc toujours en phase avec le texte. Un test e2e
+  vérifie que cette ligne ne s'affiche dans aucune des deux langues : c'est la
+  contrepartie du compromis.
+
+  La consigne d'appel de l'outil a dû être **explicite jusqu'à l'énumération**
+  (« une citation, un exemple, une image, une métaphore, une formulation… »,
+  et « en cas de doute, appelle l'outil »). Formulée plus sobrement, le modèle
+  répondait de mémoire depuis la synthèse : jamais faux, mais approximatif là
+  où le texte disait mieux.
 
   Déclencheur : le golden test du 2026-08-12 a échoué sept fois sur dix en
   `429`. La base injectée atteignait ~25 000 tokens, soit **exactement** la
