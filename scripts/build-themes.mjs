@@ -1,167 +1,94 @@
 /**
- * Génère les 3 thèmes persona à partir du theme.css WDS de référence
- * (styles/welds-src/template.theme.css, gitignoré) et des mappings
- * personas/mappings/<id>.map.json.
+ * Génère les 3 thèmes persona à partir de l'export de tokens `tokens/`.
  *
- * Le template arrive déjà sur le contrat `--ama-*` : `install-welds.mjs` aligne
- * le préfixe à l'extraction, pour le thème comme pour les composants. Ce script
- * n'a donc jamais à connaître l'ancien nom.
+ * C'est le pipeline du site : `styles/generated/<persona>.css` sort d'ici, et
+ * `tokens/` en est la seule source. La teinte de l'avatar vit dans ses
+ * primitives ; ce script ne fait que résoudre la chaîne
+ * sémantique → alias → primitive et encoder chaque valeur en CSS.
  *
- * Principe : le template est 100 % aplati (aucun var() interne), on transforme
- * donc chaque littéral de couleur via des règles de teinte HSL, on remplace les
- * familles de polices, on applique des overrides de variables, puis on rescope
- * :root → [data-persona="<id>"].
+ * Les blocs reproduisent ceux du `theme.css` du WDS : un bloc de base qui porte
+ * les primitives, le hors-breakpoint et le mode clair par défaut, quatre media
+ * queries, puis les deux modes de couleur.
  *
- * Chaque couleur transformée est ramenée à la luminance relative WCAG de la
- * couleur d'origine : les ratios de contraste du système sont donc préservés
- * par construction, pour toutes les paires texte/fond à la fois. Vérifiable
- * avec `npm run a11y:contrast`.
- *
- * La transformation elle-même vit dans scripts/lib/persona-color.mjs, partagée
- * avec le générateur de l'export de tokens AMa.
+ * La bascule vers cette source ne devait changer aucune valeur, et
+ * `npm run tokens:check` le vérifie en régénérant les mêmes thèmes par l'ancien
+ * chemin — teinte du CSS aplati du WDS, sans jamais résoudre un token — puis en
+ * comparant. Les deux routes sont indépendantes ; c'est ce qui donne son sens à
+ * la comparaison.
  *
  * Usage : npm run themes:build
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  SURFACE_ALTERNATIVE_LIGHT,
-  alternativeOf,
-  hex2,
-  transformRgb,
-} from "./lib/persona-color.mjs";
+import { NOT_EMITTED, SCOPES, loadSet, resolveValue, toCss, varName } from "./lib/token-css.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const templatePath = join(root, "styles", "welds-src", "template.theme.css");
+const tokensDir = join(root, "tokens");
 const outDir = join(root, "styles", "generated");
 const PERSONAS = ["ours", "corneille", "libellule"];
 
-if (!existsSync(templatePath)) {
-  console.error("✘ template absent — lancer d'abord : npm run welds:install");
+if (!existsSync(tokensDir)) {
+  console.error("✘ tokens/ absent — lancer d'abord : npm run tokens:build");
   process.exit(1);
 }
 
-// ---------- couleurs ----------
+const numbers = loadSet(tokensDir, "primitives/numbers");
+const sets = new Map();
+const set = (rel) => {
+  if (!sets.has(rel)) sets.set(rel, loadSet(tokensDir, rel));
+  return sets.get(rel);
+};
 
-function transformColors(css, rules) {
-  // hex 6 ou 8 digits (l'alpha est préservé tel quel)
-  css = css.replace(/#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?\b/g, (_, rgb, alpha) => {
-    const [r, g, b] = [0, 2, 4].map((i) => parseInt(rgb.slice(i, i + 2), 16));
-    const [nr, ng, nb] = transformRgb([r, g, b], rules);
-    return `#${hex2(nr)}${hex2(ng)}${hex2(nb)}${alpha ?? ""}`;
-  });
-  // hex 3/4 digits
-  css = css.replace(/#([0-9a-fA-F]{3})([0-9a-fA-F])?\b/g, (m, rgb, alpha) => {
-    const [r, g, b] = rgb.split("").map((c) => parseInt(c + c, 16));
-    const [nr, ng, nb] = transformRgb([r, g, b], rules);
-    return `#${hex2(nr)}${hex2(ng)}${hex2(nb)}${alpha ? alpha + alpha : ""}`;
-  });
-  // rgba()/rgb()
-  css = css.replace(
-    /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*[\d.]+\s*)?\)/g,
-    (_, r, g, b, a) => {
-      const [nr, ng, nb] = transformRgb([+r, +g, +b], rules);
-      return a ? `rgba(${nr},${ng},${nb}${a})` : `rgb(${nr},${ng},${nb})`;
-    },
-  );
-  return css;
-}
-
-// ---------- fontes et overrides ----------
-
-function transformFonts(css, fonts) {
-  if (!fonts) return css;
-  return css.replace(/(--ama-[a-z0-9-]*font-famil[a-z-]*:\s*)([^;]+)(;)/g, (m, pre, value, post) => {
-    let v = value;
-    for (const [from, to] of Object.entries(fonts)) {
-      v = v.replace(new RegExp(`(['"]?)${from}\\1`, "g"), to);
-    }
-    return pre + v + post;
-  });
-}
-
-function applyVarOverrides(css, vars) {
-  if (!vars) return css;
-  for (const [pattern, value] of Object.entries(vars)) {
-    const rx = new RegExp(
-      `(${pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[a-z0-9-]*")}:\\s*)[^;]+;`,
-      "g",
-    );
-    const before = css;
-    css = css.replace(rx, `$1${value};`);
-    if (css === before) console.warn(`  ⚠ override sans effet : ${pattern}`);
+/** Émet les déclarations d'une portée, sans indentation : le bloc s'en charge. */
+function declarations(tokens, scope) {
+  const lignes = [];
+  for (const [path, token] of tokens) {
+    if (NOT_EMITTED.some((re) => re.test(path))) continue;
+    lignes.push(`--${varName(path)}: ${toCss(token.$type, resolveValue(token.$value, scope), path)};`);
   }
-  return css;
-}
-
-// ---------- tokens absents du template ----------
-
-/**
- * Ajoute `--ama-sem-color-surface-alternative`, absent du theme.css livré par le
- * paquet WDS installé ici. Voir scripts/lib/persona-color.mjs pour la dérivation.
- *
- * L'injection a lieu avant la teinte persona, qui préserve la luminance
- * relative : le pas de 1,076 vaut donc pour les trois personas.
- */
-function addSurfaceAlternative(css) {
-  return css.replace(
-    /(--ama-sem-color-surface:\s*(#[0-9a-fA-F]{3,8})\s*;)/g,
-    (line, _all, value) => {
-      // Le blanc est neutre : la recherche à teinte constante rendrait un gris,
-      // là où le système pose une nuance teintée. On garde donc sa valeur.
-      const alt =
-        value.toLowerCase() === "#ffffff" ? SURFACE_ALTERNATIVE_LIGHT : alternativeOf(value);
-      return `${line}\n--ama-sem-color-surface-alternative: ${alt};`;
-    },
-  );
-}
-
-// ---------- rescope ----------
-
-function rescope(css, id) {
-  return css
-    .replace(/:root\b/g, `[data-persona="${id}"]`)
-    .replace(/\[data-color-mode="(dark|light)"\]/g, `[data-persona="${id}"][data-color-mode="$1"]`);
-}
-
-// ---------- build ----------
-
-const template = readFileSync(templatePath, "utf8");
-
-/**
- * Une extraction antérieure à la bascule `--ama-*` porte encore l'ancien
- * préfixe. Les thèmes générés seraient corrects, mais `components.css` viendrait
- * du même lot périmé et consommerait des `var(--wel-…)` que plus personne ne
- * définit : boutons, chips et champs perdraient leurs couleurs **en silence**,
- * puisqu'une variable absente ne casse rien de visible côté CSS.
- *
- * `styles/welds-src/` étant gitignoré, il survit aux changements de branche —
- * c'est le cas normal après un `git pull`, pas un cas tordu.
- */
-if (template.includes("--wel-")) {
-  console.error("✘ extraction WDS périmée : le template porte encore --wel-*.");
-  console.error("  Le renommage a lieu à l'extraction — relancer : npm run welds:install");
-  process.exit(1);
+  return lignes;
 }
 
 mkdirSync(outDir, { recursive: true });
 
-for (const id of PERSONAS) {
-  const mapping = JSON.parse(
-    readFileSync(join(root, "personas", "mappings", `${id}.map.json`), "utf8"),
-  );
-  console.log(`— ${id}`);
-  let css = addSurfaceAlternative(template);
-  css = transformColors(css, mapping.colors ?? {});
-  css = transformFonts(css, mapping.fonts);
-  css = applyVarOverrides(css, mapping.vars);
-  css = rescope(css, id);
-  const header =
+for (const persona of PERSONAS) {
+  const primitives = new Map([...numbers, ...loadSet(tokensDir, `primitives/${persona}`)]);
+  const brand = loadSet(tokensDir, `brands/${persona}`);
+  const selecteur = `[data-persona="${persona}"]`;
+
+  const blocs = [];
+  for (const portee of SCOPES) {
+    const publics = new Map();
+    for (const rel of portee.sets) for (const [p, t] of set(rel)) publics.set(p, t);
+    const scope = new Map([...primitives, ...brand, ...publics]);
+
+    const corps = [];
+    // `color-scheme` n'est pas un token : il dit au navigateur comment peindre
+    // ses propres surfaces — barres de défilement, champs natifs. Le WDS ne le
+    // pose que sur le bloc de base.
+    if (portee.key === "base") corps.push("color-scheme: light;");
+    if (portee.primitives) corps.push(...declarations(primitives, scope));
+    corps.push(...declarations(publics, scope));
+
+    // Déclarations à la colonne zéro, y compris sous une media query : c'est le
+    // style du theme.css livré, et 500 lignes d'indentation pèsent 2 Ko pour
+    // rien dans un fichier que personne ne lit à la main.
+    const cible = portee.mode ? `${selecteur}[data-color-mode="${portee.mode}"]` : selecteur;
+    blocs.push(
+      portee.media
+        ? `@media ${portee.media} {\n  ${cible} {\n${corps.join("\n")}\n  }\n}`
+        : `${cible} {\n${corps.join("\n")}\n}`,
+    );
+  }
+
+  const entete =
     `/* GÉNÉRÉ par scripts/build-themes.mjs — ne pas éditer à la main.\n` +
-    `   Persona "${id}" : valeurs personnelles dérivées du contrat --ama-*. */\n`;
-  writeFileSync(join(outDir, `${id}.css`), header + css);
-  console.log(`  ✔ styles/generated/${id}.css (${Math.round(css.length / 1024)} KB)`);
+    `   Persona "${persona}" : résolu depuis tokens/, contrat --ama-*. */\n`;
+  const css = `${entete}${blocs.join("\n")}\n`;
+  writeFileSync(join(outDir, `${persona}.css`), css);
+  console.log(`— ${persona}`);
+  console.log(`  ✔ styles/generated/${persona}.css (${Math.round(css.length / 1024)} KB)`);
 }
 
-console.log("\n→ Thèmes générés. Ils sont committables (valeurs personnelles).");
+console.log("\n→ Thèmes générés depuis tokens/. Vérifier avec : npm run tokens:check");

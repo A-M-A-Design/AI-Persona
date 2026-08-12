@@ -1,182 +1,49 @@
 /**
- * Vérificateur de non-régression de l'export de tokens AMa.
+ * Vérificateur des thèmes servis : compare `styles/generated/*.css` à une
+ * référence dérivée par un tout autre chemin.
  *
- * Il résout la chaîne complète — ama.sem/ama.comp → ama.web.bSem/bComp →
- * ama.prim — pour les 3 avatars × 2 modes × 5 breakpoints, puis compare chaque
- * valeur obtenue à la variable CSS correspondante de styles/generated/*.css,
- * qui est la référence en production. Toute divergence fait échouer la commande.
+ * Le pipeline résout la chaîne de tokens. La référence, elle, part du
+ * `theme.css` aplati du WDS et lui applique la teinte de l'avatar littéral par
+ * littéral, **sans jamais résoudre un alias ni lire `tokens/`**. Deux routes
+ * indépendantes vers la même couleur : c'est ce qui donne son sens à la
+ * comparaison, et c'est pourquoi ce script n'importe rien de
+ * `scripts/lib/token-css.mjs`. Un oracle qui partagerait le code du générateur
+ * validerait ses propres erreurs.
  *
- * C'est l'oracle du chantier : `tokens/` n'a de valeur que s'il redonne
- * exactement ce que le site affiche aujourd'hui. Le script est délibérément
- * indépendant du générateur (il ne partage aucun code avec lui, pas même la
- * transformation de teinte) — sinon il validerait ses propres erreurs.
+ * Vérifie aussi qu'aucun `--wel-*` ne subsiste dans le contrat.
+ *
+ * La référence disparaîtra avec `styles/welds-src/`, à la réécriture des
+ * composants WDS — ce jour-là, `tokens/` sera seul et il faudra un autre oracle.
  *
  * Usage : npm run tokens:check
  */
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const tokensDir = join(root, "tokens");
 const generatedDir = join(root, "styles", "generated");
 const PERSONAS = ["ours", "corneille", "libellule"];
 
-if (!existsSync(tokensDir)) {
-  console.error("✘ tokens/ absent — lancer d'abord : npm run tokens:build");
-  process.exit(1);
-}
-
-// ---------- chargement des sets ----------
-
-function walk(node, path, visit) {
-  if (node && typeof node === "object" && node.$value !== undefined) return visit(path, node);
-  if (node && typeof node === "object")
-    for (const key of Object.keys(node)) walk(node[key], path ? `${path}.${key}` : key, visit);
-}
-
-function loadSet(rel) {
-  const file = join(tokensDir, `${rel}.json`);
-  if (!existsSync(file)) {
-    console.error(`✘ set absent : tokens/${rel}.json`);
-    process.exit(1);
-  }
-  const tokens = new Map();
-  walk(JSON.parse(readFileSync(file, "utf8")), "", (p, t) => tokens.set(p, t));
-  return tokens;
-}
-
-// ---------- résolution des alias ----------
+// ---------- lecture d'un thème ----------
 
 /**
- * Remplace les références {a.b.c} par la valeur de la cible, récursivement.
- * Un alias pur ({x} seul) rend la valeur brute — c'est ce qui permet à un token
- * numérique de rester un nombre. Une valeur composite (un linear-gradient, par
- * exemple) rend une chaîne interpolée.
+ * Découpe un thème en blocs de portée. Les blocs sont plats et sans imbrication
+ * autre que les media queries, ce qui autorise un découpage par accolades
+ * équilibrées plutôt qu'un vrai parseur.
  */
-function resolveValue(value, scope, trail = []) {
-  if (typeof value !== "string") return value;
-
-  const pure = /^\{([^}]+)\}$/.exec(value);
-  if (pure) {
-    const ref = pure[1];
-    if (trail.includes(ref)) throw new Error(`cycle d'alias : ${[...trail, ref].join(" → ")}`);
-    const target = scope.get(ref);
-    if (!target) throw new Error(`référence introuvable : {${ref}}`);
-    return resolveValue(target.$value, scope, [...trail, ref]);
-  }
-
-  return value.replace(/\{([^}]+)\}/g, (_, ref) => {
-    if (trail.includes(ref)) throw new Error(`cycle d'alias : ${[...trail, ref].join(" → ")}`);
-    const target = scope.get(ref);
-    if (!target) throw new Error(`référence introuvable : {${ref}}`);
-    return String(resolveValue(target.$value, scope, [...trail, ref]));
-  });
-}
-
-// ---------- token → variable CSS ----------
-
-/** ama.sem.color.on-surface-hi → ama-sem-color-on-surface-hi (au préfixe près). */
-function varName(path, prefix) {
-  return path
-    .replace(/^ama\./, `${prefix}-`)
-    .replace(/\./g, "-")
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .toLowerCase();
-}
-
-// ---------- valeur token → valeur CSS ----------
-
-const FONT_WEIGHTS = { Regular: "400", Italic: "400", Medium: "500", Bold: "700" };
-
-/** 16 → « 1rem », 0.5 → « 0.0313rem », 0 → « 0 » (le CSS n'unite pas le zéro). */
-function toRem(value) {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return String(value);
-  if (n === 0) return "0";
-  return `${Number((n / 16).toFixed(4))}rem`;
-}
-
-const REM_TYPES = new Set([
-  "sizing",
-  "spacing",
-  "fontSizes",
-  "lineHeights",
-  "letterSpacing",
-  "borderWidth",
-  "borderRadius",
-]);
-
-/**
- * Encode la valeur résolue d'un token comme le fait l'émetteur CSS du WDS.
- * Les règles ont été relevées sur le theme.css livré, type par type.
- */
-function toCss(type, value, path) {
-  if (typeof value === "string" && value.startsWith("var(")) return value;
-  if (REM_TYPES.has(type)) return toRem(value);
-  if (type === "fontWeights") return FONT_WEIGHTS[value] ?? String(value);
-  if (type === "number") {
-    // `number` est hétérogène : les opacités sont des pourcentages, le reste
-    // (flous et décalages d'ombre) est une longueur.
-    return /opacity/i.test(path) ? String(Number(value) / 100) : toRem(value);
-  }
-  return String(value);
-}
-
-/**
- * Ramène deux écritures d'une même valeur à une forme comparable : couleurs sous
- * toutes leurs notations, et longueurs quelle que soit l'unité.
- *
- * Les longueurs sont ramenées au pixel puis arrondies au dix-millième de rem —
- * l'émetteur CSS du WDS n'arrondit pas de la même façon selon la couche (une
- * primitive garde 0.03125rem là où un token sémantique est écrit 0.0313rem), et
- * les overrides des avatars sont écrits en px. Ces écarts d'écriture ne sont pas
- * des divergences ; un vrai changement de valeur reste détecté.
- */
-function normalize(value) {
-  let v = String(value).trim().toLowerCase().replace(/\s+/g, " ");
-
-  const length = /^(-?[\d.]+)(rem|px)$/.exec(v);
-  if (length) {
-    const px = length[2] === "rem" ? Number(length[1]) * 16 : Number(length[1]);
-    return `${Number((px / 16).toFixed(4))}rem`;
-  }
-
-  const rgba = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(v);
-  if (rgba) {
-    const [r, g, b] = [rgba[1], rgba[2], rgba[3]].map(Number);
-    const a = rgba[4] === undefined ? 1 : Number(rgba[4]);
-    const hex = (n) => n.toString(16).padStart(2, "0");
-    const alpha = a >= 1 ? "" : hex(Math.round(a * 255));
-    return `#${hex(r)}${hex(g)}${hex(b)}${alpha}`;
-  }
-
-  const hex8 = /^(#[0-9a-f]{6})ff$/.exec(v);
-  if (hex8) return hex8[1];
-
-  const hex3 = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
-  if (hex3) return `#${hex3[1]}${hex3[1]}${hex3[2]}${hex3[2]}${hex3[3]}${hex3[3]}`;
-
-  return v.replace(/,\s*/g, ", ");
-}
-
-// ---------- lecture du CSS généré ----------
-
-/**
- * Découpe styles/generated/<persona>.css en blocs de portée. Les blocs sont
- * plats et sans imbrication autre que les media queries, ce qui autorise un
- * découpage par accolades équilibrées plutôt qu'un vrai parseur.
- */
-function parseGenerated(css, persona) {
+function parseTheme(css, source) {
   const scopes = new Map();
 
-  const addBlock = (key, body) => {
+  const add = (key, body) => {
     const decls = scopes.get(key) ?? new Map();
     for (const m of body.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/g)) decls.set(m[1], m[2].trim());
     scopes.set(key, decls);
   };
 
-  const selectorKey = (selector, media) => {
+  const keyOf = (selector, media) => {
     if (/data-color-mode="dark"/.test(selector)) return "dark";
     if (/data-color-mode="light"/.test(selector)) return "light";
     if (/min-width:\s*1280px/.test(media)) return "desktopMD";
@@ -186,8 +53,6 @@ function parseGenerated(css, persona) {
     return "base";
   };
 
-  // parcours linéaire : on suit la profondeur d'accolades pour distinguer une
-  // règle de premier niveau d'une règle enfermée dans une media query.
   let i = 0;
   while (i < css.length) {
     const open = css.indexOf("{", i);
@@ -202,145 +67,128 @@ function parseGenerated(css, persona) {
     const body = css.slice(open + 1, close);
 
     if (head.startsWith("@media")) {
-      for (const m of body.matchAll(/([^{}]+)\{([^{}]*)\}/g))
-        addBlock(selectorKey(m[1], head), m[2]);
+      for (const m of body.matchAll(/([^{}]+)\{([^{}]*)\}/g)) add(keyOf(m[1], head), m[2]);
     } else {
-      addBlock(selectorKey(head, ""), body);
+      add(keyOf(head, ""), body);
     }
     i = close + 1;
   }
 
-  if (!scopes.has("base")) throw new Error(`aucun bloc de base dans ${persona}.css`);
+  if (!scopes.has("base")) throw new Error(`aucun bloc de base dans ${source}`);
   return scopes;
 }
 
-// ---------- composition des portées ----------
+// ---------- comparaison de valeurs ----------
 
 /**
- * Chaque bloc du CSS généré correspond à une combinaison de sets de tokens.
- * Le bloc de base porte à la fois les tokens hors breakpoint et le mode clair,
- * que le theme.css pose en défaut avant les sélecteurs de mode.
- */
-const SCOPES = [
-  ["base", ["breakpoints/crossBpts", "colorModes/light"]],
-  ["light", ["colorModes/light"]],
-  ["dark", ["colorModes/dark"]],
-  ["desktopMD", ["breakpoints/desktopMD"]],
-  ["desktopSM", ["breakpoints/desktopSM"]],
-  ["tablet", ["breakpoints/tablet"]],
-  ["mobile", ["breakpoints/mobile"]],
-];
-
-/** Tokens présents dans l'export mais que l'émetteur CSS du WDS n'écrit pas. */
-const NOT_EMITTED = [/^ama\.sem\.text\.(brandName|modeName|breakpointName)$/];
-
-/**
- * Primitives que l'export porte et que styles/generated/*.css n'écrit pas.
- * Liste fermée et justifiée : hors de cette liste, une primitive absente du CSS
- * est une erreur du générateur.
+ * Ramène deux écritures d'une même valeur à une forme comparable : couleurs
+ * sous toutes leurs notations, longueurs quelle que soit l'unité.
  *
- *  - navalGrey.6 est la nuance du `surface-alternative` sombre, que le paquet
- *    WDS installé ne livre pas du tout ;
- *  - tropos.97 est celle du `surface-alternative` clair : elle existe dans
- *    l'export Accor, mais rien ne la référence dans le theme.css installé, qui
- *    n'émet donc pas la variable.
- *
- * Les deux ne concernent que la couche des primitives, que l'application ne
- * consomme jamais. Ce que le site consomme — sem et comp — reste comparé
- * intégralement, y compris `--wel-sem-color-surface-alternative`.
+ * Les longueurs sont ramenées au pixel puis arrondies au dix-millième de rem —
+ * les deux émetteurs n'arrondissent pas au même rang, et les overrides des
+ * avatars sont écrits en px. Ces écarts d'écriture ne sont pas des divergences ;
+ * un vrai changement de valeur reste détecté.
  */
-const AMA_ONLY_PRIMITIVES = new Set([
-  "ama.prim.color.navalGrey.6",
-  "ama.prim.color.tropos.97",
-]);
+function normalize(value) {
+  const v = String(value).trim().toLowerCase().replace(/\s+/g, " ");
+
+  const length = /^(-?[\d.]+)(rem|px)$/.exec(v);
+  if (length) {
+    const px = length[2] === "rem" ? Number(length[1]) * 16 : Number(length[1]);
+    return `${Number((px / 16).toFixed(4))}rem`;
+  }
+
+  return v.replace(/rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(?:,\s*[\d.]+\s*)?\)|#[0-9a-f]{3,8}\b/g, (c) =>
+    normalizeColor(c),
+  );
+}
+
+function normalizeColor(color) {
+  const hex2 = (n) => n.toString(16).padStart(2, "0");
+  const rgba = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(color);
+  if (rgba) {
+    const [r, g, b] = [rgba[1], rgba[2], rgba[3]].map(Number);
+    const a = rgba[4] === undefined ? 1 : Number(rgba[4]);
+    return `#${hex2(r)}${hex2(g)}${hex2(b)}${a >= 1 ? "" : hex2(Math.round(a * 255))}`;
+  }
+  const h = color.replace("#", "");
+  const full =
+    h.length <= 4
+      ? h.split("").map((c) => c + c).join("")
+      : h;
+  return `#${full.length === 8 && full.slice(6) === "ff" ? full.slice(0, 6) : full}`;
+}
+
+// ---------- génération de la référence ----------
+
+const tmp = mkdtempSync(join(tmpdir(), "ama-ref-"));
+try {
+  execFileSync(process.execPath, [join(root, "scripts", "build-themes-wds.mjs"), tmp], {
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+} catch (error) {
+  rmSync(tmp, { recursive: true, force: true });
+  console.error("✘ la référence WDS n'a pas pu être générée :");
+  console.error(String(error.stderr ?? error.stdout ?? error.message).trim());
+  console.error("  Si le template manque ou est périmé : npm run welds:install");
+  process.exit(1);
+}
 
 // ---------- vérification ----------
 
-const prefix = process.env.TOKENS_CSS_PREFIX ?? "ama";
-const numbers = loadSet("primitives/numbers");
+/**
+ * Variables que le pipeline émet et que la référence WDS ne peut pas porter :
+ * le paquet installé ne livre pas `surface-alternative`, donc les primitives qui
+ * le portent n'apparaissent dans aucun `theme.css`. Liste fermée — hors d'elle,
+ * une variable en trop est une erreur du générateur.
+ */
+const HORS_REFERENCE = new Set([
+  "ama-prim-color-naval-grey-6",
+  "ama-prim-color-tropos-97",
+]);
 
-let mismatches = 0;
-let checked = 0;
-let uncovered = 0;
-let amaOnly = 0;
-const report = [];
+let compares = 0;
+let divergences = 0;
+let horsReference = 0;
+const rapport = [];
 
 for (const persona of PERSONAS) {
-  const cssPath = join(generatedDir, `${persona}.css`);
-  if (!existsSync(cssPath)) {
-    console.error(`✘ ${cssPath} absent — lancer d'abord : npm run themes:build`);
-    process.exit(1);
-  }
+  const servi = parseTheme(readFileSync(join(generatedDir, `${persona}.css`), "utf8"), `${persona}.css`);
+  const reference = parseTheme(readFileSync(join(tmp, `${persona}.css`), "utf8"), `référence ${persona}`);
 
-  const primitives = new Map([...numbers, ...loadSet(`primitives/${persona}`)]);
-  const brand = loadSet(`brands/${persona}`);
-  const cssScopes = parseGenerated(readFileSync(cssPath, "utf8"), persona);
-
-  // les variables du CSS qu'aucun token n'explique, par portée
-  const seenByScope = new Map();
-
-  for (const [scopeKey, sets] of SCOPES) {
-    const publicTokens = new Map();
-    for (const set of sets) for (const [p, t] of loadSet(set)) publicTokens.set(p, t);
-    const scope = new Map([...primitives, ...brand, ...publicTokens]);
-    const cssVars = cssScopes.get(scopeKey);
-    if (!cssVars) {
-      report.push(`✘ [${persona}] bloc CSS « ${scopeKey} » introuvable`);
-      mismatches++;
+  for (const [portee, attendues] of reference) {
+    const obtenues = servi.get(portee);
+    if (!obtenues) {
+      rapport.push(`✘ [${persona}] bloc « ${portee} » absent du thème servi`);
+      divergences++;
       continue;
     }
-    const seen = seenByScope.get(scopeKey) ?? new Set();
 
-    // les primitives ne sont écrites que dans le bloc de base
-    const toCheck =
-      scopeKey === "base" ? [...primitives, ...publicTokens] : [...publicTokens];
-
-    for (const [path, token] of toCheck) {
-      if (NOT_EMITTED.some((re) => re.test(path))) continue;
-      const name = varName(path, prefix);
-      seen.add(name);
-
-      let expected;
-      try {
-        expected = toCss(token.$type, resolveValue(token.$value, scope), path);
-      } catch (error) {
-        report.push(`✘ [${persona}/${scopeKey}] ${path} : ${error.message}`);
-        mismatches++;
+    for (const [nom, attendue] of attendues) {
+      const obtenue = obtenues.get(nom);
+      if (obtenue === undefined) {
+        rapport.push(`✘ [${persona}/${portee}] --${nom} : absente du thème servi`);
+        divergences++;
         continue;
       }
-
-      const actual = cssVars.get(name);
-      if (actual === undefined) {
-        if (AMA_ONLY_PRIMITIVES.has(path)) {
-          amaOnly++;
-          continue;
-        }
-        report.push(`✘ [${persona}/${scopeKey}] --${name} : absent du CSS généré`);
-        mismatches++;
-        continue;
-      }
-
-      checked++;
-      if (normalize(actual) !== normalize(expected)) {
-        report.push(
-          `✘ [${persona}/${scopeKey}] --${name}\n      tokens : ${expected}\n      CSS    : ${actual}`,
+      compares++;
+      if (normalize(obtenue) !== normalize(attendue)) {
+        rapport.push(
+          `✘ [${persona}/${portee}] --${nom}\n      servi     : ${obtenue}\n      référence : ${attendue}`,
         );
-        mismatches++;
+        divergences++;
       }
     }
-    seenByScope.set(scopeKey, seen);
-  }
 
-  // inventaire inverse : variables du CSS qu'aucun token ne produit
-  for (const [scopeKey, cssVars] of cssScopes) {
-    const seen = seenByScope.get(scopeKey) ?? new Set();
-    for (const name of cssVars.keys()) {
-      if (!name.startsWith(`${prefix}-`)) continue;
-      if (seen.has(name)) continue;
-      // le bloc de base porte aussi les valeurs des autres portées en défaut
-      if (scopeKey !== "base" && (seenByScope.get("base") ?? new Set()).has(name)) continue;
-      uncovered++;
-      report.push(`⚠ [${persona}/${scopeKey}] --${name} : aucun token ne le produit`);
+    // et l'inverse : rien ne doit être servi que la référence ignore
+    for (const nom of obtenues.keys()) {
+      if (attendues.has(nom)) continue;
+      if (HORS_REFERENCE.has(nom)) {
+        horsReference++;
+        continue;
+      }
+      rapport.push(`✘ [${persona}/${portee}] --${nom} : servie sans contrepartie dans la référence`);
+      divergences++;
     }
   }
 }
@@ -348,52 +196,46 @@ for (const persona of PERSONAS) {
 // ---------- le contrat est unique ----------
 
 /**
- * Plus rien ne doit consommer `--wel-*`. Les composants WDS le faisaient en dur ;
- * `scripts/install-welds.mjs` aligne désormais leur préfixe à l'extraction, ce
- * qui a permis de supprimer la couche d'alias que les thèmes émettaient — 358 Ko
- * pour les trois personas.
- *
- * Cette garde protège la suppression : rétablir un ancien `install-welds.mjs`,
- * ou coller du CSS Accor à la main, réintroduirait des `var(--wel-…)` que plus
- * aucun thème ne définit. Les composants perdraient leurs couleurs en silence,
- * sans qu'aucun test de contraste ne bronche — il ne mesure que ce qui est
- * peint, pas ce qui a disparu.
+ * Plus rien ne doit consommer `--wel-*`. Si un en revenait — ancien
+ * `install-welds.mjs` rétabli, CSS Accor collé à la main —, plus aucun thème ne
+ * le définirait : les composants perdraient leurs couleurs **en silence**, un
+ * test de contraste ne mesurant que ce qui est peint, pas ce qui a disparu.
  */
-const CONTRACT_FILES = [
+const FICHIERS_CONTRAT = [
   ...PERSONAS.map((p) => join(generatedDir, `${p}.css`)),
   join(root, "styles", "welds-src", "components.css"),
   join(root, "styles", "persona-extras.css"),
   join(root, "app", "globals.css"),
 ];
 
-let contractFilesChecked = 0;
-for (const file of CONTRACT_FILES) {
-  // components.css est gitignoré : absent tant que welds:install n'a pas tourné
-  if (!existsSync(file)) continue;
-  contractFilesChecked++;
-  const stray = readFileSync(file, "utf8").match(/--wel-[a-z0-9-]+/g);
-  if (!stray) continue;
-  const uniques = [...new Set(stray)];
-  report.push(
-    `✘ ${relative(root, file)} : ${stray.length} référence(s) à --wel-* alors que` +
-      ` plus aucun thème ne le définit\n      ex. ${uniques.slice(0, 3).join(", ")}`,
+let fichiersVerifies = 0;
+for (const fichier of FICHIERS_CONTRAT) {
+  if (!existsSync(fichier)) continue; // components.css est gitignoré
+  fichiersVerifies++;
+  const restes = readFileSync(fichier, "utf8").match(/--wel-[a-z0-9-]+/g);
+  if (!restes) continue;
+  rapport.push(
+    `✘ ${relative(root, fichier)} : ${restes.length} référence(s) à --wel-*, que plus aucun thème ne définit` +
+      `\n      ex. ${[...new Set(restes)].slice(0, 3).join(", ")}`,
   );
-  mismatches++;
+  divergences++;
 }
+
+rmSync(tmp, { recursive: true, force: true });
 
 // ---------- verdict ----------
 
-for (const line of report.slice(0, 80)) console.log(line);
-if (report.length > 80) console.log(`   … et ${report.length - 80} autres lignes`);
+for (const ligne of rapport.slice(0, 60)) console.log(ligne);
+if (rapport.length > 60) console.log(`   … et ${rapport.length - 60} autres lignes`);
 
 console.log(
-  `\n${checked} valeurs comparées · ${mismatches} divergence(s) · ${uncovered} variable(s) CSS sans token` +
-    `\n${amaOnly} primitive(s) propres à AMa, déclarées et hors comparaison` +
-    `\n${contractFilesChecked} fichier(s) CSS vérifiés sans aucune référence à --wel-*`,
+  `\n${compares} valeurs comparées à la référence WDS · ${divergences} divergence(s)` +
+    `\n${horsReference} variable(s) hors référence, déclarées` +
+    `\n${fichiersVerifies} fichier(s) CSS sans aucune référence à --wel-*`,
 );
 
-if (mismatches || uncovered) {
-  console.error("\n✘ RÉGRESSION : l'export de tokens ne redonne pas le CSS en production.");
+if (divergences) {
+  console.error("\n✘ RÉGRESSION : les thèmes servis ne redonnent pas la référence WDS.");
   process.exit(1);
 }
-console.log("\n✔ Zéro régression : la chaîne ama redonne exactement styles/generated/*.css.");
+console.log("\n✔ Les thèmes résolus depuis tokens/ redonnent exactement la référence WDS.");
