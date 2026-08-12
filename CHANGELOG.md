@@ -90,6 +90,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   leurs couleurs **en silence** — un test de contraste ne mesure que ce qui est
   peint, pas ce qui a disparu. Les deux voies de retour en arrière sont vérifiées
   par mutation.
+- **Le README consigne le piège du serveur de développement résiduel.**
+  `reuseExistingServer: true` récupère le serveur d'un run précédent avec son
+  cache périmé : après un changement de CSS un peu large, cela donne une
+  trentaine d'échecs Playwright groupés, **tous à exactement 30,0 s**, qui
+  ressemblent trait pour trait à une régression. Le signal est la durée ronde et
+  identique, pas le contenu des assertions.
 - **La transformation de teinte des personas passe dans
   `scripts/lib/persona-color.mjs`**, partagée par le générateur de thèmes et
   celui de tokens. Les deux chaînes doivent rendre la même couleur au bit près,
@@ -113,6 +119,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **`npm run themes:build` refuse de tourner sur une extraction WDS périmée.**
+  `styles/welds-src/` est gitignoré : il survit aux changements de branche. Une
+  extraction antérieure à la bascule `--ama-*` consomme encore `var(--wel-…)`,
+  que plus aucun thème ne définit — boutons, chips et champs perdraient leurs
+  couleurs **en silence**, une variable absente ne cassant rien de visible côté
+  CSS. Le script s'arrête et renvoie vers `npm run welds:install`. C'est le cas
+  normal après un `git pull` qui traverse cette bascule, pas un cas tordu : il
+  fallait donc le rattraper au moment où il se produit, et pas seulement dans
+  `tokens:check`, que rien n'oblige à lancer.
 - **Le héro défilait tout seul au chargement**, de l'ours vers le persona
   mémorisé, comme si le carrousel démarrait de lui-même. Le thème, lui, était
   déjà le bon dès la première image : seule la piste rattrapait sa position.
