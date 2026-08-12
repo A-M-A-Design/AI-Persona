@@ -7,6 +7,10 @@ const VIEWPORTS = {
   desktop: { width: 1440, height: 1000 },
   tablet: { width: 1000, height: 900 },
   mobile: { width: 375, height: 800 },
+  // 320 px : la largeur plancher du critère de redistribution (WCAG 1.4.10),
+  // sous la plus petite frame de la maquette. Seuls les tests d'accessibilité
+  // y tournent — les autres décrivent la maquette, qui s'arrête à 375.
+  etroit: { width: 320, height: 800 },
 };
 
 export default defineConfig({
@@ -23,6 +27,9 @@ export default defineConfig({
   projects: Object.entries(VIEWPORTS).map(([name, viewport]) => ({
     name,
     use: { ...devices["Desktop Chrome"], viewport },
+    // Les autres suites décrivent la maquette et affirment ses dimensions :
+    // les rejouer à 320 px n'aurait aucun sens. Seule l'accessibilité y tourne.
+    ...(name === "etroit" ? { testMatch: /a11y\.spec\.ts/ } : {}),
   })),
   webServer: {
     command: "npm run dev",

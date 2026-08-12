@@ -36,6 +36,55 @@ img {
   max-width: 100%;
 }
 
+/* --- Accessibilité ------------------------------------------------------- */
+
+/* Retiré de l'écran, conservé pour les technologies d'assistance. `display:
+   none` et `visibility: hidden` retireraient le texte de l'arbre accessible,
+   donc aussi des noms calculés par aria-labelledby. */
+.a11y-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Premier élément focalisable de la page : il saute la barre de navigation,
+   que le clavier retraverse sinon à chaque changement de page. Hors écran au
+   repos, il descend dans la page dès qu'il reçoit le focus. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  padding: 12px 20px;
+  border-radius: var(--wel-sem-border-radius-element-full);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  line-height: var(--wel-sem-line-heights-body-sm);
+  text-decoration: none;
+  transform: translateY(calc(-100% - 16px));
+}
+
+/* `:focus` et non `:focus-visible` : un lien d'évitement n'est atteint qu'au
+   clavier, et l'heuristique de `:focus-visible` n'a rien à arbitrer ici. */
+.skip-link:focus {
+  transform: none;
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link {
+    transition: transform 150ms ease-in-out;
+  }
+}
+
 /* --- Ossature de page --------------------------------------------------- */
 
 .page {
@@ -157,6 +206,14 @@ img {
 
 .site-nav__toggle:focus-visible {
   outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
+/* Le chip enveloppe un <select> rendu transparent : c'est lui qui reçoit le
+   focus, et son anneau est donc invisible. Sans cette règle, le clavier
+   traverse les deux réglages sans qu'on voie jamais où l'on est. */
+.site-nav__chip:has(.site-nav__select:focus-visible) {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
   outline-offset: 2px;
 }
 
@@ -1140,6 +1197,13 @@ img {
 }
 /* En bout de course, le pas reste lisible : on baisse l'opacité du fond, pas
    celle du chevron, qui doit garder son contraste. */
+/* Anneau explicite : l'anneau par défaut du navigateur se pose sur un aplat
+   primaire sombre, où il se distingue mal. */
+.carousel__step:focus-visible {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+}
+
 .carousel__step:disabled {
   cursor: default;
   background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);

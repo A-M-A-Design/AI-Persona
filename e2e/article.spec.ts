@@ -11,6 +11,13 @@ const COLUMN = { desktop: 850, tablet: 550, mobile: 311 };
 /** Articles publiés — le carousel en propose tous sauf celui qu'on lit. */
 const ARTICLE_COUNT = 6;
 
+/**
+ * Attente des changements d'URL. En développement la route cible est compilée
+ * à la demande, et les quatre projets sollicitent le même serveur en
+ * parallèle : le défaut de 5 s expirait sur une navigation pourtant en vol.
+ */
+const NAVIGATION = 15_000;
+
 /** Ouvre une page article en appliquant les réglages avant le premier rendu. */
 async function visitArticle(page: import("@playwright/test").Page, lang = "fr") {
   await page.addInitScript(
@@ -62,7 +69,10 @@ test.describe("Cards de l'accueil", () => {
     const card = page.locator(".article-card").first();
     const href = await card.getAttribute("href");
     await card.click();
-    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    // Marge large : en développement, la route cible est compilée à la
+    // demande, et les quatre projets sollicitent le même serveur en parallèle.
+    // Le défaut de 5 s expire alors sur une navigation pourtant en cours.
+    await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: NAVIGATION });
     await expect(page.locator(".article__title")).toBeVisible();
   });
 });
@@ -181,12 +191,16 @@ test.describe("Carousel de fin d'article", () => {
 
   test("la pagination compte les pages, pas les cartes", async ({ page }, testInfo) => {
     await visitArticle(page);
-    const counter = page.locator(".carousel__counter");
+    // La forme visible est « 1 / 5 » ; le compteur porte en plus une phrase
+    // masquée à destination des lecteurs d'écran, d'où le ciblage du span.
+    const counter = page.locator(".carousel__counter [aria-hidden=true]");
+    const annonce = page.locator(".carousel__counter .a11y-hidden");
 
     // Cartes visibles par page : 3 en desktop, 2 en tablette, 1 en mobile.
     const perPage = { desktop: 3, tablet: 2, mobile: 1 }[testInfo.project.name] ?? 1;
     const pages = Math.ceil((ARTICLE_COUNT - 1) / perPage);
     await expect(counter).toHaveText(`1 / ${pages}`);
+    await expect(annonce).toHaveText(`Page 1 sur ${pages}`);
 
     const [prev, next] = [
       page.locator(".carousel__step").first(),
@@ -236,7 +250,7 @@ test.describe("Carousel de fin d'article", () => {
     const card = page.locator(".carousel .article-card").first();
     const href = await card.getAttribute("href");
     await card.click();
-    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: NAVIGATION });
   });
 });
 
@@ -285,7 +299,7 @@ test.describe("Retour à l'accueil", () => {
   test("le bouton ramène à l'accueil", async ({ page }) => {
     await visitArticle(page);
     await page.locator(".site-nav .site-nav__home").click();
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/$/, { timeout: NAVIGATION });
     await expect(page.locator(".hero__title")).toBeVisible();
   });
 });

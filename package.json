@@ -10,6 +10,7 @@
     "check": "tsc --noEmit",
     "welds:install": "node scripts/install-welds.mjs",
     "themes:build": "node scripts/build-themes.mjs",
+    "a11y": "npm run a11y:contrast && playwright test e2e/a11y.spec.ts",
     "a11y:contrast": "node scripts/check-contrast.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -25,6 +26,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",

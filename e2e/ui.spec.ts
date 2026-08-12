@@ -14,10 +14,15 @@ test.describe("Accueil", () => {
   });
 
   test("le bouton d'envoi est inactif au repos et n'écoute pas le survol", async ({ page }) => {
+    // `aria-disabled` et non `disabled` : le bouton reste dans l'ordre de
+    // tabulation, donc annonçable, mais refuse l'envoi et ignore le pointeur.
     await visit(page);
     const button = page.locator(".launcher__row button[type=submit]");
-    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute("aria-disabled", "true");
     await expect(button).toHaveCSS("pointer-events", "none");
+
+    await page.locator(".launcher__row input").fill("Bonjour");
+    await expect(button).toHaveAttribute("aria-disabled", "false");
   });
 
   test("le libellé du bouton inactif reste lisible", async ({ page }) => {
