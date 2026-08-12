@@ -18,7 +18,10 @@
 ## DesignOps
 
 - Mise en place de workflows automatisés pour réduire la charge de conception.
-- Processus QA garantissant qualité, accessibilité et performance.
+- Processus QA garantissant qualité, accessibilité et performance — jusqu'à
+  leur **automatisation** : contrôles outillés du respect des tokens, de la
+  couverture fonctionnelle et de l'accessibilité, exécutés en continu et
+  publiés en rapports lisibles par les équipes.
 - Normes, standards et bonnes pratiques de conception ; structuration et
   versioning des fichiers ; flux de production.
 - Formation et coaching des équipes (Figma, design systems, plugins, méthodes).
@@ -39,13 +42,18 @@ Arthur mobilise l'IA **à toutes les échelles de création de valeur** d'un
 design system : création de composants, architecture, documentation, QA et
 gestion du versioning — pas seulement à l'étape de conception.
 
-- Serveurs **MCP** exposant tokens, composants, documentation et règles d'un
-  design system aux agents IA (travaux menés chez Accor).
-- Automatisation de la maintenance, de l'évolution et du déploiement du design
-  system.
-- Ce portfolio conversationnel lui-même est une démonstration : chaque persona
-  est un thème complet généré sur le contrat de tokens, et le bot est branché
-  sur une API de modèle de langage (le provider est configurable).
+Chez Accor, cela prend la forme d'un **programme d'industrialisation en six
+chantiers** — extraction Figma et contrats de données, documentation AI-ready,
+versioning outillé, QA automatisée, Code Connect, assistant conversationnel.
+Chacun a sa fiche projet, qui en détaille le problème, la démarche et les gains.
+
+Transverse à ces chantiers : des serveurs **MCP** qui exposent tokens,
+composants, documentation et règles d'usage aux agents IA.
+
+Ce portfolio conversationnel lui-même est une démonstration : chaque persona est
+un thème complet généré sur le contrat de tokens, et le bot est branché sur une
+API de modèle de langage (le provider est configurable) — avec le même contrat
+anti-invention que l'assistant Accor.
 
 ## Racines en design industriel
 

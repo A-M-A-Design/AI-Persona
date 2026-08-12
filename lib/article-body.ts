@@ -29,6 +29,11 @@ export function hasTranslation(slug: string, lang: Lang): boolean {
   return lang === "fr" || existsSync(join(EN_DIR, `${slug}.md`));
 }
 
+// Les deux lignes de méta que porte l'en-tête d'un article. Elles servent la
+// base de connaissance du bot, jamais la page : le rendu les écarte.
+const CREDIT_RE = /^Article (rédigé par|written by)/;
+const KEY_IDEAS_RE = /^(Idées clés|Key ideas)\s*:\s*/;
+
 export type Block =
   | { type: "heading"; text: string }
   | { type: "paragraph"; text: string }
@@ -37,6 +42,50 @@ export type Block =
 
 export function hasArticleBody(slug: string): boolean {
   return existsSync(join(DIR, `${slug}.md`));
+}
+
+/**
+ * Les idées clés de l'article, telles qu'Arthur les a écrites en tête du
+ * fichier. C'est ce que le prompt porte en permanence, à la place des ~9 ko de
+ * corps : le bot sait de quoi parle l'article sans le transporter à chaque
+ * requête, et va chercher le texte intégral quand la question l'exige.
+ *
+ * Vide si la ligne manque — le bot se rabat alors sur le titre et le plan,
+ * et `npm run prompt:size` le signale.
+ */
+export function readArticleKeyIdeas(slug: string, lang: Lang = "fr"): string {
+  const path = sourcePath(slug, lang);
+  if (!path) return "";
+  for (const raw of readFileSync(path, "utf8").split("\n")) {
+    const line = raw.trim();
+    if (KEY_IDEAS_RE.test(line)) return line.replace(KEY_IDEAS_RE, "").trim();
+  }
+  return "";
+}
+
+/** Le plan de l'article — ses titres de section, dans l'ordre. Dérivé du corps,
+ * donc toujours en phase avec lui. */
+export function readArticleOutline(slug: string, lang: Lang = "fr"): string[] {
+  return readArticleBody(slug, lang)
+    .filter((b): b is { type: "heading"; text: string } => b.type === "heading")
+    .map((b) => b.text);
+}
+
+/**
+ * Le corps de l'article remis à plat, pour l'outil `lire_article` du chat. On
+ * repasse par `readArticleBody` plutôt que de relire le fichier brut : le bot
+ * reçoit ainsi exactement ce que le lecteur voit sur la page — les lignes de
+ * méta réservées au prompt en sont déjà retirées.
+ */
+export function readArticlePlainText(slug: string, lang: Lang = "fr"): string {
+  return readArticleBody(slug, lang)
+    .map((b) => {
+      if (b.type === "heading") return `## ${b.text}`;
+      if (b.type === "list") return b.items.map((i) => `- ${i}`).join("\n");
+      if (b.type === "quote") return `« ${b.text} »`;
+      return b.text;
+    })
+    .join("\n\n");
 }
 
 /**
@@ -79,7 +128,9 @@ export function readArticleBody(slug: string, lang: Lang = "fr"): Block[] {
     // tient son titre de lib/articles.ts, qui le porte dans les deux langues.
     // La ligne de crédit est reconnue dans les deux langues : ne filtrer que le
     // français la laissait s'afficher en tête du corps des articles traduits.
-    if (line.startsWith("# ") || /^Article (rédigé par|written by)/.test(line)) continue;
+    // La ligne d'idées clés relève de la même famille : elle n'existe que pour
+    // le prompt du bot (cf. lib/prompt.ts), jamais pour le lecteur.
+    if (line.startsWith("# ") || CREDIT_RE.test(line) || KEY_IDEAS_RE.test(line)) continue;
 
     if (!line) {
       flushList();

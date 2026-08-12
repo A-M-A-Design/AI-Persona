@@ -1,5 +1,6 @@
 # Comment le DesignOps nous donne les clefs pour concevoir les outils et les workflows adaptés à nos besoins ?
 Article rédigé par Arthur Mathon (LinkedIn). Tags : Automation, DesignOps.
+Idées clés : les outils sont aux yeux d'une équipe ce qu'est l'huile pour le moteur — un facilitateur de transfert autant qu'une garantie de fonctionnement à long terme. Critères de choix d'un outil : la flexibilité (elle réduit les changements de contexte et améliore la productivité), la sécurité, la fréquence des nouvelles fonctionnalités et des mises à jour, et la solidité de l'éditeur — importance du produit dans sa stratégie, santé financière, tendance du marché. Méthodologie appuyée sur une matrice RACI (qui est en charge, qui valide, qui est consulté, qui est informé), suivie d'une mesure de la performance. L'article se clôt sur le Service Design comme prolongement possible du DesignOps.
 
 ## Pourquoi les outils et les workflows sont-ils importants ?
 
