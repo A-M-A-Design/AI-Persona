@@ -8,6 +8,7 @@
     "build": "node scripts/with-ca.mjs next build",
     "start": "node scripts/with-ca.mjs next start",
     "check": "tsc --noEmit",
+    "prompt:size": "node scripts/check-prompt-size.mjs",
     "welds:install": "node scripts/install-welds.mjs",
     "themes:build": "node scripts/build-themes.mjs",
     "a11y": "npm run a11y:contrast && playwright test e2e/a11y.spec.ts",

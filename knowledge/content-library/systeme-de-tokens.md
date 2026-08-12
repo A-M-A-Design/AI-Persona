@@ -1,5 +1,6 @@
 # Pourquoi et comment créer un système de tokens applicable à vos produits digitaux
 Article rédigé par Arthur Mathon (LinkedIn). Tags : DesignSystem, Product.
+Idées clés : trois couches de tokens — les Core Tokens rassemblent toutes les options possibles (la boîte à outils : tailles, couleurs…), les Option Tokens portent les décisions de design qui définissent les thèmes et les règles d'apparence, les Component Tokens s'appliquent aux composants eux-mêmes (boutons, cartes, modales). Quatre bénéfices défendus : consistance visuelle, adaptabilité multi-marque et multi-thème, facilité de maintenance, collaboration harmonieuse entre designers et développeurs. Méthode en quatre étapes : inventorier les composants, définir les dimensions, lister-rédiger-documenter, puis créer les tokens. Tokens Studio y est présenté comme l'outil d'industrialisation, avec synchronisation Git et scripts d'automatisation côté DesignOps.
 
 ## Introduction
 

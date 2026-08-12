@@ -1,7 +1,6 @@
 # Accor — Assistant conversationnel sur le corpus du design system
 
-- **Rôle** : conception et développement du pilote, dans le cadre de la mission
-  Design System Manager chez Accor.
+- **Rôle** : conception et développement du pilote.
 - **Contexte** : aboutissement des autres briques d'industrialisation — une
   fois que contrats, documentation, rapports de QA, tokens, changelogs et
   liaisons Figma ↔ code existent sous forme structurée, ils deviennent un

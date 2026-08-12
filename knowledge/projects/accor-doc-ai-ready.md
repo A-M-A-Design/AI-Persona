@@ -1,7 +1,6 @@
 # Accor — Documentation AI-ready générée pour les agents
 
-- **Rôle** : conception du format, du pipeline de génération et du validateur,
-  dans le cadre de la mission Design System Manager chez Accor.
+- **Rôle** : conception du format, du pipeline de génération et du validateur.
 - **Contexte** : rendre le design system Welcome consommable par des agents IA
   qui génèrent du code, sans qu'ils aient à deviner les intentions de design.
 - **Problème** : une documentation écrite pour des humains décrit ce qu'un

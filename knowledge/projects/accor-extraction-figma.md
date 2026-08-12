@@ -1,7 +1,6 @@
 # Accor — Extraction automatisée des composants Figma et contrats de données
 
-- **Rôle** : conception et développement du pipeline, dans le cadre de la
-  mission Design System Manager chez Accor.
+- **Rôle** : conception et développement du pipeline.
 - **Contexte** : brique de fondation de l'industrialisation du design system
   Welcome. Tout le reste — documentation, QA, Code Connect, assistant — se
   branche dessus.

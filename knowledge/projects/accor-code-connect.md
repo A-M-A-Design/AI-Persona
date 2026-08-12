@@ -1,7 +1,7 @@
 # Accor — Code Connect : lier Figma au code réellement rendu
 
 - **Rôle** : conception et mise en œuvre de la chaîne de liaison et de
-  publication, dans le cadre de la mission Design System Manager chez Accor.
+  publication.
 - **Contexte** : refermer l'écart entre la maquette et le code, à l'endroit
   précis où le développeur regarde — le mode développeur de Figma.
 - **Problème** : par défaut, Figma propose au développeur un CSS générique,
