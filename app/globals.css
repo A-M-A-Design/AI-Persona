@@ -18,7 +18,12 @@ body {
   padding: 0;
 }
 
+/* Colonne pleine hauteur : le pied de page est collant en bas, et une page
+   plus courte que la fenêtre le laisserait flotter au milieu. `margin-top:
+   auto` le pousse alors contre le bas. */
 body {
+  display: flex;
+  flex-direction: column;
   background: var(--wel-sem-color-surface);
   color: var(--wel-sem-color-on-surface-hi);
   font-family: var(--wel-sem-font-families-body), system-ui, sans-serif;
@@ -37,6 +42,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 28px;
+  width: 100%;
   max-width: 1440px;
   margin: 0 auto;
   padding: 44px 64px;
@@ -86,13 +92,35 @@ img {
   }
 }
 
-/* La maquette ne dessine la barre qu'en desktop : 80 px y mangeraient trop de
-   hauteur sur un petit écran. */
 @media (max-width: 767px) {
   .site-nav__inner {
     height: 64px;
     padding-inline: 16px;
   }
+}
+
+/* Pages articles : le bouton d'accueil ouvre la barre à gauche, les réglages
+   restant groupés à droite — la maquette y passe le wrapper en
+   `space-between`, ce que la marge automatique reproduit sans conditionner
+   l'alignement de la barre d'accueil. */
+.site-nav__home {
+  margin-right: auto;
+  text-decoration: none;
+}
+
+/* Les pastilles de la barre valent 40 px dans la maquette. Le bouton d'icône
+   WDS n'ayant pas de largeur propre, sa boîte se déduit du contenu — icône de
+   16, retrait de 12, bordure de 1 — et dépasse de 2 px ; le chip retombe de
+   son côté à 38. Fixer la boîte aligne les trois contrôles entre eux, ce que
+   `border-box` fait rentrer sans toucher aux retraits. */
+.site-nav__chip {
+  min-height: 40px;
+}
+
+.site-nav__home,
+.site-footer__link {
+  width: 40px;
+  height: 40px;
 }
 
 /* Le chip WDS est un bouton : on neutralise l'apparence native du select
@@ -130,6 +158,92 @@ img {
 .site-nav__toggle:focus-visible {
   outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
   outline-offset: 2px;
+}
+
+/* La maquette resserre les contrôles de la barre à 32 px en mobile, contre
+   40 en desktop : trois pastilles de 40 px dans une barre de 64 ne laissent
+   que 12 px de respiration, et le bouton d'accueil touchait le bord. */
+@media (max-width: 767px) {
+  .site-nav__chip {
+    min-height: 32px;
+    padding-block: 0;
+    padding-inline: var(--wel-sem-spacing-static-inset-xs);
+  }
+
+  .site-nav__toggle,
+  .site-nav__home {
+    width: 32px;
+    height: 32px;
+  }
+
+  .site-nav__home {
+    padding: var(--wel-sem-spacing-static-inset-xs);
+  }
+}
+
+/* --- Pied de page collant ------------------------------------------------ */
+
+/* Pendant de la barre de navigation, dessiné en dernier enfant de chaque page :
+   même retrait, même ombre — projetée vers le haut. Il remplace la carte
+   contact qui fermait l'accueil, et vaut donc pour toutes les pages.
+
+   `sticky` plutôt que `fixed` : la barre garde sa place dans le flux, donc
+   rien n'est masqué en bas de page et aucun retrait compensatoire n'est
+   nécessaire sur le contenu. */
+.site-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: auto;
+  background: var(--wel-sem-color-surface);
+  box-shadow: 0 -2px 6px rgb(7 5 24 / 20%);
+}
+
+.site-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 80px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-inline: 64px;
+}
+
+@media (max-width: 1279px) {
+  .site-footer__inner {
+    padding-inline: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-footer__inner {
+    height: 64px;
+    padding-inline: 16px;
+  }
+}
+
+/* Le token `subtitle-lg` porte déjà l'échelle responsive de la maquette
+   (26 px en desktop, 20 en mobile) : aucune media query de typographie. */
+.site-footer__title {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-subtitle), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-subtitle-lg);
+  font-style: italic;
+  font-weight: var(--wel-sem-font-weights-subtitle-default);
+  line-height: var(--wel-sem-line-heights-subtitle-lg);
+  letter-spacing: var(--wel-sem-letter-spacing-subtitle);
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.site-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.site-footer__link {
+  text-decoration: none;
 }
 
 /* --- Héro --------------------------------------------------------------- */
@@ -721,60 +835,6 @@ img {
   outline-offset: 2px;
 }
 
-/* --- Card contact ------------------------------------------------------- */
-
-/* Carte contact : une bande sur toute la largeur, sous les deux grilles.
-   Elle occupait auparavant deux colonnes de la grille étroite, d'où un
-   `align-self` qui l'empêchait désormais de s'étendre. */
-.connect-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px;
-}
-
-/* Boîte de l'icône : 76 px, radius 2 et fond accent, repris de la maquette.
-   .wel-icon-slot ne fournit que le centrage. */
-.connect-card__icon {
-  width: 72px;
-  height: 72px;
-  padding: 12px;
-  flex-shrink: 0;
-  border-radius: 2px;
-  background: var(--wel-sem-color-accent-container-low);
-  color: var(--wel-sem-color-on-accent-container);
-}
-
-.connect-card__icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.connect-card__texts {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-.connect-card__title {
-  margin: 0;
-  font-size: var(--wel-sem-font-sizes-title-sm);
-  line-height: var(--wel-sem-line-heights-title-sm);
-}
-
-.connect-card__text {
-  margin: 4px 0 0;
-  color: var(--wel-sem-color-on-surface-mid);
-}
-
-.connect-card__links {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
-}
-
 /* --- Mise en page de la démo /dev/kit ---------------------------------- */
 
 .demo {
@@ -838,17 +898,6 @@ img {
 /* La page article garde les marges communes : le carousel de fin occupe toute
    la largeur de contenu (1312 / 704 / 343 dans la maquette), et seule la
    colonne de lecture est resserrée. */
-
-/* La pilule de retour est portée par la barre de navigation, déjà collante.
-   Posée au-dessus de l'article, elle recouvrait le texte dès que la colonne
-   de lecture rejoignait le bord du retrait de page — entre 768 et ~1100 px,
-   la colonne démarre exactement à l'emplacement qu'occupait la pilule. */
-.site-nav__inner .article-back {
-  margin-right: auto;
-  border-radius: var(--pill-radius);
-  text-decoration: none;
-  white-space: nowrap;
-}
 
 .article {
   display: flex;

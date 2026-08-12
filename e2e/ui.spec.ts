@@ -2,27 +2,15 @@ import { expect, test } from "@playwright/test";
 import { MODES, openChat, PERSONAS, stubChat, visit } from "./helpers";
 
 test.describe("Accueil", () => {
-  test("rend le héro, les six cards et la carte contact", async ({ page }) => {
+  test("rend le héro et les six cards, sans carte contact", async ({ page }) => {
     await visit(page);
     await expect(page.locator(".hero__title")).toBeVisible();
     await expect(page.locator(".article-card")).toHaveCount(6);
-    await expect(page.locator(".connect-card")).toBeVisible();
 
-    // La carte contact a quitté la grille étroite, que les articles occupent
-    // désormais en entier : elle s'étend sous les deux grilles.
-    await expect(page.locator(".articles--secondary .connect-card")).toHaveCount(0);
-    const contact = await page.locator(".connect-card").boundingBox();
-    const grid = await page.locator(".articles--secondary").boundingBox();
-    expect(Math.round(contact?.width ?? 0)).toBe(Math.round(grid?.width ?? 0));
-  });
-
-  test("l'icône de la carte contact a une taille non nulle", async ({ page }) => {
-    // Régression : .wel-icon-slot est en line-height 0 et attend un <svg>.
-    // Un caractère texte s'y effondrait à une hauteur de 0.
-    await visit(page);
-    const box = await page.locator(".connect-card__icon svg").boundingBox();
-    expect(box?.width ?? 0).toBeGreaterThan(20);
-    expect(box?.height ?? 0).toBeGreaterThan(20);
+    // Le contact a quitté la grille : il vit dans le pied de page, présent
+    // sur toutes les pages.
+    await expect(page.locator(".connect-card")).toHaveCount(0);
+    await expect(page.locator(".site-footer")).toBeVisible();
   });
 
   test("le bouton d'envoi est inactif au repos et n'écoute pas le survol", async ({ page }) => {
@@ -122,6 +110,87 @@ test.describe("Barre de navigation", () => {
       return el?.closest(".chat-modal") !== null;
     });
     expect(auDessus).toBe(true);
+  });
+
+  test("les contrôles ont la taille de la maquette", async ({ page }, testInfo) => {
+    // La maquette resserre la barre et ses contrôles en mobile : 64 px de haut
+    // et des pastilles de 32, contre 80 et 40 aux largeurs supérieures.
+    const mobile = testInfo.project.name === "mobile";
+    await visit(page);
+
+    const barre = await page.locator(".site-nav__inner").boundingBox();
+    expect(Math.round(barre?.height ?? 0)).toBe(mobile ? 64 : 80);
+
+    for (const sel of [".site-nav__chip", ".site-nav__toggle"]) {
+      const box = await page.locator(sel).first().boundingBox();
+      expect(Math.round(box?.height ?? 0), sel).toBe(mobile ? 32 : 40);
+    }
+  });
+});
+
+test.describe("Pied de page", () => {
+  test("reste en bas au défilement", async ({ page }) => {
+    await visit(page);
+    const footer = page.locator(".site-footer");
+    await expect(footer).toBeVisible();
+
+    // Page longue : au repos comme après défilement, la barre touche le bas
+    // de la fenêtre.
+    const hauteur = page.viewportSize()!.height;
+    const avant = await footer.boundingBox();
+    expect(Math.round((avant?.y ?? 0) + (avant?.height ?? 0))).toBe(hauteur);
+
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForFunction(() => window.scrollY > 400);
+
+    const apres = await footer.boundingBox();
+    expect(Math.round((apres?.y ?? 0) + (apres?.height ?? 0))).toBe(hauteur);
+  });
+
+  test("ne masque rien en bas de page", async ({ page }) => {
+    // `sticky` et non `fixed` : arrivé en bas, le pied reprend sa place dans
+    // le flux et le dernier contenu reste visible sous lui.
+    await visit(page);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForFunction(
+      () => window.innerHeight + window.scrollY >= document.body.scrollHeight - 2,
+    );
+
+    const derniere = await page.locator(".article-card").last().boundingBox();
+    const footer = await page.locator(".site-footer").boundingBox();
+    expect((derniere?.y ?? 0) + (derniere?.height ?? 0)).toBeLessThanOrEqual(
+      (footer?.y ?? 0) + 1,
+    );
+  });
+
+  test("a la hauteur de la maquette", async ({ page }, testInfo) => {
+    // Il fait le pendant de la barre de navigation : 80 px, 64 en mobile. Les
+    // deux boutons, eux, gardent leurs 40 px à toutes les largeurs.
+    const mobile = testInfo.project.name === "mobile";
+    await visit(page);
+
+    const barre = await page.locator(".site-footer__inner").boundingBox();
+    expect(Math.round(barre?.height ?? 0)).toBe(mobile ? 64 : 80);
+
+    for (const lien of await page.locator(".site-footer__link").all()) {
+      const box = await lien.boundingBox();
+      expect(Math.round(box?.height ?? 0)).toBe(40);
+    }
+  });
+
+  test("expose les deux liens de contact", async ({ page }) => {
+    await visit(page);
+    const liens = page.locator(".site-footer__link");
+    await expect(liens).toHaveCount(2);
+    await expect(liens.nth(0)).toHaveAttribute("href", /linkedin\.com/);
+    await expect(liens.nth(1)).toHaveAttribute("href", /^mailto:/);
+
+    // Les icônes sont des <svg> : un caractère texte s'effondrerait à 0.
+    for (const svg of await page.locator(".site-footer__link svg").all()) {
+      const box = await svg.boundingBox();
+      expect(box?.width ?? 0).toBeGreaterThan(8);
+      expect(box?.height ?? 0).toBeGreaterThan(8);
+    }
   });
 });
 
