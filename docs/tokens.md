@@ -1,8 +1,20 @@
 # 1.0.0_AMaDesignTokens
 
 L'export de tokens du portfolio, dérivé de l'export Accor
-`2.2.2_AccorDesignTokens` (zip gitignoré, IP Accor). Il vit dans `tokens/`, se
-construit par `npm run tokens:build` et se vérifie par `npm run tokens:check`.
+`2.2.2_AccorDesignTokens` (zip gitignoré, IP Accor).
+
+| | |
+| --- | --- |
+| **Source committée** | `tokens/` — 16 fichiers, 793 Ko |
+| `npm run tokens:build` | (re)construit `tokens/` depuis le zip Accor |
+| `npm run tokens:check` | vérifie qu'il redonne exactement `styles/generated/*.css` |
+| `npm run tokens:pack` | emballe `1.0.0_AMaDesignTokens_<date>_<heure>.zip` |
+
+Le **zip** reprend la forme de l'export Accor, dossiers compris : il s'importe
+tel quel dans Tokens Studio. C'est un artefact rebuildable, gitignoré comme tous
+les zips — la source de vérité reste le dossier `tokens/`. `tokens:pack` relance
+`tokens:check` avant d'emballer et refuse d'écrire s'il échoue : distribuer un
+paquet dont personne n'a vérifié la non-régression n'aurait pas de sens.
 
 ## Ce que c'est, et ce que ce n'est pas encore
 

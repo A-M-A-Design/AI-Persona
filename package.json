@@ -16,7 +16,8 @@
     "test:e2e:ui": "playwright test --ui",
     "shots": "node scripts/capture.mjs",
     "tokens:build": "node scripts/build-tokens-ama.mjs",
-    "tokens:check": "node scripts/check-tokens.mjs"
+    "tokens:check": "node scripts/check-tokens.mjs",
+    "tokens:pack": "node scripts/pack-tokens-ama.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.37",

@@ -15,7 +15,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   `brands/brandbook` — les treize autres marques Accor et leurs primitives
   disparaissent. Préfixe `ama`, format DTCG, chaîne **sémantique → alias →
   primitive** conservée telle quelle. `npm run tokens:build` construit `tokens/`
-  depuis le zip gitignoré ; la doc complète est dans `docs/tokens.md`.
+  depuis le zip gitignoré, `npm run tokens:pack` en tire
+  `1.0.0_AMaDesignTokens_<date>_<heure>.zip` — même forme que l'export Accor,
+  donc importable tel quel dans Tokens Studio. Le zip est un artefact
+  rebuildable et gitignoré ; la source committée est le dossier `tokens/`, et
+  l'emballage refuse d'écrire si `tokens:check` échoue. La doc complète est dans
+  `docs/tokens.md`.
 
   La couleur de l'avatar ne vit que dans les **primitives** : les couches d'alias
   et sémantique sont identiques d'un avatar à l'autre. C'est possible parce que
