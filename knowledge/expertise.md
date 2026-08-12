@@ -18,7 +18,10 @@
 ## DesignOps
 
 - Mise en place de workflows automatisés pour réduire la charge de conception.
-- Processus QA garantissant qualité, accessibilité et performance.
+- Processus QA garantissant qualité, accessibilité et performance — jusqu'à
+  leur **automatisation** : contrôles outillés du respect des tokens, de la
+  couverture fonctionnelle et de l'accessibilité, exécutés en continu et
+  publiés en rapports lisibles par les équipes.
 - Normes, standards et bonnes pratiques de conception ; structuration et
   versioning des fichiers ; flux de production.
 - Formation et coaching des équipes (Figma, design systems, plugins, méthodes).
@@ -39,13 +42,30 @@ Arthur mobilise l'IA **à toutes les échelles de création de valeur** d'un
 design system : création de composants, architecture, documentation, QA et
 gestion du versioning — pas seulement à l'étape de conception.
 
-- Serveurs **MCP** exposant tokens, composants, documentation et règles d'un
-  design system aux agents IA (travaux menés chez Accor).
-- Automatisation de la maintenance, de l'évolution et du déploiement du design
-  system.
-- Ce portfolio conversationnel lui-même est une démonstration : chaque persona
-  est un thème complet généré sur le contrat de tokens, et le bot est branché
-  sur une API de modèle de langage (le provider est configurable).
+Chez Accor, cela prend la forme d'un programme d'industrialisation en six
+chantiers, chacun documenté dans une fiche projet dédiée :
+
+- **Extraction automatisée des composants Figma** et production de **contrats
+  de données** validés par schéma — le socle machine-lisible dont tout le reste
+  dépend.
+- **Documentation AI-ready** : un contrat éditorial en neuf sections, généré et
+  validé, qui dit à un agent quand *ne pas* utiliser un composant.
+- **Versioning outillé** : barème SemVer opposable, changelog par composant,
+  validation humaine du bump.
+- **QA automatisée** en trois axes, avec un escalier de provenance qui affiche
+  la source de chaque vérification.
+- **Code Connect** : le vrai code du design system dans le mode développeur de
+  Figma, par variante et en trois saveurs de stack.
+- **Assistant conversationnel (RAG)** sur le corpus du design system, avec
+  citations obligatoires, refus hors index et campagne d'évaluation chiffrée.
+
+Transverse à ces chantiers : des serveurs **MCP** qui exposent tokens,
+composants, documentation et règles d'usage aux agents IA.
+
+Ce portfolio conversationnel lui-même est une démonstration : chaque persona est
+un thème complet généré sur le contrat de tokens, et le bot est branché sur une
+API de modèle de langage (le provider est configurable) — avec le même contrat
+anti-invention que l'assistant Accor.
 
 ## Racines en design industriel
 

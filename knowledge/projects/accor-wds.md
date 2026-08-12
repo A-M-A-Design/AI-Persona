@@ -16,11 +16,27 @@
   thème complet sur un contrat commun d'environ 870 variables (primitives →
   sémantique → composants), avec light/dark et typographies responsives par
   breakpoint.
-- **Outils et automatisations** pour industrialiser la maintenance, l'évolution
-  et le déploiement du design system, en s'appuyant sur l'IA — notamment des
-  serveurs MCP qui exposent tokens, composants, documentation et règles d'usage
-  aux agents IA.
 - Gestion de la **librairie de composants core** et de son cycle de vie.
+- **Industrialisation de la chaîne de design**, en s'appuyant sur l'IA — c'est
+  la part la plus substantielle de la mission (voir ci-dessous).
+
+## Le programme d'industrialisation
+
+Six chantiers, décrits chacun dans sa propre fiche, qui s'enchaînent : le
+contrat d'extraction sert de socle à tout le reste.
+
+1. **Extraction automatisée des composants Figma et contrats de données** — la
+   maquette devient une source de vérité machine-lisible et versionnée.
+2. **Documentation AI-ready** — un contrat éditorial en neuf sections, généré et
+   validé, pour que les agents sachent *quand ne pas* utiliser un composant.
+3. **Versioning outillé des composants** — barème SemVer opposable, changelog
+   par composant, portes de validation humaines.
+4. **QA automatisée** — trois axes (tokens, fonctionnel, accessibilité) et un
+   escalier de provenance qui affiche d'où vient chaque vérification.
+5. **Code Connect** — le vrai code du design system dans le mode développeur de
+   Figma, par variante et en trois saveurs de stack.
+6. **Assistant conversationnel sur le corpus** — interroger le design system en
+   langage naturel, avec citations obligatoires et refus hors index.
 
 ## Ce que ce projet illustre
 

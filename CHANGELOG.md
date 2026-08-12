@@ -10,6 +10,25 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Six fiches projet sur l'industrialisation du design system Accor** dans
+  `knowledge/projects/` : extraction Figma et contrats de données, documentation
+  AI-ready, versioning outillé, QA automatisée, Code Connect, assistant
+  conversationnel sur le corpus. Chacune suit la même trame — problème,
+  démarche, résultats, ce que le projet illustre. La base ne décrivait la
+  mission Accor que par cinq puces génériques ; le persona Libellule (« l'IA et
+  les Operations ») n'avait donc rien de concret à citer, et Code Connect
+  n'apparaissait nulle part. `accor-wds.md` devient le hub qui les annonce, et
+  `expertise.md` remplace la mention isolée des serveurs MCP par les six
+  chantiers.
+  **Curation** : ordres de grandeur et méthode uniquement. Aucun compte de
+  défauts (overrides, violations d'accessibilité, verdicts par composant) — ce
+  sont des audits du produit du client. Aucun identifiant Figma, dépôt, branche,
+  préfixe CSS ou chemin de token Accor, aucun nom de tiers.
+- **Golden questions étendues à 27** (`docs/eval-questions.md`), renumérotées :
+  cinq questions sur l'industrialisation, dont une qui vérifie que le bot ne
+  prétend **pas** que le versioning « bumpe tout seul », et deux nouveaux pièges
+  de confidentialité (identifiants Figma, nombre de bugs d'accessibilité).
+
 - **`1.0.0_AMaDesignTokens`** : l'export de tokens du portfolio, dérivé de
   l'export Accor 2.2.2. Trois marques, une par avatar, toutes issues de
   `brands/brandbook` — les treize autres marques Accor et leurs primitives
