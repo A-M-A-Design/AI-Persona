@@ -19,7 +19,7 @@ const ARTICLE_COUNT = 6;
 const NAVIGATION = 15_000;
 
 /** Ouvre une page article en appliquant les réglages avant le premier rendu. */
-async function visitArticle(page: import("@playwright/test").Page, lang = "fr") {
+async function visitArticle(page: import("@playwright/test").Page, lang = "fr", slug = SLUG) {
   await page.addInitScript(
     (l) => {
       localStorage.setItem(
@@ -29,7 +29,7 @@ async function visitArticle(page: import("@playwright/test").Page, lang = "fr") 
     },
     lang,
   );
-  await page.goto(`/articles/${SLUG}`);
+  await page.goto(`/articles/${slug}`);
   await page.waitForLoadState("networkidle");
   await waitForHydration(page);
 }
@@ -142,6 +142,22 @@ test.describe("Page article", () => {
       const body = await page.locator(".article__body").innerText();
       expect(body).not.toContain("Article rédigé par");
       expect(body).not.toContain("Article written by");
+    }
+  });
+
+  // Les idées clés vivent en tête du markdown, pour le seul prompt du bot
+  // (lib/prompt.ts les injecte à la place des ~56 ko de corps). C'est ce qui
+  // permet de tenir « un article n'existe qu'en un seul exemplaire » sans
+  // transporter le texte intégral à chaque requête — mais le lecteur, lui, ne
+  // doit jamais voir cette ligne. Ce test est la contrepartie du compromis.
+  test("la ligne d'idées clés reste réservée au prompt, jamais affichée", async ({ page }) => {
+    for (const slug of ["roi-design-system", "systeme-de-tokens"]) {
+      for (const lang of ["fr", "en"]) {
+        await visitArticle(page, lang, slug);
+        const body = await page.locator(".article__body").innerText();
+        expect(body).not.toContain("Idées clés");
+        expect(body).not.toContain("Key ideas");
+      }
     }
   });
 

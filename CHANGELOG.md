@@ -10,6 +10,62 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Le corps des articles ne part plus dans le prompt.** Il y pesait 56 ko —
+  plus que tout le reste de la base réuni — pour un contenu que la plupart des
+  conversations n'abordent jamais, et qui est déjà publié en entier sur
+  `/articles/<slug>`. Le prompt n'en porte plus que la **synthèse** : titre
+  exact, chapô, idées clés, plan. Le texte intégral se charge **à la demande**,
+  par l'outil `lire_article` déclaré dans la route du chat (`stopWhen` à trois
+  étapes : appel, résultat, rédaction). Rien n'est perdu : ce qui n'est plus
+  transporté reste accessible.
+
+  Le principe « un article n'existe qu'en un seul exemplaire »
+  (`lib/article-body.ts`) est préservé : les **idées clés vivent dans l'article
+  lui-même**, en tête, sur une ligne `Idées clés :` que le rendu de page écarte
+  — comme il écarte déjà le H1 et la ligne de crédit. Le plan, lui, est dérivé
+  des titres de section, donc toujours en phase avec le texte. Un test e2e
+  vérifie que cette ligne ne s'affiche dans aucune des deux langues : c'est la
+  contrepartie du compromis.
+
+  La consigne d'appel de l'outil a dû être **explicite jusqu'à l'énumération**
+  (« une citation, un exemple, une image, une métaphore, une formulation… »,
+  et « en cas de doute, appelle l'outil »). Formulée plus sobrement, le modèle
+  répondait de mémoire depuis la synthèse : jamais faux, mais approximatif là
+  où le texte disait mieux.
+
+  Déclencheur : le golden test du 2026-08-12 a échoué sept fois sur dix en
+  `429`. La base injectée atteignait ~25 000 tokens, soit **exactement** la
+  limite de 25 000 tokens/minute du tier gratuit Mistral — une question
+  consommait le quota d'une minute. **115 ko → 60 ko, ~13 300 tokens estimés.**
+
+- **`npm run prompt:size`**, mesure du prompt section par section, en échec
+  au-delà de 18 000 tokens estimés. Le plafond avait été franchi sans que rien
+  ne le signale : le prompt n'était mesuré nulle part. Le script reproduit les
+  règles de sélection de `lib/prompt.ts` et lit les littéraux `IDENTITY` /
+  `GUARDRAILS` dans le source plutôt que de les recopier — un doublon dériverait
+  en silence. Il avertit aussi quand un article n'a pas de ligne `Idées clés :`.
+
+### Changed
+
+- **Déduplication de la base**, à information constante : la liste des six
+  chantiers d'industrialisation était écrite deux fois presque au mot près
+  (`expertise.md` et `projects/accor-wds.md`) — `expertise.md` renvoie
+  désormais aux fiches au lieu de les résumer ; et la mention « dans le cadre de
+  la mission Design System Manager chez Accor », répétée à l'identique dans les
+  six fiches chantier, est retirée : l'appartenance est déjà portée par le
+  regroupement `<projects>` et par `accor-wds.md`.
+
+  **Les sept clauses de confidentialité en fin de fiche sont conservées**, bien
+  que redondantes avec le garde-fou n° 4. Le plan prévoyait de les supprimer ;
+  la mesure a montré que la cible était déjà atteinte sans elles, et 1,1 ko ne
+  justifie pas d'affaiblir un comportement que trois golden questions vérifient.
+
+- **Le README documente le budget du prompt** : le quota Mistral, le seuil du
+  script, et la bascule `CHAT_PROVIDER=anthropic` comme levier disponible — le
+  `cacheControl` est déjà posé sur le préfixe stable, il n'attend qu'un provider
+  qui en tienne compte. Rien n'est basculé : le portfolio reste démontrable sur
+  un tier gratuit.
+
 - **Six fiches projet sur l'industrialisation du design system Accor** dans
   `knowledge/projects/` : extraction Figma et contrats de données, documentation
   AI-ready, versioning outillé, QA automatisée, Code Connect, assistant

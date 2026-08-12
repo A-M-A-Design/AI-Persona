@@ -42,22 +42,10 @@ Arthur mobilise l'IA **à toutes les échelles de création de valeur** d'un
 design system : création de composants, architecture, documentation, QA et
 gestion du versioning — pas seulement à l'étape de conception.
 
-Chez Accor, cela prend la forme d'un programme d'industrialisation en six
-chantiers, chacun documenté dans une fiche projet dédiée :
-
-- **Extraction automatisée des composants Figma** et production de **contrats
-  de données** validés par schéma — le socle machine-lisible dont tout le reste
-  dépend.
-- **Documentation AI-ready** : un contrat éditorial en neuf sections, généré et
-  validé, qui dit à un agent quand *ne pas* utiliser un composant.
-- **Versioning outillé** : barème SemVer opposable, changelog par composant,
-  validation humaine du bump.
-- **QA automatisée** en trois axes, avec un escalier de provenance qui affiche
-  la source de chaque vérification.
-- **Code Connect** : le vrai code du design system dans le mode développeur de
-  Figma, par variante et en trois saveurs de stack.
-- **Assistant conversationnel (RAG)** sur le corpus du design system, avec
-  citations obligatoires, refus hors index et campagne d'évaluation chiffrée.
+Chez Accor, cela prend la forme d'un **programme d'industrialisation en six
+chantiers** — extraction Figma et contrats de données, documentation AI-ready,
+versioning outillé, QA automatisée, Code Connect, assistant conversationnel.
+Chacun a sa fiche projet, qui en détaille le problème, la démarche et les gains.
 
 Transverse à ces chantiers : des serveurs **MCP** qui exposent tokens,
 composants, documentation et règles d'usage aux agents IA.

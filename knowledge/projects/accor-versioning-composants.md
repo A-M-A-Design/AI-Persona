@@ -1,7 +1,6 @@
 # Accor — Versioning outillé des composants
 
-- **Rôle** : définition du barème, du format de changelog et de la chaîne
-  d'outils, dans le cadre de la mission Design System Manager chez Accor.
+- **Rôle** : définition du barème, du format de changelog et de la chaîne d'outils.
 - **Contexte** : le design system Welcome est consommé par plusieurs stacks
   front simultanément. Un composant y bouge en permanence.
 - **Problème** : sans langage commun sur « ce qui a changé et si ça me casse »,

@@ -162,9 +162,37 @@ mécaniques, il ne remplace pas la lecture du code ni la passe manuelle.
 ```powershell
 git switch -c kb/maj-projets
 # … éditer les fichiers dans knowledge/ …
+npm run prompt:size                 # le prompt tient-il encore dans le quota ?
 git add knowledge/ ; git commit -m "kb(projects): ajout du projet X"
 git push -u origin kb/maj-projets   # puis ouvrir la PR
 ```
+
+## Le budget du prompt
+
+Toute la base de connaissance part dans le prompt système **à chaque requête**.
+Ce n'est pas gratuit : le 2026-08-12, l'ajout de six fiches projet l'a porté à
+~25 000 tokens, soit exactement la limite de **25 000 tokens par minute** du
+tier gratuit Mistral. Une seule question consommait le quota d'une minute, et le
+chat renvoyait `429` une fois sur deux — sans que rien ne l'ait signalé.
+
+`npm run prompt:size` mesure le prompt section par section et **échoue au-delà
+de 18 000 tokens estimés**. À lancer après toute modification de `knowledge/`.
+
+Deux leviers quand le compteur monte :
+
+- **Le corps des articles ne voyage plus.** Le prompt n'en porte que la synthèse
+  — titre, chapô, idées clés, plan ; le texte intégral se charge à la demande,
+  via l'outil `lire_article` déclaré dans la route du chat. Les ~60 000
+  caractères d'articles ne coûtent donc plus rien tant que la conversation ne
+  porte pas sur l'un d'eux.
+- **Le prompt caching, déjà câblé mais inerte.** Le préfixe stable est
+  rigoureusement identique pour les six combinaisons persona × langue, et
+  `lib/model.ts` pose déjà un `cacheControl` dessus — mais Mistral n'expose
+  aucun point de cache, seul Anthropic en tient compte. Passer
+  `CHAT_PROVIDER=anthropic` dans `.env.local` suffit à l'activer : ~90 %
+  d'économie d'input dès la 2ᵉ requête. Pour un trafic clairsemé, un TTL d'1 h
+  (`cacheControl: { type: "ephemeral", ttl: "1h" }`) survit mieux entre deux
+  visiteurs que les 5 minutes par défaut.
 
 ## Structure
 

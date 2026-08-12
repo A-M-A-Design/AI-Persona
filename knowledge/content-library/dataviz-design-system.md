@@ -1,6 +1,7 @@
 # Le design système au service de vos besoins en data visualisation
 
 Article rédigé par Arthur Mathon (LinkedIn, 24 janvier 2023). Tags : DesignOps, Dashboard, Dataviz, DesignSystem.
+Idées clés : un design system rend les tableaux de bord adaptés au contexte réel des données et de leurs utilisateurs finaux ; les guidelines aident à la conception, les styleguides garantissent la qualité. Règles de représentation défendues — les camemberts avec précaution (on discerne mal une quantité à partir d'une part de gâteau), du texte lisible sans se tordre le cou, méfiance envers l'accumulation visuelle (quatre graphiques séparés valent parfois mieux qu'un seul combiné), et suppression de tout élément graphique inutile ou distrayant pour réduire la charge mentale.
 
 Chez Jems, grâce à notre expertise en conception de systèmes de composants, nous pouvons aujourd’hui soutenir notre offre dans le domaine de l’exploitation de la donnée.
 

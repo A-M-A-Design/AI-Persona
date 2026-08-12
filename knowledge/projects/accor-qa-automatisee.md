@@ -1,7 +1,6 @@
 # Accor — QA automatisée du design system
 
-- **Rôle** : conception de la méthode et de l'outillage, dans le cadre de la
-  mission Design System Manager chez Accor.
+- **Rôle** : conception de la méthode et de l'outillage.
 - **Contexte** : vérifier en continu que ce qui est intégré correspond à ce qui
   a été conçu, sur un design system multi-marques servi à plusieurs stacks.
 - **Problème** : l'écart entre la maquette et le rendu intégré ne se voit qu'à
