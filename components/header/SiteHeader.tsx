@@ -7,8 +7,8 @@
 // rendu WDS sans réimplémenter un menu déroulant accessible (clavier, lecteur
 // d'écran et sélecteur natif mobile fonctionnent d'origine).
 import { t, type StringKey } from "../../lib/i18n";
-import BackLink from "../article/BackLink";
 import { persistSetting, useSettings, type Settings } from "../useSettings";
+import HomeLink from "./HomeLink";
 
 const AVATARS: { value: string; labelKey: StringKey }[] = [
   { value: "ours", labelKey: "optionOurs" },
@@ -58,7 +58,7 @@ function ChipSelect({
   );
 }
 
-export default function SiteHeader({ withBackLink = false }: { withBackLink?: boolean }) {
+export default function SiteHeader({ withHomeLink = false }: { withHomeLink?: boolean }) {
   const settings = useSettings();
   const { lang } = settings;
   const nextMode = settings.colorMode === "dark" ? "light" : "dark";
@@ -74,9 +74,9 @@ export default function SiteHeader({ withBackLink = false }: { withBackLink?: bo
   return (
     <header className="site-nav">
       <div className="site-nav__inner">
-        {/* Pages articles uniquement : la barre est déjà collante, elle porte
-            donc le retour à l'accueil sans empiéter sur la colonne de texte. */}
-        {withBackLink && <BackLink />}
+        {/* Pages articles uniquement : le bouton d'accueil ouvre la barre à
+            gauche, les réglages restant groupés à droite. */}
+        {withHomeLink && <HomeLink />}
         <ChipSelect
           id="setting-avatar"
           label={t(lang, "avatarType")}

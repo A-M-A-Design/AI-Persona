@@ -8,7 +8,26 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Pied de page collant**, présent sur toutes les pages : « Discutons ! »
+  suivi des boutons LinkedIn et e-mail. Il fait le pendant de la barre de
+  navigation — mêmes retraits, même ombre, projetée vers le haut — et vaut
+  64 px de haut à toutes les largeurs, là où la barre descend de 80 à 64 en
+  mobile. `position: sticky` plutôt que `fixed` : la barre garde sa place dans
+  le flux, donc rien n'est masqué en bas de page.
+
 ### Changed
+
+- **La carte contact disparaît de l'accueil** : les liens qu'elle portait sont
+  passés dans le pied de page, où ils suivent le lecteur sur toutes les pages.
+- **Les pages articles ouvrent leur barre par un bouton d'accueil**, à gauche,
+  en lieu et place de la pilule « Retour ». Le libellé du lien reste
+  « Retour à l'accueil » pour les lecteurs d'écran.
+- **Les contrôles de la barre suivent la maquette au pixel** : 40 px en desktop
+  et tablette, 32 en mobile, dans une barre de 80 puis 64. Le bouton d'icône
+  WDS n'ayant pas de largeur propre, sa boîte se déduisait du contenu et
+  dépassait de 2 px ; le chip retombait de son côté à 38.
 
 - **Images servies en WebP** : les douze visuels (héros et articles) passent de
   PNG/JPEG à WebP — 1 854 Ko à 1 002 Ko, soit 46 % de moins.

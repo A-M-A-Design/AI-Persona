@@ -11,9 +11,6 @@ const STRINGS = {
     chatTitle: "Arthur Mathon",
     closeChat: "Fermer la conversation",
     newChat: "Démarrer une nouvelle conversation",
-    letsConnect: "Restons en contact !",
-    connectText:
-      "N'hésitez pas à me contacter sur les réseaux ou à m'envoyer un e-mail.",
     mail: "E-mail",
     error: "Oups, quelque chose a coincé. Réessayez dans un instant.",
     thinking: "Réponse en cours…",
@@ -30,9 +27,9 @@ const STRINGS = {
     optionLibellule: "Libellule",
     optionLight: "Clair",
     optionDark: "Sombre",
-    goBack: "Retour",
     backToHome: "Retour à l'accueil",
     articleFrenchOnly: "Cet article est publié en français.",
+    footerLetsChat: "Discutons !",
     footerLinkedIn: "LinkedIn",
   },
   en: {
@@ -44,9 +41,6 @@ const STRINGS = {
     chatTitle: "Arthur Mathon",
     closeChat: "Close the conversation",
     newChat: "Start a new conversation",
-    letsConnect: "Let's connect!",
-    connectText:
-      "Feel free to contact me on social media or send me an email.",
     mail: "Mail",
     error: "Oops, something went wrong. Please try again.",
     thinking: "Thinking…",
@@ -63,9 +57,9 @@ const STRINGS = {
     optionLibellule: "Dragonfly",
     optionLight: "Light",
     optionDark: "Dark",
-    goBack: "Go back",
     backToHome: "Back to home",
     articleFrenchOnly: "This article is published in French.",
+    footerLetsChat: "Let's chat!",
     footerLinkedIn: "LinkedIn",
   },
 } as const;

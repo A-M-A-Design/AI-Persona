@@ -38,7 +38,7 @@ async function visitArticle(page: import("@playwright/test").Page, lang = "fr") 
  */
 async function waitForHydration(page: import("@playwright/test").Page) {
   await page.waitForFunction(() => {
-    const el = document.querySelector(".site-nav .article-back");
+    const el = document.querySelector(".site-nav .site-nav__home");
     return Boolean(el && Object.keys(el).some((k) => k.startsWith("__react")));
   });
 }
@@ -241,27 +241,27 @@ test.describe("Carousel de fin d'article", () => {
 });
 
 test.describe("Retour à l'accueil", () => {
-  test("la pilule suit la lecture sans recouvrir le texte", async ({ page }) => {
+  test("le bouton suit la lecture sans recouvrir le texte", async ({ page }) => {
     await visitArticle(page);
-    const pill = page.locator(".site-nav .article-back");
-    await expect(pill).toBeVisible();
+    const home = page.locator(".site-nav .site-nav__home");
+    await expect(home).toBeVisible();
 
     await page.mouse.wheel(0, 1200);
     await page.waitForTimeout(200);
-    const first = await pill.boundingBox();
+    const first = await home.boundingBox();
     await page.mouse.wheel(0, 1200);
     await page.waitForTimeout(200);
-    const second = await pill.boundingBox();
+    const second = await home.boundingBox();
 
-    await expect(pill).toBeVisible();
+    await expect(home).toBeVisible();
     expect(Math.abs((second?.y ?? 0) - (first?.y ?? 0))).toBeLessThan(2);
 
-    // Elle est portée par la barre, dont le fond est opaque : le texte passe
-    // dessous. Ce qu'il faut vérifier, c'est qu'elle reste au premier plan et
-    // atteignable — quand elle était posée au-dessus de l'article, c'est le
-    // texte qui lui passait par-dessus.
+    // Il est porté par la barre, dont le fond est opaque : le texte passe
+    // dessous. Ce qu'il faut vérifier, c'est qu'il reste au premier plan et
+    // atteignable — quand la pilule était posée au-dessus de l'article, c'est
+    // le texte qui lui passait par-dessus.
     const onTop = await page.evaluate(() => {
-      const el = document.querySelector(".site-nav .article-back");
+      const el = document.querySelector(".site-nav .site-nav__home");
       if (!el) return false;
       const r = el.getBoundingClientRect();
       const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
@@ -270,14 +270,21 @@ test.describe("Retour à l'accueil", () => {
     expect(onTop).toBe(true);
   });
 
-  test("un seul exemplaire de la pilule est exposé", async ({ page }) => {
+  test("la pilule « Retour » a disparu au profit du bouton d'accueil", async ({ page }) => {
     await visitArticle(page);
-    await expect(page.getByRole("link", { name: /Retour/ })).toHaveCount(1);
+    await expect(page.locator(".article-back")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /Retour à l'accueil|Back to home/ })).toHaveCount(1);
   });
 
-  test("la pilule ramène à l'accueil", async ({ page }) => {
+  test("l'accueil n'affiche pas le bouton", async ({ page }) => {
+    // La variante à bouton d'accueil est propre aux pages articles.
+    await visit(page);
+    await expect(page.locator(".site-nav__home")).toHaveCount(0);
+  });
+
+  test("le bouton ramène à l'accueil", async ({ page }) => {
     await visitArticle(page);
-    await page.locator(".site-nav .article-back").click();
+    await page.locator(".site-nav .site-nav__home").click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator(".hero__title")).toBeVisible();
   });

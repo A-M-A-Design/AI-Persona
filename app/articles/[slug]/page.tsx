@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ArticleCarousel from "../../../components/article/ArticleCarousel";
 import ArticleView from "../../../components/article/ArticleView";
 import SiteHeader from "../../../components/header/SiteHeader";
+import SiteFooter from "../../../components/SiteFooter";
 import { hasTranslation, readArticleBodies } from "../../../lib/article-body";
 import { ARTICLES } from "../../../lib/articles";
 
@@ -32,13 +33,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   // Le carousel de fin propose les autres articles — jamais celui qu'on lit.
   const others = ARTICLES.filter((a) => a.slug !== slug);
 
-  // La pilule « Retour » est portée par la barre de navigation.
+  // La barre de navigation des articles porte le bouton d'accueil, à gauche.
   return (
     <>
-      <SiteHeader withBackLink />
+      <SiteHeader withHomeLink />
       <main className="page page--article">
         <ArticleView article={article} blocks={blocks} translated={translated} others={others} />
       </main>
+      <SiteFooter />
     </>
   );
 }

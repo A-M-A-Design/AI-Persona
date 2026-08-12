@@ -1,6 +1,7 @@
 import ArticlesSection from "../components/ArticlesSection";
 import Chat, { type PersonaPublic } from "../components/chat/Chat";
 import SiteHeader from "../components/header/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 import { getPersonas } from "../lib/personas";
 
 export default function Home() {
@@ -10,10 +11,10 @@ export default function Home() {
     suggestedQuestions: p.suggestedQuestions,
   }));
 
-  // La barre de navigation est pleine largeur et collante : elle sort donc du
-  // conteneur de page, qui garde ses marges. Chat porte l'état de la
-  // conversation : au repos il rend le héro, et le remplace par le fil dès le
-  // premier message.
+  // Barre de navigation et pied de page sont pleine largeur et collants : ils
+  // encadrent le conteneur de page, qui garde ses marges. Chat porte l'état de
+  // la conversation : au repos il rend le héro, et le remplace par le fil dès
+  // le premier message.
   return (
     <>
       <SiteHeader />
@@ -21,6 +22,7 @@ export default function Home() {
         <Chat personas={personas} />
         <ArticlesSection />
       </main>
+      <SiteFooter />
     </>
   );
 }
