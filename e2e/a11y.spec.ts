@@ -184,6 +184,54 @@ test.describe("Clavier", () => {
   });
 });
 
+test.describe("Raccourcis clavier", () => {
+  const cible = (page: Page) =>
+    page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      return el.tagName + (el.id ? "#" + el.id : "");
+    });
+
+  test("les trois raccourcis mènent à leur cible", async ({ page }) => {
+    await visit(page);
+    for (const [touche, attendu] of [
+      ["m", /MAIN#contenu/],
+      ["f", /^A$/],
+      ["n", /^SELECT/],
+    ] as const) {
+      await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+      await page.keyboard.press(touche);
+      expect(await cible(page), `touche ${touche}`).toMatch(attendu);
+    }
+  });
+
+  test("ils se taisent dans un champ de saisie", async ({ page }) => {
+    // Sans cette réserve, on ne pourrait plus écrire les lettres concernées.
+    await visit(page);
+    await page.locator(".launcher__row input").fill("");
+    await page.locator(".launcher__row input").focus();
+    await page.keyboard.type("formation");
+    await expect(page.locator(".launcher__row input")).toHaveValue("formation");
+  });
+
+  test("ils sont désactivables, et l'aide reste le chemin du retour", async ({ page }) => {
+    // Première échappatoire de WCAG 2.1.4 : un mécanisme permet de les couper.
+    await visit(page);
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await page.keyboard.press("?");
+    await expect(page.locator(".shortcuts__panel")).toBeVisible();
+
+    await page.locator(".shortcuts__toggle input").uncheck();
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await page.keyboard.press("f");
+    expect(await cible(page), "coupés, ils ne font plus rien").toBe("BODY");
+
+    // L'aide reste atteignable : c'est là qu'on les rallume.
+    await page.keyboard.press("?");
+    await expect(page.locator(".shortcuts__panel")).toBeVisible();
+  });
+});
+
 test.describe("Annonce de la réponse", () => {
   test.beforeEach(async ({ page }) => {
     await stubChat(page);

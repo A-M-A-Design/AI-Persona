@@ -8,7 +8,17 @@ import type { Lang } from "../lib/i18n";
 export const SETTINGS_EVENT = "ai-persona:settings";
 export const STORAGE_KEY = "ai-persona:settings";
 
-export type Settings = { persona: string; lang: Lang; colorMode: "light" | "dark" };
+export type Settings = {
+  persona: string;
+  lang: Lang;
+  colorMode: "light" | "dark";
+  /**
+   * Raccourcis clavier globaux. Actifs par défaut, désactivables — c'est la
+   * première échappatoire de WCAG 2.1.4, obligatoire dès qu'un raccourci
+   * n'utilise qu'une touche imprimable sans modificateur.
+   */
+  shortcuts: boolean;
+};
 
 export function readCurrentSettings(): Settings {
   const d = document.documentElement;
@@ -16,6 +26,7 @@ export function readCurrentSettings(): Settings {
     persona: d.getAttribute("data-persona") ?? "ours",
     lang: d.getAttribute("lang") === "en" ? "en" : "fr",
     colorMode: d.getAttribute("data-color-mode") === "dark" ? "dark" : "light",
+    shortcuts: d.getAttribute("data-shortcuts") !== "off",
   };
 }
 
@@ -48,6 +59,7 @@ export function useSettings(): Settings {
     persona: "ours",
     lang: "fr",
     colorMode: "light",
+    shortcuts: true,
   });
 
   useEffect(() => {

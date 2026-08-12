@@ -73,6 +73,7 @@ img {
 
 /* `:focus` et non `:focus-visible` : un lien d'évitement n'est atteint qu'au
    clavier, et l'heuristique de `:focus-visible` n'a rien à arbitrer ici. */
+.shortcuts__hint:focus,
 .skip-link:focus {
   transform: none;
   outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
@@ -109,6 +110,101 @@ img {
     gap: 16px;
     padding: 32px 16px;
   }
+}
+
+/* --- Raccourcis clavier -------------------------------------------------- */
+
+/* L'appel à l'aide suit le lien d'évitement : hors écran au repos, il descend
+   dès qu'il reçoit le focus. C'est le seul moyen de découvrir les raccourcis
+   sans les connaître d'avance. */
+.shortcuts__hint {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 20;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--wel-sem-border-radius-element-full);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  font-family: inherit;
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  line-height: var(--wel-sem-line-heights-body-sm);
+  cursor: pointer;
+  /* Hors du flux ET hors de l'écran : sans `position: fixed`, ce bouton est un
+     enfant flex de `body` et décale toute la page vers le bas. */
+  transform: translateY(calc(-100% - 16px));
+}
+
+.shortcuts {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--modal-scrim);
+}
+
+.shortcuts__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 420px;
+  max-width: 100%;
+  padding: 28px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-surface);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.shortcuts__panel h2 {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+}
+
+.shortcuts__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.shortcuts__list > div {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.shortcuts__list dt {
+  flex: 0 0 44px;
+}
+
+.shortcuts__list dd {
+  margin: 0;
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.shortcuts__list kbd {
+  display: inline-block;
+  min-width: 28px;
+  padding: 4px 8px;
+  border: var(--wel-sem-border-width-default, 1px) solid var(--wel-sem-color-outline-low);
+  border-radius: var(--wel-sem-border-radius-element-interactive-low);
+  background: var(--wel-sem-color-surface-container-mid);
+  font-family: var(--wel-sem-font-families-body), monospace;
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  text-align: center;
+}
+
+.shortcuts__toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
 }
 
 /* --- Barre de navigation collante --------------------------------------- */

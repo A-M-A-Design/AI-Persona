@@ -6,6 +6,7 @@ import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Shortcuts from "../components/Shortcuts";
 import SkipLink from "../components/SkipLink";
 import {
   Cormorant_Garamond,
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
 };
 
 // Applique les préférences (mode, persona, langue) avant le premier paint — anti-flash.
-const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);}catch(e){}})();`;
+const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);if(s.shortcuts===false)d.setAttribute("data-shortcuts","off");}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <SkipLink />
+        <Shortcuts />
         {children}
       </body>
     </html>
