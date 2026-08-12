@@ -6,6 +6,9 @@ const STRINGS = {
     heroTitle: "Bonjour, je suis Arthur !",
     heroSubtitle: "Designaut passionné de Design System, Product et Operations",
     askAnything: "Posez-moi n'importe quelle question !",
+    // Nom accessible du champ, distinct de son indice de saisie : le
+    // placeholder disparaît dès la première frappe, le libellé demeure.
+    questionLabel: "Votre question",
     letsChat: "Discutons",
     readArticle: "Lire l'article",
     chatTitle: "Arthur Mathon",
@@ -16,9 +19,12 @@ const STRINGS = {
     thinking: "Réponse en cours…",
     suggestions: "Questions suggérées",
     moreQuestions: "Voir plus de questions",
+    featuredArticles: "Articles à la une",
     moreArticles: "Autres articles",
     previousArticles: "Articles précédents",
     nextArticles: "Articles suivants",
+    pageCounter: "Page {n} sur {total}",
+    skipToContent: "Aller au contenu",
     avatarType: "Type d'avatar",
     language: "Langue",
     colorMode: "Mode couleur",
@@ -36,6 +42,7 @@ const STRINGS = {
     heroTitle: "Hi, I'm Arthur!",
     heroSubtitle: "A Designaut passionate of Design System, Product and Operations",
     askAnything: "Ask me anything!",
+    questionLabel: "Your question",
     letsChat: "Let's chat",
     readArticle: "Read the article",
     chatTitle: "Arthur Mathon",
@@ -46,9 +53,12 @@ const STRINGS = {
     thinking: "Thinking…",
     suggestions: "Suggested questions",
     moreQuestions: "See more questions",
+    featuredArticles: "Featured articles",
     moreArticles: "More articles",
     previousArticles: "Previous articles",
     nextArticles: "Next articles",
+    pageCounter: "Page {n} of {total}",
+    skipToContent: "Skip to content",
     avatarType: "Avatar Type",
     language: "Language",
     colorMode: "Color Mode",
@@ -68,4 +78,19 @@ export type StringKey = keyof (typeof STRINGS)["fr"];
 
 export function t(lang: Lang, key: StringKey): string {
   return STRINGS[lang][key];
+}
+
+/**
+ * Variante interpolée : `tf(lang, "pageCounter", { n: 2, total: 5 })` rend
+ * « Page 2 sur 5 ». La position des valeurs change d'une langue à l'autre, une
+ * concaténation dans le composant ne suffirait donc pas.
+ */
+export function tf(
+  lang: Lang,
+  key: StringKey,
+  values: Record<string, string | number>,
+): string {
+  return t(lang, key).replace(/\{(\w+)\}/g, (found, name: string) =>
+    name in values ? String(values[name]) : found,
+  );
 }

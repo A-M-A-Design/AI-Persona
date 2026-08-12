@@ -6,6 +6,7 @@
 // Le fil s'ancre en bas, les blocs sont alignés à droite, la question de
 // l'utilisateur est une pastille sombre et la réponse du texte simple.
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { t, type Lang } from "../../lib/i18n";
 import Composer from "./Composer";
 import SuggestedQuestions from "./SuggestedQuestions";
@@ -37,6 +38,7 @@ export default function ChatModal({
   onClose,
   onReset,
 }: Props) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   // Le panneau reste monté le temps de l'animation de sortie.
@@ -46,6 +48,45 @@ export default function ChatModal({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: "end" });
   }, [exchanges]);
+
+  /*
+    Annonce vocale de la réponse.
+
+    Le fil lui-même n'est plus une région live : le texte y arrive token par
+    token, et chaque insertion faisait ré-annoncer le paragraphe entier depuis
+    le début — la lecture était inutilisable pendant la génération. La question
+    de l'utilisateur y était annoncée elle aussi, alors qu'il vient de la
+    taper.
+
+    À la place, une région de statut hors écran reçoit deux valeurs seulement :
+    « réponse en cours » au départ, puis la réponse complète une fois le flux
+    terminé. Elle ne change donc que deux fois par échange.
+  */
+  const derniere = exchanges[exchanges.length - 1]?.answer ?? null;
+  const [annonce, setAnnonce] = useState("");
+  useEffect(() => {
+    if (busy) {
+      setAnnonce(t(lang, "thinking"));
+      return;
+    }
+    if (derniere) setAnnonce(derniere);
+  }, [busy, derniere, lang]);
+
+  /*
+    Arrière-plan neutralisé tant que le panneau est ouvert. `aria-modal` suffit
+    aux lecteurs d'écran récents, mais ne retire ni les liens de la tabulation
+    ni le contenu du mode exploration des plus anciens. `inert` le fait pour
+    les deux, et complète le piège de focus posé plus bas.
+  */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const voisins = Array.from(document.body.children).filter(
+      (el) => el !== root && !el.hasAttribute("inert"),
+    );
+    voisins.forEach((el) => el.setAttribute("inert", ""));
+    return () => voisins.forEach((el) => el.removeAttribute("inert"));
+  }, []);
 
   // Échap ferme, Tab reste dans le panneau, et la page ne défile plus derrière.
   useEffect(() => {
@@ -82,9 +123,13 @@ export default function ChatModal({
     };
   }, [requestClose]);
 
-  return (
+  // Monté sur <body> plutôt que dans <main> : le panneau est en position fixe,
+  // le rendu ne change pas, mais il devient un frère du contenu — condition
+  // pour pouvoir rendre celui-ci inerte sans s'inerter soi-même.
+  return createPortal(
     <div
       className={closing ? "chat-modal chat-modal--closing" : "chat-modal"}
+      ref={rootRef}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) requestClose();
       }}
@@ -133,7 +178,12 @@ export default function ChatModal({
           </h2>
         </header>
 
-        <div className="chat-modal__body" aria-live="polite">
+        {/* Hors écran : porte l'annonce, pas l'affichage. */}
+        <p className="a11y-hidden" role="status">
+          {annonce}
+        </p>
+
+        <div className="chat-modal__body">
           {exchanges.map((x) => (
             <div className="chat-modal__exchange" key={x.id}>
               <p className="chat-modal__question">{x.question}</p>
@@ -172,12 +222,14 @@ export default function ChatModal({
             className="chat-modal__composer"
             disabled={busy}
             placeholder={t(lang, "askAnything")}
+            label={t(lang, "questionLabel")}
             sendLabel={t(lang, "letsChat")}
             onSend={onSend}
             autoFocus
           />
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

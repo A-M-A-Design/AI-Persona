@@ -63,8 +63,9 @@ fonctionne pas.
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
 | `npm run welds:install` | Extraction des assets WDS depuis le zip |
 | `npm run themes:build` | Génération des 3 thèmes persona (M3) |
+| `npm run a11y` | Audit d'accessibilité complet : contraste puis balayage axe-core |
 | `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
-| `npm run test:e2e` | Tests Playwright (3 largeurs : 1440 / 1000 / 375) |
+| `npm run test:e2e` | Tests Playwright (1440 / 1000 / 375, plus 320 pour l'accessibilité) |
 | `npm run shots` | Captures d'écran dans `e2e/__screenshots__/` (`-- --all` pour 3 personas × 2 modes × 3 largeurs) |
 
 ### Tests end-to-end
@@ -94,6 +95,17 @@ le contraste d'un texte clair posé dessus.
 Après toute modification de `personas/mappings/*.map.json`, relancer
 `npm run themes:build` puis `npm run a11y:contrast` : le script échoue (code 1)
 si une paire passe sous 4,5:1, dégradés et fonds semi-transparents compris.
+
+## Accessibilité
+
+Cible **WCAG 2.2 AA**. L'audit, les constats corrigés, ce que le lecteur
+d'écran annonce à chaque étape et la procédure de vérification manuelle sont
+dans [`docs/accessibilite.md`](docs/accessibilite.md).
+
+`npm run a11y` enchaîne le contrôle de contraste et le balayage axe-core. À
+retenir : sur ce site, **axe-core seul ne détectait aucune des anomalies de
+l'audit** avec les règles WCAG. Le balayage ferme la porte aux régressions
+mécaniques, il ne remplace pas la lecture du code ni la passe manuelle.
 
 ## Règle d'or (workflow git)
 

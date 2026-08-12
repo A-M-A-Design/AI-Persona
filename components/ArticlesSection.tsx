@@ -4,6 +4,7 @@
 // grandes cards carrées, les suivants une rangée de cards étroites. Le contact
 // n'est plus une card — il est passé dans le pied de page, présent partout.
 import { ARTICLES, FEATURED_COUNT } from "../lib/articles";
+import { t } from "../lib/i18n";
 import ArticleCard from "./ArticleCard";
 import { useSettings } from "./useSettings";
 
@@ -12,15 +13,25 @@ export default function ArticlesSection() {
   const featured = ARTICLES.slice(0, FEATURED_COUNT);
   const rest = ARTICLES.slice(FEATURED_COUNT);
 
+  // Les titres des cards sont des h3 : sans h2 au-dessus, la hiérarchie saute
+  // un niveau après le h1 du héro. La maquette ne dessine pas ces titres, ils
+  // sont donc réservés aux technologies d'assistance — ils nomment aussi les
+  // deux grilles, qui n'étaient jusque-là que des blocs anonymes.
   return (
     <>
-      <section className="articles">
+      <section className="articles" aria-labelledby="articles-une">
+        <h2 className="a11y-hidden" id="articles-une">
+          {t(lang, "featuredArticles")}
+        </h2>
         {featured.map((a) => (
           <ArticleCard key={a.slug} article={a} lang={lang} persona={persona} />
         ))}
       </section>
 
-      <section className="articles articles--secondary">
+      <section className="articles articles--secondary" aria-labelledby="articles-suite">
+        <h2 className="a11y-hidden" id="articles-suite">
+          {t(lang, "moreArticles")}
+        </h2>
         {rest.map((a) => (
           <ArticleCard key={a.slug} article={a} lang={lang} persona={persona} />
         ))}

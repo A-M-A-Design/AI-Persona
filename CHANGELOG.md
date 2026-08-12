@@ -8,6 +8,25 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **Audit d'accessibilité complet** (WCAG 2.2 AA), consigné dans
+  `docs/accessibilite.md` — treize anomalies corrigées. Les trois bloquantes :
+  la réponse du chat était ré-annoncée en entier à chaque token reçu, faute
+  d'être sortie du conteneur `aria-live` ; le groupe de questions suggérées
+  n'avait aucun nom, `aria-label` étant ignoré sur un élément générique ; et
+  les chips de réglage n'affichaient **aucun indicateur de focus**, le focus se
+  posant sur un `<select>` rendu transparent.
+- **Le nom accessible des cards commence par l'action** : « Lire l'article,
+  Comment remettre en mouvement une entreprise traumatisée ? », au lieu de la
+  concaténation de tout le contenu de la card, surtitre en tête.
+- **Le champ de saisie a un libellé distinct de son indice** : le placeholder
+  disparaît à la première frappe, le nom accessible doit tenir.
+- Lien d'évitement, hiérarchie de titres complétée sur l'accueil, titre du
+  carousel, compteur annoncé en phrase, `prefers-reduced-motion` respecté par
+  les défilements pilotés en JavaScript, arrière-plan rendu `inert` pendant la
+  conversation, bouton d'envoi inactif qui reste atteignable au clavier.
+
 ### Added
 
 - **Pied de page collant**, présent sur toutes les pages : « Discutons ! »

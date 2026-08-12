@@ -37,7 +37,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <SiteHeader withHomeLink />
-      <main className="page page--article">
+      <main className="page page--article" id="contenu" tabIndex={-1}>
         <ArticleView article={article} blocks={blocks} translated={translated} others={others} />
       </main>
       <SiteFooter />

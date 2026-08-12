@@ -18,7 +18,9 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      <main className="page">
+      {/* `tabIndex={-1}` : sans lui, certains navigateurs déplacent la vue
+          sans déplacer le focus, et la tabulation suivante repart du début. */}
+      <main className="page" id="contenu" tabIndex={-1}>
         <Chat personas={personas} />
         <ArticlesSection />
       </main>

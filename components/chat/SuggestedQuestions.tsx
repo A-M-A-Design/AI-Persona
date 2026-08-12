@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { scrollBehavior } from "../../lib/motion";
 
 type Props = {
   label: string;
@@ -49,8 +50,11 @@ export default function SuggestedQuestions({
     };
   }, [scrollable, sync, questions]);
 
+  // `role="group"` : ARIA ignore aria-label sur un élément générique, la rangée
+  // n'avait donc aucun nom. Le rôle rend le libellé effectif et regroupe les
+  // pastilles au lieu de les livrer isolées.
   const row = (
-    <div className={className} aria-label={label} ref={rowRef}>
+    <div className={className} role="group" aria-label={label} ref={rowRef}>
       {questions.map((q) => (
         <button key={q} type="button" className="wel-chip" onClick={() => onPick(q)}>
           {q}
@@ -69,7 +73,7 @@ export default function SuggestedQuestions({
           type="button"
           className="suggestions__next"
           aria-label={nextLabel}
-          onClick={() => rowRef.current?.scrollBy({ left: 220, behavior: "smooth" })}
+          onClick={() => rowRef.current?.scrollBy({ left: 220, behavior: scrollBehavior() })}
         >
           <span aria-hidden="true">›</span>
         </button>

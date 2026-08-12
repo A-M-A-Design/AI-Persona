@@ -38,6 +38,7 @@ export default function Hero({ lang, persona, colorMode, disabled, questions, on
               className="launcher__row"
               disabled={disabled}
               placeholder={t(lang, "askAnything")}
+              label={t(lang, "questionLabel")}
               sendLabel={t(lang, "letsChat")}
               onSend={onSend}
             />

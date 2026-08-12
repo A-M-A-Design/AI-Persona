@@ -21,6 +21,13 @@ type Props = {
 const SIZES = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 644px";
 
 export default function ArticleCard({ article, lang, persona }: Props) {
+  // Le nom accessible du lien est calculé à partir de ces deux éléments, dans
+  // cet ordre : « Lire l'article, Comment remettre en mouvement une entreprise
+  // traumatisée ? ». Sans eux, il vaut la concaténation de tout le contenu de
+  // la card — surtitre compris — et commence donc par « SOCIÉTÉ ».
+  const titreId = `card-titre-${article.slug}`;
+  const ctaId = `card-cta-${article.slug}`;
+
   const inner = (
     <>
       {/* Visuel décoratif : le sens est porté par le titre de la card. */}
@@ -48,9 +55,11 @@ export default function ArticleCard({ article, lang, persona }: Props) {
         <div className="article-card__content">
           <div className="article-card__texts">
             <p className="article-card__kicker">{article.kicker[lang]}</p>
-            <h3 className="article-card__title">{article.title[lang]}</h3>
+            <h3 className="article-card__title" id={titreId}>
+              {article.title[lang]}
+            </h3>
           </div>
-          <span className="wel-button wel-button--secondary wel-button--sm">
+          <span className="wel-button wel-button--secondary wel-button--sm" id={ctaId}>
             {t(lang, "readArticle")}
           </span>
         </div>
@@ -65,6 +74,7 @@ export default function ArticleCard({ article, lang, persona }: Props) {
     <Link
       className={`article-card${article.image ? "" : " article-card--flat"}`}
       href={articlePath(article.slug)}
+      aria-labelledby={`${ctaId} ${titreId}`}
     >
       {inner}
     </Link>

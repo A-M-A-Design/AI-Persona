@@ -10,7 +10,8 @@
 // visibles en desktop, 2 en tablette, 1 en mobile) sans les connaître.
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Article } from "../../lib/articles";
-import { t, type Lang } from "../../lib/i18n";
+import { t, tf, type Lang } from "../../lib/i18n";
+import { scrollBehavior } from "../../lib/motion";
 import ArticleCard from "../ArticleCard";
 
 type Props = {
@@ -65,13 +66,23 @@ export default function ArticleCarousel({ articles, lang, persona }: Props) {
 
   const go = (direction: 1 | -1) => {
     const el = trackRef.current;
-    if (el) el.scrollBy({ left: direction * (stepRef.current || el.clientWidth), behavior: "smooth" });
+    if (el)
+      el.scrollBy({
+        left: direction * (stepRef.current || el.clientWidth),
+        behavior: scrollBehavior(),
+      });
   };
 
   if (articles.length === 0) return null;
 
+  // Un titre plutôt qu'un simple aria-label : la section apparaît alors dans
+  // la liste des titres, par laquelle un lecteur d'écran parcourt la page. Il
+  // reste masqué à l'écran, la maquette ne le dessinant pas.
   return (
-    <section className="carousel" aria-label={t(lang, "moreArticles")}>
+    <section className="carousel" aria-labelledby="carousel-titre">
+      <h2 className="a11y-hidden" id="carousel-titre">
+        {t(lang, "moreArticles")}
+      </h2>
       <div className="carousel__track" ref={trackRef}>
         {articles.map((article) => (
           <ArticleCard key={article.slug} article={article} lang={lang} persona={persona} />
@@ -90,9 +101,16 @@ export default function ArticleCarousel({ articles, lang, persona }: Props) {
           >
             <span aria-hidden="true">‹</span>
           </button>
-          {/* Le compteur suit le défilement, y compris au geste tactile. */}
+          {/* Le compteur suit le défilement, y compris au geste tactile. La
+              forme visible reste « 2 / 5 » ; l'annonce, elle, dit de quoi il
+              s'agit — « 2 / 5 » seul ne veut rien dire à l'oreille. */}
           <p className="carousel__counter" aria-live="polite">
-            {page + 1} / {pages}
+            <span aria-hidden="true">
+              {page + 1} / {pages}
+            </span>
+            <span className="a11y-hidden">
+              {tf(lang, "pageCounter", { n: page + 1, total: pages })}
+            </span>
           </p>
           <button
             type="button"

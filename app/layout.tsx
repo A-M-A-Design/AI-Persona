@@ -6,6 +6,7 @@ import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import SkipLink from "../components/SkipLink";
 import {
   Cormorant_Garamond,
   Fraunces,
@@ -70,7 +71,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: settingsScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <SkipLink />
+        {children}
+      </body>
     </html>
   );
 }
