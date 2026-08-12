@@ -22,6 +22,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le balayage axe du panneau de conversation mesurait les contrastes pendant
+  son animation d'entrée** : le panneau y est encore partiellement
+  transparent, et les couleurs composées avec l'arrière-plan faisaient échouer
+  la règle `color-contrast` sans que la page posée ait le moindre défaut. Le
+  test attend désormais la fin des animations en cours.
 - **Le titre du pied de page écrasait les boutons sur la libellule.** Press
   Start 2P est une pixel font à chasse fixe : chaque glyphe occupe un em plein,
   et « Discutons ! » y faisait 286 px contre 136 pour le même texte en
