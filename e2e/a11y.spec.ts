@@ -127,6 +127,36 @@ test.describe("Clavier", () => {
     expect(page.url()).toContain("#contenu");
   });
 
+  test("tout arrêt de tabulation a un nom et un anneau visible", async ({ page }) => {
+    // Relevé du parcours réel plutôt qu'une liste de sélecteurs : c'est ainsi
+    // qu'on attrape un élément rendu focalisable sans avoir été nommé — la
+    // piste du slideshow l'a été.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await visit(page);
+
+    const anomalies: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press("Tab");
+      const r = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (!el || el === document.body) return null;
+        const cs = getComputedStyle(el);
+        const etiquette = el.id
+          ? document.querySelector(`label[for="${el.id}"]`)?.textContent
+          : null;
+        return {
+          repere: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
+          nomme: Boolean(el.getAttribute("aria-label") || etiquette || el.textContent?.trim()),
+          anneau: cs.outlineStyle !== "none" && Number.parseFloat(cs.outlineWidth) > 0,
+        };
+      });
+      if (!r) break;
+      if (!r.nomme) anomalies.push(`${r.repere} : sans nom accessible`);
+      if (!r.anneau) anomalies.push(`${r.repere} : sans anneau de focus`);
+    }
+    expect(anomalies.join("\n")).toBe("");
+  });
+
   test("les chips de réglage montrent leur focus", async ({ page }) => {
     // Le <select> est en opacity 0 : sans style dédié, l'anneau de focus du
     // navigateur est invisible et le clavier navigue à l'aveugle.

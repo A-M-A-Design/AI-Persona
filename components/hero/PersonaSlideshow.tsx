@@ -178,7 +178,13 @@ export default function PersonaSlideshow({
       {/* Focalisable : les slides inactives sont `inert`, la piste n'a donc
           aucun contenu atteignable au clavier. Sans ce point d'entrée, elle ne
           se fait défiler qu'à la souris ou au doigt. */}
-      <div className="slideshow__track" ref={pisteRef} tabIndex={0}>
+      <div
+        className="slideshow__track"
+        ref={pisteRef}
+        tabIndex={0}
+        role="group"
+        aria-label={t(lang, "slideshowTrack")}
+      >
         {personas.map((p, i) => (
           <div
             className="slideshow__slide"
