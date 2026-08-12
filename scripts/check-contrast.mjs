@@ -27,23 +27,23 @@ const AA = 4.5;
 // On les mesure quand même — un état désactivé illisible reste un problème
 // d'usage — mais sans faire échouer l'audit.
 const PAIRS = [
-  ["Bouton primaire", "--wel-comp-btn-primary-fg-color", "--wel-comp-btn-primary-bg-color"],
-  ["Bouton primaire · survol", "--wel-comp-btn-primary-hover-fg-color", "--wel-comp-btn-primary-hover-bg-color"],
-  ["Bouton primaire · pressé", "--wel-comp-btn-primary-pressed-fg-color", "--wel-comp-btn-primary-pressed-bg-color"],
+  ["Bouton primaire", "--ama-comp-btn-primary-fg-color", "--ama-comp-btn-primary-bg-color"],
+  ["Bouton primaire · survol", "--ama-comp-btn-primary-hover-fg-color", "--ama-comp-btn-primary-hover-bg-color"],
+  ["Bouton primaire · pressé", "--ama-comp-btn-primary-pressed-fg-color", "--ama-comp-btn-primary-pressed-bg-color"],
   // L'état inactif ne suit plus le WDS : styles/persona-extras.css garde le
   // libellé opaque et rend le fond translucide (24 % de la primaire). Le seuil
   // s'applique donc, alors que WCAG 1.4.3 exempterait ce composant.
-  ["Bouton inactif", "--wel-sem-color-on-surface-hi", "--wel-sem-color-primary", { alpha: 0.24 }],
-  ["Bouton secondaire", "--wel-comp-btn-secondary-fg-color", "--wel-comp-btn-secondary-bg-color"],
-  ["Bouton secondaire · survol", "--wel-comp-btn-secondary-hover-fg-color", "--wel-comp-btn-secondary-hover-bg-color"],
-  ["Bouton tertiaire", "--wel-comp-btn-tertiary-fg-color", "--wel-comp-btn-tertiary-bg-color"],
-  ["Chip", "--wel-comp-chip-fg-color", "--wel-comp-chip-bg-color"],
-  ["Chip sélectionné", "--wel-comp-chip-fg-color", "--wel-comp-chip-selected-bg-color"],
-  ["Pastille question", "--wel-sem-color-on-primary", "--wel-sem-color-primary"],
-  ["Texte principal", "--wel-sem-color-on-surface-hi", "--wel-sem-color-surface"],
-  ["Texte secondaire", "--wel-sem-color-on-surface-mid", "--wel-sem-color-surface"],
-  ["Texte tertiaire", "--wel-sem-color-on-surface-low", "--wel-sem-color-surface"],
-  ["Lien", "--wel-sem-color-link", "--wel-sem-color-surface"],
+  ["Bouton inactif", "--ama-sem-color-on-surface-hi", "--ama-sem-color-primary", { alpha: 0.24 }],
+  ["Bouton secondaire", "--ama-comp-btn-secondary-fg-color", "--ama-comp-btn-secondary-bg-color"],
+  ["Bouton secondaire · survol", "--ama-comp-btn-secondary-hover-fg-color", "--ama-comp-btn-secondary-hover-bg-color"],
+  ["Bouton tertiaire", "--ama-comp-btn-tertiary-fg-color", "--ama-comp-btn-tertiary-bg-color"],
+  ["Chip", "--ama-comp-chip-fg-color", "--ama-comp-chip-bg-color"],
+  ["Chip sélectionné", "--ama-comp-chip-fg-color", "--ama-comp-chip-selected-bg-color"],
+  ["Pastille question", "--ama-sem-color-on-primary", "--ama-sem-color-primary"],
+  ["Texte principal", "--ama-sem-color-on-surface-hi", "--ama-sem-color-surface"],
+  ["Texte secondaire", "--ama-sem-color-on-surface-mid", "--ama-sem-color-surface"],
+  ["Texte tertiaire", "--ama-sem-color-on-surface-low", "--ama-sem-color-surface"],
+  ["Lien", "--ama-sem-color-link", "--ama-sem-color-surface"],
 ];
 
 // Le contenu des cards article repose sur un voile posé au-dessus d'une image.
@@ -52,16 +52,16 @@ const PAIRS = [
 // voile étant foncé quel que soit le mode de la page (cf. ArticleCard).
 const VEIL = { color: [7, 5, 24], alpha: 0.6 };
 const CARD_PAIRS = [
-  ["Card · titre", "--wel-sem-color-on-surface-hi"],
+  ["Card · titre", "--ama-sem-color-on-surface-hi"],
   // La maquette lie le surtitre à on-surface-low (2,21:1 ici) ; on-surface-hi
   // est le seul palier conforme sans épaissir le voile — cf. app/globals.css.
-  ["Card · surtitre", "--wel-sem-color-on-surface-hi"],
+  ["Card · surtitre", "--ama-sem-color-on-surface-hi"],
   // Même situation pour le héro de la v2 : titre et accroche posés sur le
   // voile fort de l'illustration du persona, en mode sombre forcé. L'accroche
   // visait on-surface-mid et tombait à 3,18:1 sur les trois personas — même
   // arbitrage que le surtitre de card, la hiérarchie passant par la taille.
-  ["Slideshow · titre", "--wel-sem-color-on-surface-hi"],
-  ["Slideshow · accroche", "--wel-sem-color-on-surface-hi"],
+  ["Slideshow · titre", "--ama-sem-color-on-surface-hi"],
+  ["Slideshow · accroche", "--ama-sem-color-on-surface-hi"],
 ];
 
 function blocks(css) {
@@ -111,7 +111,7 @@ for (const persona of PERSONAS) {
   const b = blocks(readFileSync(join(root, "styles", "generated", `${persona}.css`), "utf8"));
   for (const mode of MODES) {
     const token = (t) => b[mode][t] ?? b.base[t];
-    const surface = rgba(token("--wel-sem-color-surface")) ?? [255, 255, 255, 1];
+    const surface = rgba(token("--ama-sem-color-surface")) ?? [255, 255, 255, 1];
     for (const [label, fgToken, bgToken, opts = {}] of PAIRS) {
       const fg = rgba(token(fgToken));
       const bgRaw = token(bgToken);

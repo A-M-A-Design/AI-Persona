@@ -76,7 +76,7 @@ function resolveValue(value, scope, trail = []) {
 
 // ---------- token → variable CSS ----------
 
-/** ama.sem.color.on-surface-hi → wel-sem-color-on-surface-hi (au préfixe près). */
+/** ama.sem.color.on-surface-hi → ama-sem-color-on-surface-hi (au préfixe près). */
 function varName(path, prefix) {
   return path
     .replace(/^ama\./, `${prefix}-`)
@@ -256,7 +256,7 @@ const AMA_ONLY_PRIMITIVES = new Set([
 
 // ---------- vérification ----------
 
-const prefix = process.env.TOKENS_CSS_PREFIX ?? "wel";
+const prefix = process.env.TOKENS_CSS_PREFIX ?? "ama";
 const numbers = loadSet("primitives/numbers");
 
 let mismatches = 0;
@@ -345,6 +345,52 @@ for (const persona of PERSONAS) {
   }
 }
 
+// ---------- audit de la couche d'alias --wel-* ----------
+
+/**
+ * `styles/welds-src/components.css` consomme `var(--wel-…)` en dur : les thèmes
+ * émettent donc `--wel-x: var(--ama-x)` à côté de chaque source.
+ *
+ * Ce que cet audit protège : l'alias doit exister **dans le bloc même** où la
+ * source est déclarée. Une propriété personnalisée est substituée sur l'élément
+ * qui la déclare — un alias posé une seule fois sur `:root` serait figé sur la
+ * valeur qui y règne, et `ArticleCard`, qui porte `data-persona` et
+ * `data-color-mode="dark"` sur un descendant, perdrait son thème sombre.
+ *
+ * À supprimer avec la couche elle-même, quand les composants seront réécrits.
+ */
+let aliasChecked = 0;
+for (const persona of PERSONAS) {
+  const scopes = parseGenerated(readFileSync(join(generatedDir, `${persona}.css`), "utf8"), persona);
+  for (const [scopeKey, cssVars] of scopes) {
+    for (const [name, value] of cssVars) {
+      if (!name.startsWith("ama-")) continue;
+      const alias = `wel-${name.slice(4)}`;
+      const actual = cssVars.get(alias);
+      if (actual === undefined) {
+        report.push(`✘ [${persona}/${scopeKey}] --${alias} : alias absent du bloc de sa source`);
+        mismatches++;
+        continue;
+      }
+      if (actual !== `var(--${name})`) {
+        report.push(
+          `✘ [${persona}/${scopeKey}] --${alias}\n      attendu : var(--${name})\n      trouvé  : ${actual}`,
+        );
+        mismatches++;
+        continue;
+      }
+      aliasChecked++;
+    }
+    // et l'inverse : aucun --wel-* orphelin, qui ne suivrait plus rien
+    for (const name of cssVars.keys()) {
+      if (!name.startsWith("wel-")) continue;
+      if (cssVars.has(`ama-${name.slice(4)}`)) continue;
+      report.push(`✘ [${persona}/${scopeKey}] --${name} : alias sans source --ama-*`);
+      mismatches++;
+    }
+  }
+}
+
 // ---------- verdict ----------
 
 for (const line of report.slice(0, 80)) console.log(line);
@@ -352,7 +398,8 @@ if (report.length > 80) console.log(`   … et ${report.length - 80} autres lign
 
 console.log(
   `\n${checked} valeurs comparées · ${mismatches} divergence(s) · ${uncovered} variable(s) CSS sans token` +
-    `\n${amaOnly} primitive(s) propres à AMa, déclarées et hors comparaison`,
+    `\n${amaOnly} primitive(s) propres à AMa, déclarées et hors comparaison` +
+    `\n${aliasChecked} alias --wel-* vérifiés dans le bloc de leur source`,
 );
 
 if (mismatches || uncovered) {

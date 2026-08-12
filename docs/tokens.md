@@ -20,14 +20,38 @@ paquet dont personne n'a vérifié la non-régression n'aurait pas de sens.
 
 C'est un **artefact parallèle**. Les thèmes servis au navigateur —
 `styles/generated/*.css` — restent produits par `scripts/build-themes.mjs` à
-partir du `theme.css` du paquet WDS installé. `tokens/` ne les alimente pas.
+partir du `theme.css` du paquet WDS installé. `tokens/` ne les alimente pas
+encore ; `tokens:check` prouve seulement que les deux chaînes coïncident.
 
-La raison tient en une phrase : `styles/welds-src/components.css`, régénéré par
-`npm run welds:install`, consomme `var(--wel-…)` **en dur**. Tant que ces
-composants sont utilisés, les thèmes doivent continuer d'émettre `--wel-*`, sous
-peine de voir boutons, chips et champs perdre leurs couleurs. La bascule du
-pipeline vers `tokens/` viendra après la réécriture perso des composants, prévue
-au MVP — d'ici là, l'export est vérifié sans être branché.
+En revanche le **contrat CSS a basculé** : `--ama-*` est désormais la source, et
+`--wel-*` une couche d'alias. Voir « La double émission » plus bas.
+
+## La double émission
+
+```css
+[data-persona="ours"][data-color-mode="dark"] {
+  --ama-sem-color-surface: #0a0702;
+  --wel-sem-color-surface: var(--ama-sem-color-surface);
+}
+```
+
+Le CSS applicatif (`app/`, `components/`, `persona-extras.css`) consomme
+**`--ama-*` uniquement**. `--wel-*` n'existe plus que pour
+`styles/welds-src/components.css`, régénéré par `npm run welds:install` et qui
+consomme `var(--wel-…)` **en dur** : on ne peut pas le migrer, seulement le
+remplacer par des composants réécrits. Cette couche disparaîtra ce jour-là.
+
+**L'alias est émis dans le bloc même où la source est déclarée**, jamais une
+seule fois sur `:root`. Ce n'est pas une précaution théorique : une propriété
+personnalisée est substituée sur l'élément qui la déclare, donc un alias posé à
+la racine serait figé sur la valeur qui y règne. Or `ArticleCard` porte
+`data-persona` et `data-color-mode="dark"` sur un **descendant** — une card
+sombre dans une page claire. Un alias unique à la racine leur ferait toutes
+perdre leur thème. `tokens:check` refuse cette situation, et le test de mutation
+le vérifie.
+
+Coût de la couche : **210 → 568 Ko brut, 23 → 50 Ko gzip** pour les trois
+thèmes. Temporaire, et c'est la moitié du poids qui part avec elle.
 
 ## La chaîne
 
@@ -75,7 +99,11 @@ pour toutes les paires texte/fond à la fois.
 ```
 4875 valeurs comparées · 0 divergence(s) · 0 variable(s) CSS sans token
 6 primitive(s) propres à AMa, déclarées et hors comparaison
+4875 alias --wel-* vérifiés dans le bloc de leur source
 ```
+
+Le préfixe comparé est réglable par `TOKENS_CSS_PREFIX` (`ama` par défaut) :
+c'est ce qui a permis de vérifier la bascule du contrat sans réécrire l'oracle.
 
 Le vérificateur ne partage **aucun code** avec le générateur, pas même la
 transformation de teinte : il relit le CSS et refait la résolution de son côté.
@@ -175,9 +203,11 @@ dans git », qui vaut toujours pour `styles/welds-src/` et les zips.
 
 ## Reste à faire
 
-- Brancher le pipeline sur `tokens/` après la réécriture des composants, en
-  émettant `--ama-*` comme source et `--wel-*` en alias pointant dessus, pour
-  que le CSS applicatif migre à son rythme.
+- **Retirer la couche d'alias `--wel-*`** quand les composants WDS seront
+  réécrits : supprimer `addWelAliases` de `build-themes.mjs` et l'audit
+  correspondant de `check-tokens.mjs`. C'est la moitié du poids des thèmes.
+- Brancher le pipeline sur `tokens/` — les thèmes sortent encore du `theme.css`
+  WDS, pas de l'export.
 - Retirer les familles de primitives héritées (`ama.prim.color.leg.*`, 130
   tokens) une fois qu'aucun composant ne les référence. Elles sont conservées
   pour l'instant parce que le CSS généré les émet, et que le vérificateur exige

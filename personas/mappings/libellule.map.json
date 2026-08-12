@@ -14,21 +14,21 @@
     "Roboto": "var(--font-libellule-body)"
   },
   "vars": {
-    "--wel-sem-border-radius-*": "0",
-    "--wel-comp-checkbox-radius": "0",
-    "--wel-comp-map-pointer-radius": "0",
-    "--wel-comp-booking-engine-radius": "0",
-    "--wel-sem-number-shadow-blur": "0",
-    "--wel-sem-number-shadow-wide-blur": "0",
-    "--wel-sem-number-shadow-up-y": "4px",
-    "--wel-sem-number-shadow-down-y": "4px",
-    "--wel-sem-number-shadow-down-wide-y": "6px",
-    "--wel-sem-font-sizes-body-md": "1.2rem",
-    "--wel-sem-font-sizes-input-md": "1.2rem",
-    "--wel-sem-font-sizes-display-sm": "1.4rem",
-    "--wel-sem-font-sizes-display-md": "1rem",
-    "--wel-sem-line-heights-display-md": "1.5rem",
-    "--wel-sem-font-sizes-subtitle-lg": "1rem",
-    "--wel-sem-line-heights-subtitle-lg": "1.5rem"
+    "--ama-sem-border-radius-*": "0",
+    "--ama-comp-checkbox-radius": "0",
+    "--ama-comp-map-pointer-radius": "0",
+    "--ama-comp-booking-engine-radius": "0",
+    "--ama-sem-number-shadow-blur": "0",
+    "--ama-sem-number-shadow-wide-blur": "0",
+    "--ama-sem-number-shadow-up-y": "4px",
+    "--ama-sem-number-shadow-down-y": "4px",
+    "--ama-sem-number-shadow-down-wide-y": "6px",
+    "--ama-sem-font-sizes-body-md": "1.2rem",
+    "--ama-sem-font-sizes-input-md": "1.2rem",
+    "--ama-sem-font-sizes-display-sm": "1.4rem",
+    "--ama-sem-font-sizes-display-md": "1rem",
+    "--ama-sem-line-heights-display-md": "1.5rem",
+    "--ama-sem-font-sizes-subtitle-lg": "1rem",
+    "--ama-sem-line-heights-subtitle-lg": "1.5rem"
   }
 }

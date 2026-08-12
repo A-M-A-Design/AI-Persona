@@ -275,10 +275,10 @@ function addFontStyles(brand, cross) {
 
 // ---------- overrides de l'avatar ----------
 
-/** ama.sem.color.on-surface-hi → wel-sem-color-on-surface-hi */
+/** ama.sem.color.on-surface-hi → ama-sem-color-on-surface-hi */
 const varName = (path) =>
   path
-    .replace(/^ama\./, "wel-")
+    .replace(/^ama\./, "ama-")
     .replace(/\./g, "-")
     .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
     .toLowerCase();

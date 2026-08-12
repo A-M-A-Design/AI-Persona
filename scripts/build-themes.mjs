@@ -68,7 +68,7 @@ function transformColors(css, rules) {
 
 function transformFonts(css, fonts) {
   if (!fonts) return css;
-  return css.replace(/(--wel-[a-z0-9-]*font-famil[a-z-]*:\s*)([^;]+)(;)/g, (m, pre, value, post) => {
+  return css.replace(/(--ama-[a-z0-9-]*font-famil[a-z-]*:\s*)([^;]+)(;)/g, (m, pre, value, post) => {
     let v = value;
     for (const [from, to] of Object.entries(fonts)) {
       v = v.replace(new RegExp(`(['"]?)${from}\\1`, "g"), to);
@@ -113,6 +113,41 @@ function addSurfaceAlternative(css) {
   );
 }
 
+// ---------- double émission du contrat ----------
+
+/**
+ * Renomme les déclarations du template en `--ama-*`. Seules les déclarations
+ * sont touchées : les rares valeurs contenant un `var()` visent les polices
+ * (`--font-<persona>-*`), jamais une variable du contrat.
+ */
+function renameToAma(css) {
+  return css.replace(/(^|\n)([ \t]*)--wel-([a-z0-9-]+):/g, "$1$2--ama-$3:");
+}
+
+/**
+ * Ajoute, après chaque déclaration `--ama-x`, l'alias `--wel-x: var(--ama-x)`.
+ *
+ * L'alias est émis **dans le bloc même** où la source est déclarée, jamais une
+ * seule fois sur `:root` — et ce n'est pas une précaution théorique. Une
+ * propriété personnalisée est substituée sur l'élément qui la déclare : un alias
+ * posé à la racine serait figé sur la valeur qui y règne. Or `ArticleCard` porte
+ * `data-persona` et `data-color-mode="dark"` sur un descendant — une card sombre
+ * dans une page claire. Un alias unique à la racine leur ferait toutes perdre
+ * leur thème.
+ *
+ * Cette couche existe parce que `styles/welds-src/components.css`, régénéré par
+ * `npm run welds:install`, consomme `var(--wel-…)` en dur : on ne peut pas la
+ * migrer, seulement la remplacer par des composants réécrits. À supprimer ce
+ * jour-là — elle pèse pour moitié dans le poids des thèmes.
+ */
+function addWelAliases(css) {
+  return css.replace(
+    /(^|\n)([ \t]*)--ama-([a-z0-9-]+):[ \t]*([^;]+);/g,
+    (_, nl, indent, name, value) =>
+      `${nl}${indent}--ama-${name}: ${value};${nl}${indent}--wel-${name}: var(--ama-${name});`,
+  );
+}
+
 // ---------- rescope ----------
 
 function rescope(css, id) {
@@ -133,10 +168,18 @@ for (const id of PERSONAS) {
   console.log(`— ${id}`);
   let css = addSurfaceAlternative(template);
   css = transformColors(css, mapping.colors ?? {});
+  css = renameToAma(css);
   css = transformFonts(css, mapping.fonts);
+  // après le renommage : les overrides du mapping visent la source, et l'alias
+  // les suit tout seul puisqu'il pointe dessus.
   css = applyVarOverrides(css, mapping.vars);
+  css = addWelAliases(css);
   css = rescope(css, id);
-  const header = `/* GÉNÉRÉ par scripts/build-themes.mjs — ne pas éditer à la main.\n   Persona "${id}" : valeurs personnelles dérivées du contrat --wel-*. */\n`;
+  const header =
+    `/* GÉNÉRÉ par scripts/build-themes.mjs — ne pas éditer à la main.\n` +
+    `   Persona "${id}" : valeurs personnelles dérivées du contrat --ama-*.\n` +
+    `   --wel-* est une couche d'alias pour les composants WDS, à retirer\n` +
+    `   quand ils seront réécrits (voir docs/tokens.md). */\n`;
   writeFileSync(join(outDir, `${id}.css`), header + css);
   console.log(`  ✔ styles/generated/${id}.css (${Math.round(css.length / 1024)} KB)`);
 }

@@ -66,6 +66,25 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Le contrat CSS bascule sur `--ama-*`.** Les thèmes émettent la valeur sous
+  `--ama-*` et un alias `--wel-*: var(--ama-*)` à côté ; le CSS applicatif — 191
+  occurrences dans `app/`, `components/`, `persona-extras.css` et
+  `check-contrast.mjs` — ne consomme plus que `--ama-*`.
+
+  `--wel-*` ne subsiste que pour `styles/welds-src/components.css`, régénéré par
+  `npm run welds:install` et qui consomme `var(--wel-…)` **en dur** : on ne peut
+  pas le migrer, seulement le remplacer par des composants réécrits. La couche
+  disparaîtra ce jour-là — elle pèse pour moitié dans les thèmes (210 → 568 Ko
+  brut, 23 → 50 Ko gzip).
+
+  **L'alias est émis dans le bloc même où la source est déclarée**, jamais une
+  seule fois sur `:root` : une propriété personnalisée est substituée sur
+  l'élément qui la déclare, et `ArticleCard` porte `data-persona` +
+  `data-color-mode="dark"` sur un descendant. Un alias unique à la racine aurait
+  fait perdre son thème à toutes les cards sombres. `tokens:check` audite les
+  4875 alias et refuse cette situation ; les trois modes de défaillance — alias
+  manquant, alias figé sur une valeur, alias orphelin — sont vérifiés par
+  mutation.
 - **La transformation de teinte des personas passe dans
   `scripts/lib/persona-color.mjs`**, partagée par le générateur de thèmes et
   celui de tokens. Les deux chaînes doivent rendre la même couleur au bit près,
@@ -89,6 +108,18 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Quatre variables de thème n'existaient nulle part.**
+  `--wel-sem-border-width-focus`, `--wel-sem-border-width-thin`,
+  `--wel-sem-font-sizes-body-xs` et `--wel-sem-line-heights-body-xs` étaient
+  consommées par `globals.css` sans jamais être définies — ni par les thèmes, ni
+  par les composants, ni par l'export de tokens. Six usages sur huit avaient une
+  valeur de repli et passaient donc inaperçus ; **les deux autres n'en avaient
+  pas** (`.article__kicker`), et sa taille comme son interligne retombaient
+  silencieusement sur l'héritage. Remplacées par les tokens réels, dont la
+  valeur est exactement celle des replis : `border-width-strong` (2 px),
+  `border-width-default` (1 px) et `font-sizes`/`line-heights-caption`
+  (0,75 rem / 1 rem) — `caption` étant le token du surtitre en capitales.
+  Trouvé en cartographiant les consommateurs avant la bascule vers `--ama-*`.
 - **Le chat retombait en erreur à chaque redémarrage du serveur de
   développement.** Derrière l'interception TLS de l'entreprise, `fetch` côté
   Node échoue avec `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` tant que
