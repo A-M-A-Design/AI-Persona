@@ -30,6 +30,34 @@ test.describe("Slideshow", () => {
     await expect(page.locator(".slideshow__slide:not([inert])")).toHaveCount(1);
   });
 
+  test("le persona mémorisé est restauré sans faire défiler la piste", async ({ page }) => {
+    // `useSettings` rend les défauts SSR puis lit <html> à son montage : le
+    // composant rattrape alors la slide du persona mémorisé. Ce rattrapage doit
+    // être instantané. Animé, il donnait à voir un défilement de l'ours vers la
+    // libellule au chargement, comme si le carrousel démarrait tout seul.
+    await page.addInitScript(() => {
+      (window as unknown as { __positions: number[] }).__positions = [];
+      const releve = () => {
+        const piste = document.querySelector(".slideshow__track");
+        if (piste) (window as unknown as { __positions: number[] }).__positions.push(piste.scrollLeft);
+        requestAnimationFrame(releve);
+      };
+      requestAnimationFrame(releve);
+    });
+    await visit(page, { persona: "libellule" });
+
+    const largeur = await page.locator(".slideshow__track").evaluate((el) => el.clientWidth);
+    const positions = await page.evaluate(
+      () => (window as unknown as { __positions: number[] }).__positions,
+    );
+
+    // Une animation laisse forcément des positions intermédiaires ; un saut, non.
+    const intermediaires = positions.filter((x) => x > 4 && x < 2 * largeur - 4);
+    expect(intermediaires).toHaveLength(0);
+    expect(await persona(page)).toBe("libellule");
+    await expect(page.locator(".slideshow__slide:not([inert])")).toHaveCount(1);
+  });
+
   test("la lecture automatique tourne et boucle", async ({ page }) => {
     await visit(page);
     expect(await enLecture(page)).toBe("true");

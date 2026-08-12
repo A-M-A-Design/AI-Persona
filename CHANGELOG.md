@@ -113,6 +113,21 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le héro défilait tout seul au chargement**, de l'ours vers le persona
+  mémorisé, comme si le carrousel démarrait de lui-même. Le thème, lui, était
+  déjà le bon dès la première image : seule la piste rattrapait sa position.
+
+  `useSettings` rend les défauts SSR pour éviter un écart d'hydratation, puis lit
+  `<html>` dans son effet de montage — où le script anti-flash a déjà posé le
+  persona mémorisé. Le slideshow rattrapait donc sa slide *après* l'hydratation,
+  et ce rattrapage passait par la même animation qu'un changement voulu.
+
+  Un déplacement de la piste n'est désormais animé que s'il a une cause : lecture
+  automatique, bouton, clavier ou sélecteur de la barre, qui passent tous par un
+  événement de réglages. La restauration initiale n'en a pas, et se fait donc
+  d'un bloc. Test de régression : une animation laisse des positions
+  intermédiaires, un saut n'en laisse aucune — il en relevait 25 avant le
+  correctif, zéro après.
 - **Quatre variables de thème n'existaient nulle part.**
   `--wel-sem-border-width-focus`, `--wel-sem-border-width-thin`,
   `--wel-sem-font-sizes-body-xs` et `--wel-sem-line-heights-body-xs` étaient
