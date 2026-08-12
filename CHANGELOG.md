@@ -71,13 +71,19 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   `app/`, `components/`, `persona-extras.css`, `check-contrast.mjs`) comme les
   composants WDS.
 
-  Les composants d'Accor consommaient `var(--wel-…)` **en dur**, ce qui semblait
-  imposer une couche d'alias `--wel-*: var(--ama-*)` dans les thèmes jusqu'à leur
-  réécriture — 358 Ko pour les trois personas. Fausse contrainte : un renommage
-  ne serait détruit à la réinstallation que s'il était fait **à la main**.
-  `install-welds.mjs` aligne donc le préfixe **à l'extraction**, sur les 1188
-  références du fichier, qui est de toute façon un artefact local et gitignoré.
-  Les thèmes restent à 210 Ko brut / 23 Ko gzip, et il n'y a qu'un seul contrat.
+  Le paquet d'Accor parle `--wel-*` sur 2810 références. Le renommage a lieu à un
+  seul endroit, le plus en amont possible : `install-welds.mjs`, à l'extraction,
+  sur le `theme.css` comme sur les composants. `build-themes.mjs` n'a donc jamais
+  à connaître l'ancien nom, et les thèmes restent à 210 Ko brut / 23 Ko gzip.
+
+  Ce chantier avait d'abord pris un autre chemin, sur une contrainte non
+  vérifiée — « le fichier est régénéré, tout renommage y serait détruit ». Vrai
+  d'une édition **à la main** ; faux fait par l'installateur, où la
+  transformation est reproductible par construction. Le détour a coûté une couche
+  d'alias de 358 Ko, un piège de portée CSS à désamorcer et son audit dédié, tout
+  cela supprimé par une ligne une fois la contrainte examinée. Consigné dans
+  `docs/tokens.md` : quand une contrainte impose une architecture coûteuse, la
+  vérifier avant de la contourner.
 
   `tokens:check` refuse tout `--wel-*` dans les six fichiers du contrat : s'il en
   revenait un, plus aucun thème ne le définirait et les composants perdraient

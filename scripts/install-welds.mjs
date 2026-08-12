@@ -45,33 +45,43 @@ if (!theme) {
   console.error(`✘ ${THEME} absent du zip`);
   process.exit(1);
 }
-writeFileSync(join(outDir, "template.theme.css"), zip.readAsText(theme));
-console.log(`✔ template.theme.css (${THEME})`);
-
 /**
- * Les composants WDS consomment `var(--wel-…)` en dur. Plutôt que de faire
- * émettre aux thèmes une couche d'alias `--wel-*: var(--ama-*)` — 358 Ko pour
- * les trois personas —, on aligne le contrat à l'extraction : le fichier est de
- * toute façon un artefact local, gitignoré et reconstruit par cette commande,
- * exactement comme `build-themes.mjs` dérive les thèmes du template.
+ * Le paquet WDS parle `--wel-*`. Le projet parle `--ama-*` : on aligne le
+ * préfixe **ici**, à l'extraction, sur le thème comme sur les composants.
  *
- * C'est un renommage de préfixe, définitions comprises (`.wel-modal` déclare une
- * variable à lui) : rien d'autre n'est touché dans le CSS d'Accor. Les noms de
- * classes `.wel-*` restent ceux du paquet, puisque c'est lui qui les fournit.
+ * Faire ce renommage à un seul endroit, le plus en amont possible, est ce qui
+ * évite de le traîner ailleurs. La tentation inverse — laisser les composants sur
+ * `--wel-*` et faire émettre aux thèmes une couche d'alias `--wel-x: var(--ama-x)`
+ * — a été essayée : 358 Ko pour les trois personas, et un piège de portée CSS à
+ * désamorcer. Elle reposait sur une contrainte fausse (voir docs/tokens.md).
+ *
+ * Ces fichiers sont des artefacts locaux, gitignorés et reconstruits par cette
+ * commande : les renommer n'altère rien de durable, exactement comme
+ * `build-themes.mjs` dérive les thèmes du template. Rien d'autre n'est touché
+ * dans le CSS d'Accor — les noms de classes `.wel-*` restent les siens, puisque
+ * c'est lui qui les fournit.
  */
 const toAmaContract = (css) => css.replace(/--wel-/g, "--ama-");
 
-let componentsCss = "";
 let renamed = 0;
+const align = (css) => {
+  renamed += (css.match(/--wel-/g) ?? []).length;
+  return toAmaContract(css);
+};
+
+writeFileSync(join(outDir, "template.theme.css"), align(zip.readAsText(theme)));
+console.log(`✔ template.theme.css (${THEME})`);
+
+let componentsCss = "";
 for (const name of COMPONENTS) {
   const entry = zip.getEntry(`private/install/css/${name}.css`);
   if (!entry) {
     console.warn(`⚠ composant absent du zip : ${name}`);
     continue;
   }
-  const raw = zip.readAsText(entry);
-  renamed += (raw.match(/--wel-/g) ?? []).length;
-  componentsCss += `\n/* === ${name} === */\n` + toAmaContract(raw);
+  // le renommage couvre aussi les définitions : `.wel-modal` déclare une
+  // variable à lui, qu'il consomme dans la foulée.
+  componentsCss += `\n/* === ${name} === */\n` + align(zip.readAsText(entry));
   console.log(`✔ ${name}.css`);
 }
 writeFileSync(join(outDir, "components.css"), componentsCss);

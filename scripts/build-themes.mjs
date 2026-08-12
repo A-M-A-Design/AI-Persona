@@ -3,6 +3,10 @@
  * (styles/welds-src/template.theme.css, gitignoré) et des mappings
  * personas/mappings/<id>.map.json.
  *
+ * Le template arrive déjà sur le contrat `--ama-*` : `install-welds.mjs` aligne
+ * le préfixe à l'extraction, pour le thème comme pour les composants. Ce script
+ * n'a donc jamais à connaître l'ancien nom.
+ *
  * Principe : le template est 100 % aplati (aucun var() interne), on transforme
  * donc chaque littéral de couleur via des règles de teinte HSL, on remplace les
  * familles de polices, on applique des overrides de variables, puis on rescope
@@ -94,7 +98,7 @@ function applyVarOverrides(css, vars) {
 // ---------- tokens absents du template ----------
 
 /**
- * Ajoute `--wel-sem-color-surface-alternative`, absent du theme.css livré par le
+ * Ajoute `--ama-sem-color-surface-alternative`, absent du theme.css livré par le
  * paquet WDS installé ici. Voir scripts/lib/persona-color.mjs pour la dérivation.
  *
  * L'injection a lieu avant la teinte persona, qui préserve la luminance
@@ -102,31 +106,15 @@ function applyVarOverrides(css, vars) {
  */
 function addSurfaceAlternative(css) {
   return css.replace(
-    /(--wel-sem-color-surface:\s*(#[0-9a-fA-F]{3,8})\s*;)/g,
+    /(--ama-sem-color-surface:\s*(#[0-9a-fA-F]{3,8})\s*;)/g,
     (line, _all, value) => {
       // Le blanc est neutre : la recherche à teinte constante rendrait un gris,
       // là où le système pose une nuance teintée. On garde donc sa valeur.
       const alt =
         value.toLowerCase() === "#ffffff" ? SURFACE_ALTERNATIVE_LIGHT : alternativeOf(value);
-      return `${line}\n--wel-sem-color-surface-alternative: ${alt};`;
+      return `${line}\n--ama-sem-color-surface-alternative: ${alt};`;
     },
   );
-}
-
-// ---------- contrat --ama-* ----------
-
-/**
- * Renomme les déclarations du template en `--ama-*`. Seules les déclarations
- * sont touchées : les rares valeurs contenant un `var()` visent les polices
- * (`--font-<persona>-*`), jamais une variable du contrat.
- *
- * Les composants WDS consommaient `var(--wel-…)` en dur ; ils sont désormais
- * alignés sur `--ama-*` par `scripts/install-welds.mjs`, à l'extraction. Plus
- * rien ne consomme `--wel-*`, d'où l'absence de couche d'alias — elle aurait
- * pesé 358 Ko pour les trois personas.
- */
-function renameToAma(css) {
-  return css.replace(/(^|\n)([ \t]*)--wel-([a-z0-9-]+):/g, "$1$2--ama-$3:");
 }
 
 // ---------- rescope ----------
@@ -149,10 +137,7 @@ for (const id of PERSONAS) {
   console.log(`— ${id}`);
   let css = addSurfaceAlternative(template);
   css = transformColors(css, mapping.colors ?? {});
-  css = renameToAma(css);
   css = transformFonts(css, mapping.fonts);
-  // après le renommage : les overrides du mapping visent la source, et l'alias
-  // les suit tout seul puisqu'il pointe dessus.
   css = applyVarOverrides(css, mapping.vars);
   css = rescope(css, id);
   const header =

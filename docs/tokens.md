@@ -28,39 +28,66 @@ En revanche le **contrat CSS a basculé** : `--ama-*` est la seule source, et
 
 ## Un seul contrat, `--ama-*`
 
-Tout ce que sert le navigateur consomme `--ama-*` : le CSS applicatif (`app/`,
-`components/`, `persona-extras.css`) comme les composants WDS.
+**`--wel-` n'existe plus nulle part** — ni dans le CSS applicatif, ni dans les
+thèmes, ni dans les composants WDS, ni même dans le `theme.css` extrait.
 
-Les composants d'Accor consommaient pourtant `var(--wel-…)` **en dur**. Le
-réflexe était de faire émettre aux thèmes une couche d'alias
-`--wel-x: var(--ama-x)` en attendant leur réécriture — 358 Ko pour les trois
-personas, et un piège de portée CSS à désamorcer. C'était une fausse contrainte :
-
-> « Un renommage dans `components.css` serait détruit à la prochaine
-> installation. »
-
-Vrai d'une **édition à la main**. Faux si c'est **l'installateur** qui le fait.
-`scripts/install-welds.mjs` aligne donc le préfixe à l'extraction, sur les 1188
-références du fichier :
+Le paquet d'Accor parle pourtant `--wel-*`, sur 2810 références. Le renommage a
+lieu **à un seul endroit, le plus en amont possible** : `install-welds.mjs`, au
+moment de l'extraction.
 
 ```js
 const toAmaContract = (css) => css.replace(/--wel-/g, "--ama-");
 ```
 
-Le fichier est de toute façon un artefact local, gitignoré et reconstruit par
-cette commande — exactement comme `build-themes.mjs` dérive les thèmes du
-`theme.css`. Aucun autre changement dans le CSS d'Accor ; les noms de classes
-`.wel-*` restent les siens, puisque c'est lui qui les fournit.
+`template.theme.css` et `components.css` sont des artefacts locaux, gitignorés et
+reconstruits par `npm run welds:install` : les renommer n'altère rien de durable,
+exactement comme `build-themes.mjs` dérive les thèmes du template. Rien d'autre
+n'est touché dans le CSS d'Accor — les noms de classes `.wel-*` restent les
+siens, puisque c'est lui qui les fournit.
 
-**Ce qu'il ne faut pas réintroduire.** Si un `--wel-*` revient — ancien
-`install-welds.mjs` rétabli, CSS Accor collé à la main —, plus aucun thème ne le
-définit : les composants perdent leurs couleurs **en silence**, et aucun test de
-contraste ne bronche, puisqu'il mesure ce qui est peint, pas ce qui a disparu.
-`tokens:check` refuse tout `--wel-*` dans les six fichiers du contrat, et les
-deux voies de retour en arrière sont vérifiées par mutation.
+Conséquence : `build-themes.mjs` n'a jamais à connaître l'ancien nom. Les deux
+seuls fichiers du dépôt qui l'écrivent encore sont l'installateur, qui doit le
+lire, et `check-tokens.mjs`, qui doit l'interdire.
 
-Cela laisse les thèmes à **210 Ko brut, 23 Ko gzip** — le poids d'avant la
-migration.
+### Le piège : une contrainte qu'on n'a pas vérifiée
+
+Ce chantier a d'abord pris un tout autre chemin, sur la foi d'une phrase :
+
+> « `components.css` est régénéré par `npm run welds:install` : tout renommage y
+> serait détruit à la prochaine installation. Donc on ne peut pas le migrer,
+> seulement le remplacer par des composants réécrits. »
+
+Elle a l'air solide, et elle est **fausse** — ou plutôt vraie d'un cas seulement :
+une édition **à la main**. Faite par **l'installateur**, la transformation est
+reproductible par construction, puisqu'elle fait partie de la génération.
+
+Le coût de cette conclusion trop rapide, avant qu'elle ne soit revue :
+
+- une couche d'alias `--wel-x: var(--ama-x)` émise par les thèmes, **+358 Ko** ;
+- un piège de portée CSS à désamorcer avec elle (l'alias doit être émis dans le
+  bloc de sa source, sans quoi `ArticleCard` perd son thème sombre) ;
+- un audit dédié dans `tokens:check`, plus les tests de mutation qui vont avec ;
+- de la documentation décrivant tout cela comme un état durable.
+
+Le tout supprimé par une ligne, une fois la contrainte examinée.
+
+**Ce qu'il faut en retenir** : quand une contrainte impose une architecture
+coûteuse, la vérifier avant de la contourner. Le signal d'alerte, ici, était que
+l'impossibilité tenait à *qui* faisait le renommage, jamais énoncé — « le fichier
+est régénéré » n'interdit rien si l'on contrôle ce qui le régénère. Le même test
+vaut pour les autres artefacts dérivés du projet : `styles/generated/`,
+`tokens/`, `knowledge/content-library/`.
+
+### Ce qu'il ne faut pas réintroduire
+
+Si un `--wel-*` revient — ancien `install-welds.mjs` rétabli, CSS Accor collé à
+la main —, plus aucun thème ne le définit : les composants perdent leurs couleurs
+**en silence**, et aucun test de contraste ne bronche, puisqu'il mesure ce qui est
+peint, pas ce qui a disparu. `tokens:check` refuse tout `--wel-*` dans les six
+fichiers du contrat, et les deux voies de retour en arrière sont vérifiées par
+mutation.
+
+Les thèmes pèsent **210 Ko brut, 23 Ko gzip** — leur poids d'avant la migration.
 
 ## La chaîne
 
