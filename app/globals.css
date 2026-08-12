@@ -396,6 +396,10 @@ img {
   color: var(--wel-sem-color-on-surface-hi);
 }
 
+/* `on-surface-hi` et non `mid` : posée sur le voile, l'accroche tombait à
+   3,18:1 sur les trois personas. C'est l'arbitrage déjà retenu pour les
+   surtitres de card — aucun palier intermédiaire n'atteint AA sans épaissir le
+   voile, et la hiérarchie reste portée par la taille et l'italique. */
 .slideshow__tagline {
   margin: 0;
   max-width: 866px;
@@ -403,7 +407,7 @@ img {
   font-style: italic;
   font-size: var(--wel-sem-font-sizes-display-sm);
   line-height: var(--wel-sem-line-heights-display-sm);
-  color: var(--wel-sem-color-on-surface-mid);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
 /* Contrôles en haut de l'image : bascule de lecture à gauche, pas à pas à
