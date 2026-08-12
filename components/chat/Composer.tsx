@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
+import { ArrowRightIcon } from "../Icons";
 
 type Props = {
   disabled: boolean;
@@ -81,7 +82,7 @@ export default function Composer({
         aria-label={sendLabel}
       >
         <span className="composer__label">{sendLabel}</span>
-        <span aria-hidden="true"> →</span>
+        <ArrowRightIcon className="composer__arrow" />
       </button>
     </form>
   );

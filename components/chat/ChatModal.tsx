@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t, type Lang } from "../../lib/i18n";
+import { CloseIcon } from "../Icons";
 import type { PersonaPublic } from "./Chat";
 import Composer from "./Composer";
 import PersonaMention from "./PersonaMention";
@@ -178,7 +179,7 @@ export default function ChatModal({
               onClick={requestClose}
               aria-label={t(lang, "closeChat")}
             >
-              <span aria-hidden="true">✕</span>
+              <CloseIcon />
             </button>
           </div>
           <h2 className="chat-modal__title" id="chat-modal-title">

@@ -4,7 +4,7 @@ export type Lang = "fr" | "en";
 const STRINGS = {
   fr: {
     heroTitle: "Bonjour, je suis Arthur !",
-    heroSubtitle: "Designaut passionné de Design System, Product et Operations",
+    heroSubtitle: "Designaute passionné de Design System, Product et Operations",
     askAnything: "Posez-moi n'importe quelle question !",
     // Nom accessible du champ, distinct de son indice de saisie : le
     // placeholder disparaît dès la première frappe, le libellé demeure.

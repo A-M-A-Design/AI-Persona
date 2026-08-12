@@ -13,6 +13,7 @@ import type { Article } from "../../lib/articles";
 import { t, tf, type Lang } from "../../lib/i18n";
 import { scrollBehavior } from "../../lib/motion";
 import ArticleCard from "../ArticleCard";
+import { ArrowLeftIcon, ArrowRightIcon } from "../Icons";
 
 type Props = {
   articles: Article[];
@@ -99,7 +100,7 @@ export default function ArticleCarousel({ articles, lang, persona }: Props) {
             disabled={page === 0}
             onClick={() => go(-1)}
           >
-            <span aria-hidden="true">‹</span>
+            <ArrowLeftIcon />
           </button>
           {/* Le compteur suit le défilement, y compris au geste tactile. La
               forme visible reste « 2 / 5 » ; l'annonce, elle, dit de quoi il
@@ -119,7 +120,7 @@ export default function ArticleCarousel({ articles, lang, persona }: Props) {
             disabled={page >= pages - 1}
             onClick={() => go(1)}
           >
-            <span aria-hidden="true">›</span>
+            <ArrowRightIcon />
           </button>
         </div>
       )}
