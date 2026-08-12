@@ -128,6 +128,23 @@ function rescope(css, id) {
 // ---------- build ----------
 
 const template = readFileSync(templatePath, "utf8");
+
+/**
+ * Une extraction antérieure à la bascule `--ama-*` porte encore l'ancien
+ * préfixe. Les thèmes générés seraient corrects, mais `components.css` viendrait
+ * du même lot périmé et consommerait des `var(--wel-…)` que plus personne ne
+ * définit : boutons, chips et champs perdraient leurs couleurs **en silence**,
+ * puisqu'une variable absente ne casse rien de visible côté CSS.
+ *
+ * `styles/welds-src/` étant gitignoré, il survit aux changements de branche —
+ * c'est le cas normal après un `git pull`, pas un cas tordu.
+ */
+if (template.includes("--wel-")) {
+  console.error("✘ extraction WDS périmée : le template porte encore --wel-*.");
+  console.error("  Le renommage a lieu à l'extraction — relancer : npm run welds:install");
+  process.exit(1);
+}
+
 mkdirSync(outDir, { recursive: true });
 
 for (const id of PERSONAS) {

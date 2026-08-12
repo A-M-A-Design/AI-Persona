@@ -78,6 +78,17 @@ est régénéré » n'interdit rien si l'on contrôle ce qui le régénère. Le 
 vaut pour les autres artefacts dérivés du projet : `styles/generated/`,
 `tokens/`, `knowledge/content-library/`.
 
+### Après un `git pull` : relancer `welds:install`
+
+`styles/welds-src/` est gitignoré, donc il **survit aux changements de branche**.
+Une extraction antérieure à cette bascule consomme encore `var(--wel-…)`, que
+plus aucun thème ne définit : boutons, chips et champs perdraient leurs couleurs
+**en silence**, une variable absente ne cassant rien de visible côté CSS.
+
+`build-themes.mjs` refuse de tourner si le template porte encore l'ancien
+préfixe, et renvoie vers `npm run welds:install`. C'est le cas normal après un
+`git pull`, pas un cas tordu.
+
 ### Ce qu'il ne faut pas réintroduire
 
 Si un `--wel-*` revient — ancien `install-welds.mjs` rétabli, CSS Accor collé à
