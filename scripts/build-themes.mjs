@@ -191,6 +191,65 @@ function applyVarOverrides(css, vars) {
   return css;
 }
 
+// ---------- tokens absents du template ----------
+
+/**
+ * Ajoute `--wel-sem-color-surface-alternative`, présent dans la bibliothèque
+ * Figma et dans l'export de tokens 2.2.2, mais pas dans le theme.css livré par
+ * le paquet WDS installé ici.
+ *
+ * En clair, on reprend la valeur brandbook telle quelle : #F5F6FF sur un
+ * `surface` blanc, soit un écart de contraste de 1,076.
+ *
+ * En sombre, l'export donne au token la valeur exacte de `surface` — l'écart
+ * n'y existe donc pas, et la barre ne se détacherait que par son ombre. On le
+ * dérive plutôt du `surface` sombre : même teinte, même saturation, luminance
+ * relevée du même écart qu'en clair. La barre s'éloigne du fond dans les deux
+ * modes, du même pas, et reste dans la famille chromatique du thème.
+ *
+ * L'injection a lieu avant la teinte persona, qui préserve la luminance
+ * relative : le pas de 1,076 vaut donc pour les trois personas.
+ */
+const SURFACE_ALTERNATIVE_LIGHT = "#f5f6ff";
+
+function hexToRgb(hex) {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h.slice(0, 6);
+  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
+}
+
+const contrast = (a, b) => {
+  const [l1, l2] = [relLuminance(a), relLuminance(b)].sort((x, y) => y - x);
+  return (l1 + 0.05) / (l2 + 0.05);
+};
+
+/** Écart visé, mesuré sur la paire brandbook en mode clair. */
+const ALT_CONTRAST = contrast(hexToRgb("#ffffff"), hexToRgb(SURFACE_ALTERNATIVE_LIGHT));
+
+/** Décale `surface` d'un pas d'ALT_CONTRAST, en s'éloignant de l'extrême. */
+function alternativeOf(hex) {
+  const rgb = hexToRgb(hex);
+  const lum = relLuminance(rgb);
+  const [h, s] = rgbToHsl(...rgb);
+  const target =
+    lum > 0.5 ? (lum + 0.05) / ALT_CONTRAST - 0.05 : (lum + 0.05) * ALT_CONTRAST - 0.05;
+  const [r, g, b] = atLuminance(h, s, target);
+  return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
+}
+
+function addSurfaceAlternative(css) {
+  return css.replace(
+    /(--wel-sem-color-surface:\s*(#[0-9a-fA-F]{3,8})\s*;)/g,
+    (line, _all, value) => {
+      // Le blanc est neutre : la recherche à teinte constante rendrait un gris,
+      // là où le système pose une nuance teintée. On garde donc sa valeur.
+      const alt =
+        value.toLowerCase() === "#ffffff" ? SURFACE_ALTERNATIVE_LIGHT : alternativeOf(value);
+      return `${line}\n--wel-sem-color-surface-alternative: ${alt};`;
+    },
+  );
+}
+
 // ---------- rescope ----------
 
 function rescope(css, id) {
@@ -209,7 +268,7 @@ for (const id of PERSONAS) {
     readFileSync(join(root, "personas", "mappings", `${id}.map.json`), "utf8"),
   );
   console.log(`— ${id}`);
-  let css = template;
+  let css = addSurfaceAlternative(template);
   css = transformColors(css, mapping.colors ?? {});
   css = transformFonts(css, mapping.fonts);
   css = applyVarOverrides(css, mapping.vars);
