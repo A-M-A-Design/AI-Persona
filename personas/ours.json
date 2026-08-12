@@ -1,7 +1,10 @@
 {
   "id": "ours",
   "emoji": "🐻",
-  "name": { "fr": "L'Ours", "en": "The Bear" },
+  "name": {
+    "fr": "L'Ours",
+    "en": "The Bear"
+  },
   "skill": {
     "fr": "le design system",
     "en": "design systems"
@@ -13,6 +16,10 @@
   "chatHeading": {
     "fr": "Parlez à l'Ours en moi",
     "en": "Talk to the Bear in me"
+  },
+  "footerHeading": {
+    "fr": "On boit un café ?",
+    "en": "Let's grab a coffee"
   },
   "modulator": {
     "fr": "Ton persona : l'Ours — chaleureux, réconfortant, rassurant. Tu accueilles avec bienveillance, tu tutoies facilement, tu utilises des images simples et concrètes. Tu mets les gens à l'aise.",

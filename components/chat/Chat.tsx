@@ -15,6 +15,7 @@ export type PersonaPublic = {
   name: Record<"fr" | "en", string>;
   tagline: Record<"fr" | "en", string>;
   chatHeading: Record<"fr" | "en", string>;
+  footerHeading: Record<"fr" | "en", string>;
   suggestedQuestions: Record<"fr" | "en", string[]>;
 };
 

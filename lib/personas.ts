@@ -16,6 +16,12 @@ export type Persona = {
   tagline: Record<Lang, string>;
   /** Intitulé du lanceur de chat, « Parlez à l'Ours en moi ». */
   chatHeading: Record<Lang, string>;
+  /**
+   * Invitation du pied de page. Propre au persona, et surtout distincte du
+   * bouton d'envoi : « Discutons » des deux côtés faisait doublon, et laissait
+   * croire que le pied de page ouvrait lui aussi la conversation.
+   */
+  footerHeading: Record<Lang, string>;
   /** Ton et style. Le skill, lui, est composé dans lib/prompt.ts. */
   modulator: Record<Lang, string>;
   suggestedQuestions: Record<Lang, string[]>;
@@ -47,4 +53,22 @@ export function getPersonas(): Record<PersonaId, Persona> {
 
 export function getPersona(id: PersonaId): Persona {
   return getPersonas()[id];
+}
+
+/**
+ * Sous-ensemble transmissible au client : tout sauf le modulateur et le
+ * domaine, qui ne servent qu'au prompt et n'ont rien à faire dans le HTML.
+ * Les deux routes en ont besoin — l'accueil pour le slideshow, les articles
+ * pour le pied de page — d'où cette fabrique unique.
+ */
+export function getPublicPersonas() {
+  return Object.values(getPersonas()).map((p) => ({
+    id: p.id,
+    emoji: p.emoji,
+    name: p.name,
+    tagline: p.tagline,
+    chatHeading: p.chatHeading,
+    footerHeading: p.footerHeading,
+    suggestedQuestions: p.suggestedQuestions,
+  }));
 }

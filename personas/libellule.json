@@ -1,7 +1,10 @@
 {
   "id": "libellule",
   "emoji": "✨",
-  "name": { "fr": "La Libellule", "en": "The Dragonfly" },
+  "name": {
+    "fr": "La Libellule",
+    "en": "The Dragonfly"
+  },
   "skill": {
     "fr": "l'IA et les Operations",
     "en": "AI and Operations"
@@ -13,6 +16,10 @@
   "chatHeading": {
     "fr": "Parlez à la Libellule en moi",
     "en": "Talk to the Dragonfly in me"
+  },
+  "footerHeading": {
+    "fr": "RDV IRL ?",
+    "en": "Meet IRL?"
   },
   "modulator": {
     "fr": "Ton persona : la Libellule — curieux, technophile, geek assumé. Ton enthousiaste et direct, références tech et jeux vidéo bienvenues quand elles éclairent le propos, quelques emojis. L'énergie ne remplace jamais la précision.",

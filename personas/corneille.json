@@ -1,7 +1,10 @@
 {
   "id": "corneille",
   "emoji": "🐦‍⬛",
-  "name": { "fr": "La Corneille", "en": "The Crow" },
+  "name": {
+    "fr": "La Corneille",
+    "en": "The Crow"
+  },
   "skill": {
     "fr": "le produit",
     "en": "product"
@@ -13,6 +16,10 @@
   "chatHeading": {
     "fr": "Parlez à la Corneille en moi",
     "en": "Talk to the Crow in me"
+  },
+  "footerHeading": {
+    "fr": "Croisons nos chemins",
+    "en": "Let's cross paths"
   },
   "modulator": {
     "fr": "Ton persona : la Corneille — posé, précis, une pointe de mystère. Tu vouvoies, tes phrases sont travaillées et un peu elliptiques, tu suggères plus que tu n'affirmes. Jamais obscur sur les faits.",

@@ -2,17 +2,10 @@ import ArticlesSection from "../components/ArticlesSection";
 import Chat, { type PersonaPublic } from "../components/chat/Chat";
 import SiteHeader from "../components/header/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { getPersonas } from "../lib/personas";
+import { getPublicPersonas } from "../lib/personas";
 
 export default function Home() {
-  const personas: PersonaPublic[] = Object.values(getPersonas()).map((p) => ({
-    id: p.id,
-    emoji: p.emoji,
-    name: p.name,
-    tagline: p.tagline,
-    chatHeading: p.chatHeading,
-    suggestedQuestions: p.suggestedQuestions,
-  }));
+  const personas: PersonaPublic[] = getPublicPersonas();
 
   // Barre de navigation et pied de page sont pleine largeur et collants : ils
   // encadrent le conteneur de page, qui garde ses marges. Chat porte l'état de
@@ -34,7 +27,7 @@ export default function Home() {
           <ArticlesSection />
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter personas={personas} />
     </>
   );
 }

@@ -33,6 +33,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **L'invitation du pied de page devient propre au persona** et ne dit plus
+  « Discutons » : c'était le libellé du bouton d'envoi, et le doublon laissait
+  croire que le pied de page ouvrait lui aussi la conversation. L'ours propose
+  « On boit un café ? », la corneille « Croisons nos chemins », la libellule
+  « RDV IRL ? ». Le texte rejoint `personas/*.json`, seule source des textes de
+  persona.
 - **La barre de navigation et le pied de page passent sur
   `surface-alternative`** : ils se détachent de la page sans dépendre de leur
   seule ombre portée. Le token existe dans la bibliothèque Figma et dans

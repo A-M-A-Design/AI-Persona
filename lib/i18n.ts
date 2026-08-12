@@ -44,8 +44,7 @@ const STRINGS = {
     optionLight: "Clair",
     optionDark: "Sombre",
     backToHome: "Retour à l'accueil",
-    articleFrenchOnly: "Cet article est publié en français.",
-    footerLetsChat: "Discutons !",
+    articleFrenchOnly: "Cet article est publié en français.",
     footerLinkedIn: "LinkedIn",
   },
   en: {
@@ -88,8 +87,7 @@ const STRINGS = {
     optionLight: "Light",
     optionDark: "Dark",
     backToHome: "Back to home",
-    articleFrenchOnly: "This article is published in French.",
-    footerLetsChat: "Let's chat!",
+    articleFrenchOnly: "This article is published in French.",
     footerLinkedIn: "LinkedIn",
   },
 } as const;
