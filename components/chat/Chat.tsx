@@ -90,6 +90,8 @@ export default function Chat({ personas }: Props) {
       {open && (
         <ChatModal
           lang={settings.lang}
+          personas={personas}
+          persona={settings.persona}
           exchanges={exchanges}
           questions={questions}
           busy={busy}

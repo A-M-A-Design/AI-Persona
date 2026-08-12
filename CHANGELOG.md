@@ -16,16 +16,20 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   suggérées en découlent. Le bot répond à tout, mais cadre ses réponses selon
   son domaine, et **invite à basculer vers le bon persona** quand la question
   relève d'un autre, en disant comment. Une seule invitation par réponse : sans
-  ce garde-fou, la redirection devient un tic de fin de message.
+  ce garde-fou, la redirection devient un tic de fin de message. **Le nom du
+  persona cité est cliquable** dans la réponse : la bascule se fait sans
+  quitter la conversation, pour creuser dans la foulée.
 - **Le héro devient un slideshow**, une slide par persona, d'après la maquette
   v2. Reprend le comportement du composant slideshow du WDS : lecture
   automatique au moment où le carrousel entre dans la fenêtre, 5 s entre deux
   slides, boucle infinie. Changer de slide change le thème et le sélecteur de
   la barre ; changer au sélecteur fait défiler la piste **et met la lecture en
   pause** — agir dans le carrousel ne l'interrompt pas, le quitter pour la
-  barre si. La lecture s'arrête aussi quand l'onglet passe en arrière-plan,
-  quand le panneau de conversation s'ouvre, et `prefers-reduced-motion` la
-  neutralise entièrement.
+  barre si. **Le survol de la souris suspend le défilement** — et le focus
+  clavier avec, pour la même raison —, suspension passagère qui se relâche dès
+  qu'on s'en va, sans toucher à l'état du bouton. La lecture s'arrête aussi
+  quand l'onglet passe en arrière-plan, quand le panneau de conversation
+  s'ouvre, et `prefers-reduced-motion` la neutralise entièrement.
 
 ### Changed
 

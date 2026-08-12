@@ -80,6 +80,35 @@ test.describe("Panneau de conversation", () => {
     expect(await body.evaluate((el) => el.scrollTop)).toBe(0);
   });
 
+  test("le persona cité dans la réponse bascule sans fermer le panneau", async ({ page }) => {
+    // Le bot invite à changer de persona quand la question relève d'un autre
+    // domaine : le nom cité est cliquable, pour creuser dans la foulée.
+    await stubChat(
+      page,
+      "Pour l'IA, va voir **la Libellule**, elle est plus calée que moi.",
+    );
+    await visit(page);
+    await openChat(page, "Comment tu utilises l'IA ?");
+
+    const lien = page.locator(".chat-modal__persona-link");
+    await expect(lien).toHaveCount(1);
+    // Les astérisques du markdown ne se retrouvent pas dans le libellé.
+    await expect(lien).toHaveText("la Libellule");
+    await expect(lien).toHaveAttribute("aria-label", /Basculer vers/);
+
+    await lien.click();
+    await expect(page.locator("html")).toHaveAttribute("data-persona", "libellule");
+    // On ne quitte pas la conversation pour autant.
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(1);
+  });
+
+  test("le persona qui parle n'est pas cliquable dans sa propre réponse", async ({ page }) => {
+    await stubChat(page, "En tant qu'Ours, je dirais que le design system prime.");
+    await visit(page);
+    await openChat(page, "Ton avis ?");
+    await expect(page.locator(".chat-modal__persona-link")).toHaveCount(0);
+  });
+
   test("Échap ferme le panneau", async ({ page }) => {
     await visit(page);
     await openChat(page);

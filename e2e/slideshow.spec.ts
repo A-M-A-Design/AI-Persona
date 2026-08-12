@@ -10,6 +10,11 @@ import { openChat, stubChat, visit } from "./helpers";
 /** Un tour de lecture, avec la marge nécessaire à l'animation de défilement. */
 const TOUR = 6000;
 
+// Ces tests attendent réellement plusieurs tours de 5 s. Le défaut de 30 s
+// suffit en isolé mais expire quand les quatre projets sollicitent le même
+// serveur de développement en parallèle.
+test.describe.configure({ timeout: 90_000 });
+
 const persona = (page: Page) =>
   page.evaluate(() => document.documentElement.getAttribute("data-persona"));
 
@@ -101,6 +106,29 @@ test.describe("Slideshow", () => {
     expect(await enLecture(page)).toBe("true");
     await page.waitForTimeout(TOUR);
     expect(await persona(page)).not.toBe(fige);
+  });
+
+  test("le survol suspend le défilement, et le relâche", async ({ page }) => {
+    await visit(page);
+    await page.locator(".slideshow").hover();
+    const fige = await persona(page);
+    await page.waitForTimeout(TOUR);
+    expect(await persona(page), "sous le curseur, la slide ne part pas").toBe(fige);
+
+    // Suspension passagère : la bascule reste sur « en lecture », et le
+    // défilement repart dès que la souris s'en va.
+    expect(await enLecture(page)).toBe("true");
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(TOUR);
+    expect(await persona(page)).not.toBe(fige);
+  });
+
+  test("le focus clavier suspend aussi le défilement", async ({ page }) => {
+    await visit(page);
+    await page.locator(".slideshow__play").focus();
+    const fige = await persona(page);
+    await page.waitForTimeout(TOUR);
+    expect(await persona(page)).toBe(fige);
   });
 
   test("le panneau de conversation fige le persona", async ({ page }) => {

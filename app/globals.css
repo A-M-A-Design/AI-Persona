@@ -457,6 +457,31 @@ img {
   }
 }
 
+/* Persona cité dans une réponse : cliquable pour basculer sans quitter la
+   conversation. Souligné plutôt que coloré — le fil est déjà dense, et la
+   couleur seule ne suffirait pas à le distinguer (WCAG 1.4.1). */
+.chat-modal__persona-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.chat-modal__persona-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.chat-modal__persona-link:focus-visible {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* --- Lanceur de chat / composer ---------------------------------------- */
 
 /* Carte du lanceur : le champ et son bouton, puis les questions toutes faites

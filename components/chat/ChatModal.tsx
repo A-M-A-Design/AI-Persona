@@ -8,13 +8,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t, type Lang } from "../../lib/i18n";
+import type { PersonaPublic } from "./Chat";
 import Composer from "./Composer";
+import PersonaMention from "./PersonaMention";
 import SuggestedQuestions from "./SuggestedQuestions";
 
 export type Exchange = { id: string; question: string; answer: string | null };
 
 type Props = {
   lang: Lang;
+  /** Pour rendre cliquables les personas cités dans les réponses. */
+  personas: PersonaPublic[];
+  /** Le persona qui parle : il ne se cite pas lui-même. */
+  persona: string;
   exchanges: Exchange[];
   questions: string[];
   busy: boolean;
@@ -30,6 +36,8 @@ const FOCUSABLE =
 
 export default function ChatModal({
   lang,
+  personas,
+  persona,
   exchanges,
   questions,
   busy,
@@ -188,7 +196,14 @@ export default function ChatModal({
             <div className="chat-modal__exchange" key={x.id}>
               <p className="chat-modal__question">{x.question}</p>
               {x.answer !== null ? (
-                <p className="chat-modal__answer">{x.answer}</p>
+                <p className="chat-modal__answer">
+                  <PersonaMention
+                    texte={x.answer}
+                    personas={personas}
+                    actif={persona}
+                    lang={lang}
+                  />
+                </p>
               ) : (
                 busy && (
                   <p className="chat-modal__answer chat-modal__answer--pending">

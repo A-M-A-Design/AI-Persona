@@ -48,6 +48,10 @@ export default function PersonaSlideshow({
   const pisteRef = useRef<HTMLDivElement>(null);
   const [lecture, setLecture] = useState(true);
   const [visible, setVisible] = useState(false);
+  // Suspension passagère : la souris survole le carrousel, ou le clavier y a
+  // le focus. Contrairement à la bascule et au sélecteur, elle ne touche pas
+  // à l'état de lecture — le défilement reprend dès qu'on s'en va.
+  const [survol, setSurvol] = useState(false);
 
   // Retient qui a demandé le dernier changement de persona. Un changement venu
   // du slideshow lui-même ne doit pas interrompre la lecture ; un changement
@@ -134,11 +138,11 @@ export default function PersonaSlideshow({
   // mouvement non réduit. La boucle est infinie — le modulo de `allerA` s'en
   // charge.
   useEffect(() => {
-    if (!lecture || !visible || paused || prefersReducedMotion()) return;
+    if (!lecture || !visible || paused || survol || prefersReducedMotion()) return;
     if (typeof document !== "undefined" && document.hidden) return;
     const minuteur = setInterval(() => allerA(index + 1), DELAI);
     return () => clearInterval(minuteur);
-  }, [lecture, visible, paused, index, allerA]);
+  }, [lecture, visible, paused, survol, index, allerA]);
 
   // Onglet en arrière-plan : rien ne doit continuer de tourner.
   useEffect(() => {
@@ -160,6 +164,15 @@ export default function PersonaSlideshow({
       className="slideshow"
       aria-roledescription={t(lang, "carousel")}
       aria-label={t(lang, "personaCarousel")}
+      // Le survol suspend le défilement : on ne lit pas une slide qui s'en va
+      // sous le curseur. `pointerType` filtre le tactile, où `pointerenter`
+      // se déclenche à la première touche et ne repartirait jamais.
+      onPointerEnter={(e) => e.pointerType === "mouse" && setSurvol(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setSurvol(false)}
+      // Même raison au clavier : le focus posé dans le carrousel ne doit pas
+      // voir le persona changer sous lui.
+      onFocus={() => setSurvol(true)}
+      onBlur={() => setSurvol(false)}
     >
       {/* Focalisable : les slides inactives sont `inert`, la piste n'a donc
           aucun contenu atteignable au clavier. Sans ce point d'entrée, elle ne
@@ -208,7 +221,13 @@ export default function PersonaSlideshow({
           className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm slideshow__play"
           aria-pressed={lecture}
           aria-label={t(lang, lecture ? "pauseSlideshow" : "playSlideshow")}
-          onClick={() => setLecture((v) => !v)}
+          onClick={() => {
+            // Le bouton garde le focus après le clic, et le focus suspend le
+            // défilement : sans cette levée, « lecture » n'aurait relancé
+            // qu'une fois le focus parti ailleurs.
+            setSurvol(false);
+            setLecture((v) => !v);
+          }}
         >
           <span aria-hidden="true">{lecture ? "❚❚" : "▶"}</span>
         </button>
