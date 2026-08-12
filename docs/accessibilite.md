@@ -4,6 +4,9 @@ Audit du 12 août 2026, cible **WCAG 2.2 niveau AA**. Couvre l'accueil, les
 pages articles et le panneau de conversation, sur les trois personas, les deux
 modes de couleur et quatre largeurs (1440 / 1000 / 375 / 320).
 
+**Complété le même jour pour la v2** — le héro est devenu un slideshow, et le
+panneau de conversation a gagné des liens. Voir « La v2 » en fin de document.
+
 La page `/dev/kit` est hors périmètre : elle n'est pas publiée.
 
 ## Ce que l'outillage couvre
@@ -126,6 +129,52 @@ en anglais : la synthèse vocale ne lit pas du français avec une voix anglaise.
   l'action à une icône ; le libellé est retiré de l'écran, jamais du nom
   accessible.
 
+## La v2 — slideshow et liens dans la conversation
+
+Le héro est devenu un carrousel de trois slides, une par persona, et les
+réponses du bot portent désormais des éléments interactifs. Deux défauts réels
+en sont sortis, **tous deux invisibles au balayage automatique**.
+
+### Ce qui a été trouvé
+
+| Sév. | Constat | Correction |
+| --- | --- | --- |
+| **B** | La piste défilante était un **arrêt de tabulation sans nom**. Rendue focalisable pour répondre à une violation axe (`scrollable-region-focusable`, les slides inactives étant `inert`), elle n'avait jamais reçu de libellé : le clavier s'y posait sans savoir où il était. | `role="group"` et un nom — « Faire défiler les personas ». |
+| **M** | L'accroche du héro était à **3,18:1** sur les trois personas, sous le seuil AA. Elle est posée sur le voile fort de l'illustration : `check-contrast.mjs` ne connaissait que les paires de tokens, et la règle `color-contrast` d'axe ne se prononce pas sur du texte au-dessus d'une image. | Passée de `on-surface-mid` à `on-surface-hi`, soit 5,11:1 — même arbitrage que les surtitres de card. Les deux paires du slideshow sont entrées dans le script. |
+
+Le premier a été trouvé en **relevant le parcours clavier arrêt par arrêt** ;
+une liste figée de sélecteurs ne l'aurait pas vu, l'élément fautif ayant été
+ajouté après coup. Ce relevé est désormais un test : il exige de chacun des dix
+premiers arrêts un nom accessible et un anneau de focus visible.
+
+### Le slideshow
+
+- `role="region"`, `aria-roledescription="carrousel"`, nommé « Choisir un
+  persona ». Chaque slide est un `group` « 2 sur 3 — La Corneille ».
+- **Les slides inactives sont `inert`** : trois titres de niveau 1 identiques
+  annoncés à la suite n'apprendraient rien.
+- Bascule de lecture avec `aria-pressed`, flèches nommées, et une **région de
+  statut** qui annonce le persona actif — sans elle, le changement de thème de
+  toute la page serait muet.
+- **Lecture automatique** : elle satisfait WCAG 2.2.2 par sa bascule, et
+  `prefers-reduced-motion` la neutralise entièrement. Elle se suspend aussi au
+  survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
+  panneau s'ouvre.
+
+### Les liens dans les réponses
+
+Le nom d'un persona cité devient un **bouton** de bascule, le titre d'un article
+publié un **lien** vers sa page. Tous deux sont soulignés et en gras, jamais
+distingués par la seule couleur (WCAG 1.4.1), et portent un anneau de focus.
+Le bouton de persona a un nom accessible explicite — « Basculer vers la
+Libellule » — le libellé visible seul n'annonçant pas ce qu'il fait.
+
+### Ce qui reste à vérifier
+
+L'arbre d'accessibilité du panneau, avec ses nouveaux liens, n'a pas été relevé
+comme l'a été celui de l'accueil. Le balayage axe n'y signale rien, mais ce
+document doit dire ce qui est annoncé, pas seulement ce qui est conforme.
+
 ## Vérification manuelle
 
 Le balayage automatique et les tests ne remplacent pas une passe réelle. À
@@ -142,4 +191,8 @@ rejouer après tout changement de structure :
 3. **Zoom à 200 %** et fenêtre à 320 px : aucun défilement horizontal, aucun
    contenu tronqué.
 4. **`prefers-reduced-motion`** activé au niveau du système : les défilements du
-   carousel et des questions suggérées doivent être instantanés.
+   carousel et des questions suggérées doivent être instantanés, et **le
+   slideshow du héro ne doit pas défiler seul**.
+5. **Le slideshow au clavier** : tabuler jusqu'à la piste, la faire défiler aux
+   flèches, vérifier que le persona et le thème suivent et que la lecture
+   automatique se suspend tant que le focus y reste.
