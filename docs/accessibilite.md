@@ -184,6 +184,33 @@ touche unique : en mode exploration, les lecteurs d'écran réservent les lettre
 à leur propre navigation, et un raccourci global n'atteindrait pas la page ou
 entrerait en collision.
 
+### Les raccourcis globaux
+
+Trois raccourcis à touche unique valent partout dans le site — **M** vers le
+contenu, **N** vers les réglages, **F** vers le pied de page — plus **?** qui
+ouvre l'aide.
+
+Valant partout, ils relèvent de la **première échappatoire de 2.1.4** : une case
+à cocher dans l'aide les désactive, et le choix est persisté. **L'aide reste
+atteignable raccourcis coupés** — c'est le chemin du retour, sans quoi la
+désactivation serait sans appel.
+
+Trois gardes protègent la saisie :
+
+- aucun modificateur (`Ctrl`, `Alt`, `Meta`) ne déclenche quoi que ce soit ;
+- **jamais dans un champ ni un `select`** — ce dernier utilise déjà les lettres
+  pour choisir une option ;
+- `Échap` ferme l'aide, comme toute boîte de dialogue.
+
+La découverte passe par un bouton « Raccourcis clavier », hors écran au repos et
+visible dès qu'il reçoit le focus, sur le modèle du lien d'évitement. Un
+raccourci que personne ne connaît ne sert personne.
+
+**Ce que cela ne résout pas** : en mode exploration, les lecteurs d'écran
+réservent les lettres à leur propre navigation. M, N et F ne leur parviendront
+probablement pas. Les flèches du carrousel, portées au focus, échappent à cette
+limite — c'est la raison de leur périmètre plus étroit.
+
 ### Les liens dans les réponses
 
 Le nom d'un persona cité devient un **bouton** de bascule, le titre d'un article
