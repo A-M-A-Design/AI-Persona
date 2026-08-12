@@ -8,6 +8,18 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **La barre de navigation et le pied de page passent sur
+  `surface-alternative`** : ils se détachent de la page sans dépendre de leur
+  seule ombre portée. Le token existe dans la bibliothèque Figma et dans
+  l'export 2.2.2 mais pas dans le `theme.css` du paquet WDS installé ; il est
+  donc injecté dans le pipeline de thèmes, à retirer quand le paquet le
+  livrera. En clair il vaut la valeur brandbook ; en sombre, où l'export lui
+  donne exactement celle de `surface`, il est dérivé du fond sombre avec le
+  même écart de luminance qu'en clair — 1,071 à 1,078 sur les trois personas,
+  dans les deux modes.
+
 ### Fixed
 
 - **Audit d'accessibilité complet** (WCAG 2.2 AA), consigné dans
