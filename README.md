@@ -34,7 +34,7 @@ sortants de Node échouent avec `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` : `curl`
 utilise le magasin de certificats Windows, Node embarque le sien. Le chat
 renvoie alors une erreur générique alors que la clé API est valide.
 
-Exporter le magasin Windows une fois, puis pointer Node dessus :
+Exporter le magasin Windows une fois, dans `~/.certs/corporate-ca.pem` :
 
 ```powershell
 $sb = New-Object System.Text.StringBuilder
@@ -47,12 +47,26 @@ foreach ($s in @("Cert:\LocalMachine\Root","Cert:\CurrentUser\Root","Cert:\Local
 }
 New-Item -ItemType Directory "$HOME\.certs" -Force | Out-Null
 Set-Content "$HOME\.certs\corporate-ca.pem" $sb.ToString() -Encoding ascii
-setx NODE_EXTRA_CA_CERTS "$HOME\.certs\corporate-ca.pem"   # rouvrir le terminal ensuite
 ```
 
-`NODE_EXTRA_CA_CERTS` est lu au démarrage du process : il doit être présent
-dans l'environnement **avant** `npm run dev`, le mettre dans `.env.local` ne
-fonctionne pas.
+C'est tout : `dev`, `build` et `start` passent par `scripts/with-ca.mjs`, qui
+pose `NODE_EXTRA_CA_CERTS` sur ce chemin s'il existe et si la variable n'est
+pas déjà définie, puis délègue. Le chat fonctionne donc après un simple
+`npm run dev`, depuis n'importe quel terminal.
+
+Deux choses à savoir :
+
+- **`.env.local` ne peut pas porter cette variable.** Node lit
+  `NODE_EXTRA_CA_CERTS` au démarrage du process, bien avant que Next ne charge
+  le moindre fichier d'environnement. D'où le lanceur.
+- **Les autres outils Node ne sont pas couverts** : `npm install`, un
+  `node script.mjs` lancé à la main, ou un serveur MCP échoueront toujours.
+  Pour les couvrir tous, rendre la variable permanente :
+  `setx NODE_EXTRA_CA_CERTS "$HOME\.certs\corporate-ca.pem"`, puis rouvrir le
+  terminal. Le lanceur respecte alors ce réglage sans l'écraser.
+
+Sans bundle sur la machine, les commandes s'exécutent inchangées : le dépôt
+reste utilisable hors du réseau de l'entreprise.
 
 ## Scripts
 

@@ -22,6 +22,16 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le chat retombait en erreur à chaque redémarrage du serveur de
+  développement.** Derrière l'interception TLS de l'entreprise, `fetch` côté
+  Node échoue avec `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` tant que
+  `NODE_EXTRA_CA_CERTS` ne pointe pas le bundle de certificats — l'API répond
+  alors `error` sans autre explication, et le symptôme est déroutant puisque
+  curl et le navigateur passent. La variable ne pouvait pas venir de
+  `.env.local`, Node la lisant au démarrage du process. `dev`, `build` et
+  `start` passent désormais par `scripts/with-ca.mjs`, qui la pose depuis
+  `~/.certs/corporate-ca.pem` quand le fichier existe et qu'elle n'est pas
+  déjà définie. Sans bundle, la commande est lancée inchangée.
 - **Le balayage axe du panneau de conversation mesurait les contrastes pendant
   son animation d'entrée** : le panneau y est encore partiellement
   transparent, et les couleurs composées avec l'arrière-plan faisaient échouer

@@ -4,9 +4,9 @@
   "private": true,
   "description": "Portfolio conversationnel d'Arthur Mathon — chattez avec la version IA d'Arthur",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node scripts/with-ca.mjs next dev",
+    "build": "node scripts/with-ca.mjs next build",
+    "start": "node scripts/with-ca.mjs next start",
     "check": "tsc --noEmit",
     "welds:install": "node scripts/install-welds.mjs",
     "themes:build": "node scripts/build-themes.mjs",
