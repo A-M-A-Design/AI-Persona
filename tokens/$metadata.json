@@ -1,0 +1,18 @@
+{
+  "tokenSetOrder": [
+    "primitives/numbers",
+    "primitives/ours",
+    "primitives/corneille",
+    "primitives/libellule",
+    "brands/ours",
+    "brands/corneille",
+    "brands/libellule",
+    "colorModes/light",
+    "colorModes/dark",
+    "breakpoints/crossBpts",
+    "breakpoints/desktopMD",
+    "breakpoints/desktopSM",
+    "breakpoints/tablet",
+    "breakpoints/mobile"
+  ]
+}

@@ -1,5 +1,5 @@
 /* Mise en page reprise de la maquette Figma.
-   Le CSS applicatif ne consomme que --wel-sem-* et --wel-comp-*.
+   Le CSS applicatif ne consomme que --ama-sem-* et --ama-comp-*.
 
    Les tailles de texte ne sont jamais écrites ici : les tokens WDS portent
    déjà l'échelle responsive (display-2xl vaut 62/54/48/38 px selon le
@@ -24,11 +24,11 @@ body {
 body {
   display: flex;
   flex-direction: column;
-  background: var(--wel-sem-color-surface);
-  color: var(--wel-sem-color-on-surface-hi);
-  font-family: var(--wel-sem-font-families-body), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-body-md);
-  line-height: var(--wel-sem-line-heights-body-md);
+  background: var(--ama-sem-color-surface);
+  color: var(--ama-sem-color-on-surface-hi);
+  font-family: var(--ama-sem-font-families-body), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-body-md);
+  line-height: var(--ama-sem-line-heights-body-md);
   min-height: 100dvh;
 }
 
@@ -62,11 +62,11 @@ img {
   left: 8px;
   z-index: 20;
   padding: 12px 20px;
-  border-radius: var(--wel-sem-border-radius-element-full);
-  background: var(--wel-sem-color-primary);
-  color: var(--wel-sem-color-on-primary);
-  font-size: var(--wel-sem-font-sizes-body-sm);
-  line-height: var(--wel-sem-line-heights-body-sm);
+  border-radius: var(--ama-sem-border-radius-element-full);
+  background: var(--ama-sem-color-primary);
+  color: var(--ama-sem-color-on-primary);
+  font-size: var(--ama-sem-font-sizes-body-sm);
+  line-height: var(--ama-sem-line-heights-body-sm);
   text-decoration: none;
   transform: translateY(calc(-100% - 16px));
 }
@@ -76,7 +76,7 @@ img {
 .shortcuts__hint:focus,
 .skip-link:focus {
   transform: none;
-  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
@@ -124,12 +124,12 @@ img {
   z-index: 20;
   padding: 12px 20px;
   border: 0;
-  border-radius: var(--wel-sem-border-radius-element-full);
-  background: var(--wel-sem-color-primary);
-  color: var(--wel-sem-color-on-primary);
+  border-radius: var(--ama-sem-border-radius-element-full);
+  background: var(--ama-sem-color-primary);
+  color: var(--ama-sem-color-on-primary);
   font-family: inherit;
-  font-size: var(--wel-sem-font-sizes-body-sm);
-  line-height: var(--wel-sem-line-heights-body-sm);
+  font-size: var(--ama-sem-font-sizes-body-sm);
+  line-height: var(--ama-sem-line-heights-body-sm);
   cursor: pointer;
   /* Hors du flux ET hors de l'écran : sans `position: fixed`, ce bouton est un
      enfant flex de `body` et décale toute la page vers le bas. */
@@ -154,16 +154,16 @@ img {
   width: 420px;
   max-width: 100%;
   padding: 28px;
-  border-radius: var(--wel-sem-border-radius-container-low);
-  background: var(--wel-sem-color-surface);
-  color: var(--wel-sem-color-on-surface-hi);
+  border-radius: var(--ama-sem-border-radius-container-low);
+  background: var(--ama-sem-color-surface);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 .shortcuts__panel h2 {
   margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-sm);
-  line-height: var(--wel-sem-line-heights-display-sm);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-display-sm);
+  line-height: var(--ama-sem-line-heights-display-sm);
 }
 
 .shortcuts__list {
@@ -185,18 +185,18 @@ img {
 
 .shortcuts__list dd {
   margin: 0;
-  color: var(--wel-sem-color-on-surface-mid);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 
 .shortcuts__list kbd {
   display: inline-block;
   min-width: 28px;
   padding: 4px 8px;
-  border: var(--wel-sem-border-width-default, 1px) solid var(--wel-sem-color-outline-low);
-  border-radius: var(--wel-sem-border-radius-element-interactive-low);
-  background: var(--wel-sem-color-surface-container-mid);
-  font-family: var(--wel-sem-font-families-body), monospace;
-  font-size: var(--wel-sem-font-sizes-body-sm);
+  border: var(--ama-sem-border-width-default, 1px) solid var(--ama-sem-color-outline-low);
+  border-radius: var(--ama-sem-border-radius-element-interactive-low);
+  background: var(--ama-sem-color-surface-container-mid);
+  font-family: var(--ama-sem-font-families-body), monospace;
+  font-size: var(--ama-sem-font-sizes-body-sm);
   text-align: center;
 }
 
@@ -219,7 +219,7 @@ img {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: var(--wel-sem-color-surface-alternative);
+  background: var(--ama-sem-color-surface-alternative);
   box-shadow: 0 2px 6px rgb(7 5 24 / 20%);
 }
 
@@ -299,13 +299,13 @@ img {
   padding: 0;
   border: none;
   border-radius: 100px;
-  background: var(--wel-sem-color-primary);
-  color: var(--wel-sem-color-on-primary);
+  background: var(--ama-sem-color-primary);
+  color: var(--ama-sem-color-on-primary);
   cursor: pointer;
 }
 
 .site-nav__toggle:focus-visible {
-  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
@@ -313,7 +313,7 @@ img {
    focus, et son anneau est donc invisible. Sans cette règle, le clavier
    traverse les deux réglages sans qu'on voie jamais où l'on est. */
 .site-nav__chip:has(.site-nav__select:focus-visible) {
-  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
@@ -324,7 +324,7 @@ img {
   .site-nav__chip {
     min-height: 32px;
     padding-block: 0;
-    padding-inline: var(--wel-sem-spacing-static-inset-xs);
+    padding-inline: var(--ama-sem-spacing-static-inset-xs);
   }
 
   .site-nav__toggle,
@@ -334,7 +334,7 @@ img {
   }
 
   .site-nav__home {
-    padding: var(--wel-sem-spacing-static-inset-xs);
+    padding: var(--ama-sem-spacing-static-inset-xs);
   }
 }
 
@@ -352,7 +352,7 @@ img {
   bottom: 0;
   z-index: 5;
   margin-top: auto;
-  background: var(--wel-sem-color-surface-alternative);
+  background: var(--ama-sem-color-surface-alternative);
   box-shadow: 0 -2px 6px rgb(7 5 24 / 20%);
 }
 
@@ -386,13 +386,13 @@ img {
    (26 px en desktop, 20 en mobile) : aucune media query de typographie. */
 .site-footer__title {
   margin: 0;
-  font-family: var(--wel-sem-font-families-subtitle), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-subtitle-lg);
+  font-family: var(--ama-sem-font-families-subtitle), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-subtitle-lg);
   font-style: italic;
-  font-weight: var(--wel-sem-font-weights-subtitle-default);
-  line-height: var(--wel-sem-line-heights-subtitle-lg);
-  letter-spacing: var(--wel-sem-letter-spacing-subtitle);
-  color: var(--wel-sem-color-on-surface-mid);
+  font-weight: var(--ama-sem-font-weights-subtitle-default);
+  line-height: var(--ama-sem-line-heights-subtitle-lg);
+  letter-spacing: var(--ama-sem-letter-spacing-subtitle);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 
 .site-footer__links {
@@ -415,7 +415,7 @@ img {
   width: 100%;
   height: 800px;
   overflow: hidden;
-  background: var(--wel-sem-color-surface-container-mid);
+  background: var(--ama-sem-color-surface-container-mid);
 }
 
 @media (max-width: 767px) {
@@ -439,7 +439,7 @@ img {
 /* La piste est un point d'entrée clavier : son anneau doit se voir, posé sur
    une image et non sur la surface de la page. */
 .slideshow__track:focus-visible {
-  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
   outline-offset: -4px;
 }
 
@@ -486,10 +486,10 @@ img {
 .slideshow__title {
   margin: 0;
   max-width: 866px;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-2xl);
-  line-height: var(--wel-sem-line-heights-display-2xl);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-display-2xl);
+  line-height: var(--ama-sem-line-heights-display-2xl);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 /* `on-surface-hi` et non `mid` : posée sur le voile, l'accroche tombait à
@@ -499,11 +499,11 @@ img {
 .slideshow__tagline {
   margin: 0;
   max-width: 866px;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
   font-style: italic;
-  font-size: var(--wel-sem-font-sizes-display-sm);
-  line-height: var(--wel-sem-line-heights-display-sm);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-size: var(--ama-sem-font-sizes-display-sm);
+  line-height: var(--ama-sem-line-heights-display-sm);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 /* Contrôles en haut de l'image : bascule de lecture à gauche, pas à pas à
@@ -518,12 +518,12 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 28px var(--wel-sem-sizing-grid-margins, 64px);
+  padding: 28px var(--ama-sem-sizing-grid-margins, 64px);
 }
 
 @media (max-width: 767px) {
   .slideshow__controls {
-    padding: 12px var(--wel-sem-sizing-grid-margins, 16px);
+    padding: 12px var(--ama-sem-sizing-grid-margins, 16px);
   }
 }
 
@@ -546,14 +546,14 @@ img {
   bottom: 0;
   left: 0;
   z-index: 2;
-  padding: 0 var(--wel-sem-sizing-grid-margins, 64px)
-    var(--wel-sem-sizing-grid-margins, 64px);
+  padding: 0 var(--ama-sem-sizing-grid-margins, 64px)
+    var(--ama-sem-sizing-grid-margins, 64px);
 }
 
 @media (max-width: 767px) {
   .slideshow__launcher {
-    padding: 0 var(--wel-sem-sizing-grid-margins, 16px)
-      var(--wel-sem-sizing-grid-margins, 16px);
+    padding: 0 var(--ama-sem-sizing-grid-margins, 16px)
+      var(--ama-sem-sizing-grid-margins, 16px);
   }
 }
 
@@ -588,7 +588,7 @@ img {
 
 .chat-modal__article-link:focus-visible,
 .chat-modal__persona-link:focus-visible {
-  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -602,10 +602,10 @@ img {
   flex-direction: column;
   gap: 16px;
   padding: 28px;
-  border-radius: var(--wel-sem-border-radius-container-low);
-  background: var(--wel-sem-color-surface);
-  box-shadow: 0 var(--wel-sem-number-shadow-down-y, 2px)
-    var(--wel-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
+  border-radius: var(--ama-sem-border-radius-container-low);
+  background: var(--ama-sem-color-surface);
+  box-shadow: 0 var(--ama-sem-number-shadow-down-y, 2px)
+    var(--ama-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
 }
 
 /* Variante v2 : le lanceur est posé sur l'image du slideshow. Il porte donc
@@ -619,9 +619,9 @@ img {
 
 .launcher__heading {
   margin: 0;
-  font-size: var(--wel-sem-font-sizes-title-sm);
-  line-height: var(--wel-sem-line-heights-title-sm);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-size: var(--ama-sem-font-sizes-title-sm);
+  line-height: var(--ama-sem-line-heights-title-sm);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 .launcher__row {
@@ -667,8 +667,8 @@ img {
     gap: 20px;
     padding: 28px;
     margin-inline: 0;
-    border-radius: var(--wel-sem-border-radius-container-low);
-    background: var(--wel-sem-color-surface);
+    border-radius: var(--ama-sem-border-radius-container-low);
+    background: var(--ama-sem-color-surface);
   }
 
   /* L'action n'est pas posée à côté du champ mais dedans, à droite : une
@@ -704,14 +704,14 @@ img {
     border: 0;
     border-radius: var(--pill-radius);
     background: none;
-    color: var(--wel-sem-color-on-surface-hi);
+    color: var(--ama-sem-color-on-surface-hi);
   }
 
   /* Inactive, la flèche s'estompe sur une couleur de texte qui reste
      contrastée — jamais un aplat translucide, illisible à cette taille. */
   .launcher__row button[type="submit"]:disabled {
     background: none;
-    color: var(--wel-sem-color-on-surface-mid);
+    color: var(--ama-sem-color-on-surface-mid);
   }
 
   .launcher__row .composer__label {
@@ -744,7 +744,7 @@ img {
 .chat__composer {
   display: flex;
   align-items: center;
-  gap: var(--wel-sem-spacing-static-inline-sm, 0.5rem);
+  gap: var(--ama-sem-spacing-static-inline-sm, 0.5rem);
 }
 
 /* --- Panneau de conversation ------------------------------------------- */
@@ -767,8 +767,8 @@ img {
   max-width: 100%;
   height: 100%;
   padding: 28px;
-  border-radius: var(--wel-sem-border-radius-container-low);
-  background: var(--wel-sem-color-surface);
+  border-radius: var(--ama-sem-border-radius-container-low);
+  background: var(--ama-sem-color-surface);
   animation: modal-panel-in 240ms ease-in-out both;
 }
 
@@ -870,21 +870,21 @@ img {
   padding: 0;
   border: none;
   background: none;
-  color: var(--wel-sem-color-on-surface-hi);
+  color: var(--ama-sem-color-on-surface-hi);
   cursor: pointer;
 }
 
 .chat-modal__close:focus-visible {
-  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
 .chat-modal__title {
   margin: 0;
-  font-family: var(--wel-sem-font-families-title), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-title-lg);
-  line-height: var(--wel-sem-line-heights-title-lg);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-family: var(--ama-sem-font-families-title), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-title-lg);
+  line-height: var(--ama-sem-line-heights-title-lg);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 /* Le fil s'ancre en bas et les blocs sont alignés à droite.
@@ -920,20 +920,20 @@ img {
   margin: 0;
   padding: 10px 12px;
   border-radius: var(--pill-radius);
-  background: var(--wel-sem-color-primary);
-  color: var(--wel-sem-color-on-primary);
+  background: var(--ama-sem-color-primary);
+  color: var(--ama-sem-color-on-primary);
   max-width: 100%;
 }
 
 .chat-modal__answer {
   margin: 0;
   max-width: 100%;
-  color: var(--wel-sem-color-on-surface-hi);
+  color: var(--ama-sem-color-on-surface-hi);
   white-space: pre-wrap;
 }
 
 .chat-modal__answer--pending {
-  color: var(--wel-sem-color-on-surface-low);
+  color: var(--ama-sem-color-on-surface-low);
 }
 
 .chat-modal__footer {
@@ -1002,8 +1002,8 @@ img {
   display: block;
   aspect-ratio: 1;
   overflow: hidden;
-  border-radius: var(--wel-sem-border-radius-container-low);
-  background: var(--wel-sem-color-surface-container-mid);
+  border-radius: var(--ama-sem-border-radius-container-low);
+  background: var(--ama-sem-color-surface-container-mid);
   text-decoration: none;
 }
 
@@ -1041,7 +1041,7 @@ img {
    en clair sur la surface claire de la page, soit un contraste de 1:1. Le bloc
    portant déjà le mode sombre, sa propre surface fournit l'aplat attendu. */
 .article-card--flat .article-card__body {
-  background: var(--wel-sem-color-surface);
+  background: var(--ama-sem-color-surface);
 }
 
 .article-card__content {
@@ -1077,23 +1077,23 @@ img {
    taille, l'italique et les capitales plutôt que par la couleur. */
 .article-card__kicker {
   margin: 0;
-  font-size: var(--wel-sem-font-sizes-body-xs, 0.75rem);
-  line-height: var(--wel-sem-line-heights-body-xs, 1rem);
+  font-size: var(--ama-sem-font-sizes-caption);
+  line-height: var(--ama-sem-line-heights-caption);
   font-style: italic;
   text-transform: uppercase;
-  color: var(--wel-sem-color-on-surface-hi);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 .article-card__title {
   margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-md);
-  line-height: var(--wel-sem-line-heights-display-md);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-display-md);
+  line-height: var(--ama-sem-line-heights-display-md);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 .article-card:focus-visible {
-  outline: var(--wel-sem-border-width-focus, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
@@ -1102,10 +1102,10 @@ img {
 .demo {
   max-width: 720px;
   margin: 0 auto;
-  padding: var(--wel-sem-spacing-static-inset-lg, 2rem);
+  padding: var(--ama-sem-spacing-static-inset-lg, 2rem);
   display: flex;
   flex-direction: column;
-  gap: var(--wel-sem-spacing-static-stack-lg, 1.5rem);
+  gap: var(--ama-sem-spacing-static-stack-lg, 1.5rem);
 }
 
 .demo__header {
@@ -1120,7 +1120,7 @@ img {
 .settings-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--wel-sem-spacing-static-inline-md, 0.75rem);
+  gap: var(--ama-sem-spacing-static-inline-md, 0.75rem);
 }
 
 .settings-bar__select {
@@ -1130,24 +1130,24 @@ img {
 
 .demo h1 {
   margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-sm, 2rem);
-  line-height: var(--wel-sem-line-heights-display-sm, 1.2);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-display-sm, 2rem);
+  line-height: var(--ama-sem-line-heights-display-sm, 1.2);
 }
 
 .demo section {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--wel-sem-spacing-static-inline-md, 0.75rem);
+  gap: var(--ama-sem-spacing-static-inline-md, 0.75rem);
 }
 
 .demo h2 {
   width: 100%;
   margin: 0;
-  font-family: var(--wel-sem-font-families-title), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-title-md, 1.25rem);
-  color: var(--wel-sem-color-on-surface-mid);
+  font-family: var(--ama-sem-font-families-title), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-title-md, 1.25rem);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1211,33 +1211,33 @@ img {
 }
 .article__kicker {
   margin: 0;
-  font-size: var(--wel-sem-font-sizes-body-xs);
-  line-height: var(--wel-sem-line-heights-body-xs);
+  font-size: var(--ama-sem-font-sizes-caption);
+  line-height: var(--ama-sem-line-heights-caption);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--wel-sem-color-on-surface-mid);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 .article__title {
   margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
-  font-size: var(--wel-sem-font-sizes-display-xl);
-  line-height: var(--wel-sem-line-heights-display-xl);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-display-xl);
+  line-height: var(--ama-sem-line-heights-display-xl);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 .article__lede {
   margin: 0;
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
   font-style: italic;
-  font-size: var(--wel-sem-font-sizes-display-sm);
-  line-height: var(--wel-sem-line-heights-display-sm);
-  color: var(--wel-sem-color-on-surface-mid);
+  font-size: var(--ama-sem-font-sizes-display-sm);
+  line-height: var(--ama-sem-line-heights-display-sm);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 
 .article__media {
   position: relative;
   aspect-ratio: 850 / 386;
   overflow: hidden;
-  border-radius: var(--wel-sem-border-radius-container-low);
+  border-radius: var(--ama-sem-border-radius-container-low);
 }
 .article__image {
   object-fit: cover;
@@ -1248,30 +1248,30 @@ img {
 .article__notice {
   margin: 0;
   padding: 12px 16px;
-  border-radius: var(--wel-sem-border-radius-container-low);
-  background: var(--wel-sem-color-accent-container-low);
-  font-size: var(--wel-sem-font-sizes-body-sm);
-  line-height: var(--wel-sem-line-heights-body-sm);
-  color: var(--wel-sem-color-on-surface-hi);
+  border-radius: var(--ama-sem-border-radius-container-low);
+  background: var(--ama-sem-color-accent-container-low);
+  font-size: var(--ama-sem-font-sizes-body-sm);
+  line-height: var(--ama-sem-line-heights-body-sm);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 .article__body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  font-size: var(--wel-sem-font-sizes-body-md);
-  line-height: var(--wel-sem-line-heights-body-md);
-  color: var(--wel-sem-color-on-surface-mid);
+  font-size: var(--ama-sem-font-sizes-body-md);
+  line-height: var(--ama-sem-line-heights-body-md);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 .article__body p {
   margin: 0;
 }
 .article__h2 {
   margin: 28px 0 0;
-  font-size: var(--wel-sem-font-sizes-title-lg);
-  line-height: var(--wel-sem-line-heights-title-lg);
+  font-size: var(--ama-sem-font-sizes-title-lg);
+  line-height: var(--ama-sem-line-heights-title-lg);
   font-weight: 500;
-  color: var(--wel-sem-color-on-surface-hi);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 .article__body > .article__h2:first-child {
   margin-top: 0;
@@ -1286,12 +1286,12 @@ img {
 .article__quote {
   margin: 12px 0;
   padding-left: 36px;
-  border-left: 2px solid var(--wel-sem-color-primary);
-  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  border-left: 2px solid var(--ama-sem-color-primary);
+  font-family: var(--ama-sem-font-families-display), system-ui, sans-serif;
   font-style: italic;
-  font-size: var(--wel-sem-font-sizes-display-sm);
-  line-height: var(--wel-sem-line-heights-display-sm);
-  color: var(--wel-sem-color-on-surface-mid);
+  font-size: var(--ama-sem-font-sizes-display-sm);
+  line-height: var(--ama-sem-line-heights-display-sm);
+  color: var(--ama-sem-color-on-surface-mid);
 }
 @media (max-width: 767px) {
   .article__quote {
@@ -1329,10 +1329,10 @@ img {
      est invisible sur fond sombre : le bouton se réduisait alors à son chevron,
      sans forme ni rayon perceptibles. Une surface surélevée et la bordure des
      chips lui donnent un contour dans les deux modes. */
-  border: var(--wel-sem-border-width-thin, 1px) solid var(--wel-sem-color-outline-hi);
+  border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
   border-radius: var(--pill-radius);
-  background: var(--wel-sem-color-surface-container-mid);
-  color: var(--wel-sem-color-on-surface-hi);
+  background: var(--ama-sem-color-surface-container-mid);
+  color: var(--ama-sem-color-on-surface-hi);
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
@@ -1380,9 +1380,9 @@ img {
   margin: 0;
   min-width: 29px;
   text-align: center;
-  font-size: var(--wel-sem-font-sizes-body-md);
-  line-height: var(--wel-sem-line-heights-body-md);
-  color: var(--wel-sem-color-on-surface-hi);
+  font-size: var(--ama-sem-font-sizes-body-md);
+  line-height: var(--ama-sem-line-heights-body-md);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 .carousel__step {
   display: grid;
@@ -1392,8 +1392,8 @@ img {
   padding: 0;
   border: 0;
   border-radius: var(--pill-radius);
-  background: var(--wel-sem-color-primary);
-  color: var(--wel-sem-color-on-primary);
+  background: var(--ama-sem-color-primary);
+  color: var(--ama-sem-color-on-primary);
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
@@ -1403,14 +1403,14 @@ img {
 /* Anneau explicite : l'anneau par défaut du navigateur se pose sur un aplat
    primaire sombre, où il se distingue mal. */
 .carousel__step:focus-visible {
-  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
   outline-offset: 2px;
 }
 
 .carousel__step:disabled {
   cursor: default;
-  background: color-mix(in srgb, var(--wel-sem-color-primary) 24%, transparent);
-  color: var(--wel-sem-color-on-surface-hi);
+  background: color-mix(in srgb, var(--ama-sem-color-primary) 24%, transparent);
+  color: var(--ama-sem-color-on-surface-hi);
 }
 
 @media (max-width: 1279px) {

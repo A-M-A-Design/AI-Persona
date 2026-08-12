@@ -32,7 +32,7 @@ export default function PersonaGlyph({ persona, className, title }: Props) {
     >
       <path
         d={d}
-        stroke="var(--wel-sem-color-primary, currentColor)"
+        stroke="var(--ama-sem-color-primary, currentColor)"
         strokeWidth="5"
         strokeLinecap="round"
         strokeLinejoin="round"

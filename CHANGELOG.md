@@ -10,6 +10,35 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **`1.0.0_AMaDesignTokens`** : l'export de tokens du portfolio, dérivé de
+  l'export Accor 2.2.2. Trois marques, une par avatar, toutes issues de
+  `brands/brandbook` — les treize autres marques Accor et leurs primitives
+  disparaissent. Préfixe `ama`, format DTCG, chaîne **sémantique → alias →
+  primitive** conservée telle quelle. `npm run tokens:build` construit `tokens/`
+  depuis le zip gitignoré, `npm run tokens:pack` en tire
+  `1.0.0_AMaDesignTokens_<date>_<heure>.zip` — même forme que l'export Accor,
+  donc importable tel quel dans Tokens Studio. Le zip est un artefact
+  rebuildable et gitignoré ; la source committée est le dossier `tokens/`, et
+  l'emballage refuse d'écrire si `tokens:check` échoue. La doc complète est dans
+  `docs/tokens.md`.
+
+  La couleur de l'avatar ne vit que dans les **primitives** : les couches d'alias
+  et sémantique sont identiques d'un avatar à l'autre. C'est possible parce que
+  la teinte est une fonction pure de la couleur — teinter puis résoudre donne le
+  même résultat que résoudre puis teinter, ce que fait déjà `build-themes.mjs`.
+
+  L'export est un artefact **parallèle** : `styles/generated/*.css` reste produit
+  depuis le `theme.css` WDS. `styles/welds-src/components.css` consomme
+  `var(--wel-…)` en dur, donc les thèmes doivent continuer d'émettre `--wel-*`
+  jusqu'à la réécriture perso des composants.
+- **`npm run tokens:check`, vérificateur de non-régression.** Il résout la chaîne
+  complète pour 3 avatars × 2 modes × 5 breakpoints et compare chaque valeur à la
+  variable CSS correspondante de `styles/generated/*.css` : **4875 valeurs
+  comparées, 0 divergence**, et aucune variable du CSS sans token qui la produise.
+  Écrit **avant** le générateur, et sans partager une ligne avec lui — pas même
+  la transformation de teinte : un oracle qui importerait le générateur
+  validerait ses propres erreurs. Testé par mutation, décaler d'une unité une
+  primitive lève 50 divergences par propagation.
 - **Chaque persona porte un domaine** : l'ours le design system, la corneille
   le produit, la libellule l'IA et les operations. Le domaine vit dans
   `personas/*.json` — sous-titre du héro, intitulé du lanceur et questions
@@ -37,6 +66,41 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Le contrat CSS bascule sur `--ama-*`, sans couche d'alias.** Tout ce que sert
+  le navigateur consomme `--ama-*` : le CSS applicatif (191 occurrences dans
+  `app/`, `components/`, `persona-extras.css`, `check-contrast.mjs`) comme les
+  composants WDS.
+
+  Le paquet d'Accor parle `--wel-*` sur 2810 références. Le renommage a lieu à un
+  seul endroit, le plus en amont possible : `install-welds.mjs`, à l'extraction,
+  sur le `theme.css` comme sur les composants. `build-themes.mjs` n'a donc jamais
+  à connaître l'ancien nom, et les thèmes restent à 210 Ko brut / 23 Ko gzip.
+
+  Ce chantier avait d'abord pris un autre chemin, sur une contrainte non
+  vérifiée — « le fichier est régénéré, tout renommage y serait détruit ». Vrai
+  d'une édition **à la main** ; faux fait par l'installateur, où la
+  transformation est reproductible par construction. Le détour a coûté une couche
+  d'alias de 358 Ko, un piège de portée CSS à désamorcer et son audit dédié, tout
+  cela supprimé par une ligne une fois la contrainte examinée. Consigné dans
+  `docs/tokens.md` : quand une contrainte impose une architecture coûteuse, la
+  vérifier avant de la contourner.
+
+  `tokens:check` refuse tout `--wel-*` dans les six fichiers du contrat : s'il en
+  revenait un, plus aucun thème ne le définirait et les composants perdraient
+  leurs couleurs **en silence** — un test de contraste ne mesure que ce qui est
+  peint, pas ce qui a disparu. Les deux voies de retour en arrière sont vérifiées
+  par mutation.
+- **Le README consigne le piège du serveur de développement résiduel.**
+  `reuseExistingServer: true` récupère le serveur d'un run précédent avec son
+  cache périmé : après un changement de CSS un peu large, cela donne une
+  trentaine d'échecs Playwright groupés, **tous à exactement 30,0 s**, qui
+  ressemblent trait pour trait à une régression. Le signal est la durée ronde et
+  identique, pas le contenu des assertions.
+- **La transformation de teinte des personas passe dans
+  `scripts/lib/persona-color.mjs`**, partagée par le générateur de thèmes et
+  celui de tokens. Les deux chaînes doivent rendre la même couleur au bit près,
+  ce qui ne peut être vrai que si la fonction est littéralement la même. Sortie
+  de `build-themes.mjs` identique au bit près après extraction.
 - **L'invitation du pied de page devient propre au persona** et ne dit plus
   « Discutons » : c'était le libellé du bouton d'envoi, et le doublon laissait
   croire que le pied de page ouvrait lui aussi la conversation. L'ours propose
@@ -55,6 +119,42 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **`npm run themes:build` refuse de tourner sur une extraction WDS périmée.**
+  `styles/welds-src/` est gitignoré : il survit aux changements de branche. Une
+  extraction antérieure à la bascule `--ama-*` consomme encore `var(--wel-…)`,
+  que plus aucun thème ne définit — boutons, chips et champs perdraient leurs
+  couleurs **en silence**, une variable absente ne cassant rien de visible côté
+  CSS. Le script s'arrête et renvoie vers `npm run welds:install`. C'est le cas
+  normal après un `git pull` qui traverse cette bascule, pas un cas tordu : il
+  fallait donc le rattraper au moment où il se produit, et pas seulement dans
+  `tokens:check`, que rien n'oblige à lancer.
+- **Le héro défilait tout seul au chargement**, de l'ours vers le persona
+  mémorisé, comme si le carrousel démarrait de lui-même. Le thème, lui, était
+  déjà le bon dès la première image : seule la piste rattrapait sa position.
+
+  `useSettings` rend les défauts SSR pour éviter un écart d'hydratation, puis lit
+  `<html>` dans son effet de montage — où le script anti-flash a déjà posé le
+  persona mémorisé. Le slideshow rattrapait donc sa slide *après* l'hydratation,
+  et ce rattrapage passait par la même animation qu'un changement voulu.
+
+  Un déplacement de la piste n'est désormais animé que s'il a une cause : lecture
+  automatique, bouton, clavier ou sélecteur de la barre, qui passent tous par un
+  événement de réglages. La restauration initiale n'en a pas, et se fait donc
+  d'un bloc. Test de régression : une animation laisse des positions
+  intermédiaires, un saut n'en laisse aucune — il en relevait 25 avant le
+  correctif, zéro après.
+- **Quatre variables de thème n'existaient nulle part.**
+  `--wel-sem-border-width-focus`, `--wel-sem-border-width-thin`,
+  `--wel-sem-font-sizes-body-xs` et `--wel-sem-line-heights-body-xs` étaient
+  consommées par `globals.css` sans jamais être définies — ni par les thèmes, ni
+  par les composants, ni par l'export de tokens. Six usages sur huit avaient une
+  valeur de repli et passaient donc inaperçus ; **les deux autres n'en avaient
+  pas** (`.article__kicker`), et sa taille comme son interligne retombaient
+  silencieusement sur l'héritage. Remplacées par les tokens réels, dont la
+  valeur est exactement celle des replis : `border-width-strong` (2 px),
+  `border-width-default` (1 px) et `font-sizes`/`line-heights-caption`
+  (0,75 rem / 1 rem) — `caption` étant le token du surtitre en capitales.
+  Trouvé en cartographiant les consommateurs avant la bascule vers `--ama-*`.
 - **Le chat retombait en erreur à chaque redémarrage du serveur de
   développement.** Derrière l'interception TLS de l'entreprise, `fetch` côté
   Node échoue avec `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` tant que

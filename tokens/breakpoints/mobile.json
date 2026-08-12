@@ -1,0 +1,721 @@
+{
+  "ama": {
+    "sem": {
+      "text": {
+        "breakpointName": {
+          "$type": "text",
+          "$value": "mobile (320-767)",
+          "$description": "String variable to bind the component’s breakpoint property to the breakpoint variable from the 🌈 [platform] Appearances Library. Learn more in the documentation https://design.accor.com/latest/get-started/designing/using-templates/guide-6MiFCQRw#section-adding-components-e7"
+        }
+      },
+      "spacingDynamic": {
+        "inline": {
+          "xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inline.xl}",
+            "$description": "The dynamic inline space tokens provide responsive spacing values for inline elements."
+          },
+          "3xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inline.3xl}",
+            "$description": "The dynamic inline space tokens provide responsive spacing values for inline elements."
+          },
+          "4xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inline.4xl}",
+            "$description": "The dynamic inline space tokens provide responsive spacing values for inline elements."
+          },
+          "6xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inline.6xl}",
+            "$description": "The dynamic inline space tokens provide responsive spacing values for inline elements."
+          }
+        },
+        "stack": {
+          "md": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.md}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "lg": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.lg}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.xl}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "2xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.2xl}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "3xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.3xl}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "4xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.4xl}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          },
+          "5xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.stack.5xl}",
+            "$description": "The dynamic stack space tokens provide responsive spacing values for vertical aligned elements."
+          }
+        },
+        "inset": {
+          "xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inset.xl}",
+            "$description": "The dynamic inset space tokens provide responsive spacing values for homogeneous padding elements."
+          },
+          "2xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inset.2xl}",
+            "$description": "The dynamic inset space tokens provide responsive spacing values for homogeneous padding elements."
+          },
+          "3xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inset.3xl}",
+            "$description": "The dynamic inset space tokens provide responsive spacing values for homogeneous padding elements."
+          },
+          "4xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inset.4xl}",
+            "$description": "The dynamic inset space tokens provide responsive spacing values for homogeneous padding elements."
+          },
+          "5xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.inset.5xl}",
+            "$description": "The dynamic inset space tokens provide responsive spacing values for homogeneous padding elements."
+          }
+        },
+        "insetSquish": {
+          "3xl-h": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetSquish.3xl-h}",
+            "$description": "[DEPRECATED] The dynamic insetSquish space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "3xl-v": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetSquish.3xl-v}",
+            "$description": "[DEPRECATED] The dynamic insetSquish space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "6xl-h": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetSquish.6xl-h}",
+            "$description": "[DEPRECATED] The dynamic insetSquish space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "6xl-v": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetSquish.6xl-v}",
+            "$description": "[DEPRECATED] The dynamic insetSquish space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          }
+        },
+        "insetStretch": {
+          "xl-h": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.xl-h}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "xl-v": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.xl-v}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "2xl-h": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.2xl-h}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "2xl-v": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.2xl-v}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "4xl-h": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.4xl-h}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          },
+          "4xl-v": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.insetStretch.4xl-v}",
+            "$description": "[DEPRECATED] The dynamic insetStretch space tokens provide responsive spacing values for non homogeneous padding elements - resulting in a visually squished layout."
+          }
+        },
+        "pinchVertical": {
+          "xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.pinchVertical.xl}",
+            "$description": "[DEPRECATED] Minimim space applied only on the top and/or bottom of an element that dynamically varies from one breakpoint to another."
+          },
+          "2xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.pinchVertical.2xl}",
+            "$description": "[DEPRECATED] Standard space applied only on the top and/or bottom of an element that dynamically varies from one breakpoint to another."
+          },
+          "3xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.pinchVertical.3xl}",
+            "$description": "[DEPRECATED] Extra large space applied only on the top and/or bottom of an element that dynamically varies from one breakpoint to another."
+          },
+          "4xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.pinchVertical.4xl}",
+            "$description": "[DEPRECATED] Twice extra large space applied only on the top and/or bottom of an element that dynamically varies from one breakpoint to another."
+          },
+          "5xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.pinchVertical.5xl}",
+            "$description": "[DEPRECATED] Maximum space applied only on the top and/or bottom of an element that dynamically varies from one breakpoint to another."
+          }
+        },
+        "page": {
+          "beforeFooter": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.page.beforeFooter}",
+            "$description": "Spacing before the page footer."
+          },
+          "afterHeader": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.page.afterHeader}",
+            "$description": "Spacing after the main page header."
+          },
+          "withinPage": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.page.withinPage}",
+            "$description": "Standard spacing between major page sections."
+          }
+        },
+        "withinSection": {
+          "xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.withinSection.xl}",
+            "$description": "Small spacing within sections for tight groupings."
+          },
+          "2xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.withinSection.2xl}",
+            "$description": "Medium spacing within sections for standard groupings."
+          },
+          "3xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.withinSection.3xl}",
+            "$description": "Large spacing within sections for loose groupings."
+          },
+          "4xl": {
+            "$type": "spacing",
+            "$value": "{ama.web.bSem.spacingDynamic.mobile.withinSection.4xl}",
+            "$description": "Extra large spacing within sections for maximum separation."
+          }
+        }
+      },
+      "sizing": {
+        "grid": {
+          "margins": {
+            "$type": "sizing",
+            "$value": "{ama.prim.sizing.positive-16}",
+            "$description": "margins width"
+          },
+          "gutter": {
+            "$type": "sizing",
+            "$value": "{ama.prim.sizing.positive-16}",
+            "$description": "gutter width"
+          },
+          "columns": {
+            "$type": "sizing",
+            "$value": "{ama.prim.sizing.positive-4}",
+            "$description": "column width"
+          }
+        }
+      },
+      "fontSizes": {
+        "display": {
+          "xs": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.xs}",
+            "$description": "Smallest display font size. Used for display-06 typography style."
+          },
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.sm}",
+            "$description": "Fifth display font size. Used for display-05 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.md}",
+            "$description": "Fourth display font size. Used for display-04 typography style."
+          },
+          "lg": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.lg}",
+            "$description": "Third display font size. Used for display-03 typography style."
+          },
+          "xl": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.xl}",
+            "$description": "Second display font size. Used for display-02 typography style."
+          },
+          "2xl": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.display.2xl}",
+            "$description": "Highest display font size. Used for display-01 typography style."
+          }
+        },
+        "title": {
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.title.sm}",
+            "$description": "Smallest title font size. Used for title-02 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.title.md}",
+            "$description": "Medium title font size. Used for title-03 typography style."
+          },
+          "lg": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.title.lg}",
+            "$description": "Highest title font size. Used for title-01 typography style."
+          }
+        },
+        "subtitle": {
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.subtitle.md}",
+            "$description": "[DEPRECATED] Smallest subtitle font size. Used for sub-02 typography style."
+          },
+          "lg": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.subtitle.lg}",
+            "$description": "Highest subtitle font size. Used for sub-01 typography style."
+          }
+        },
+        "body": {
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.body.sm}",
+            "$description": "Smallest body font size. Used for body-[font-style]-02 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.body.md}",
+            "$description": "Highest body font size. Used for body-[font-style]-01 typography style."
+          }
+        },
+        "caption": {
+          "$type": "fontSizes",
+          "$value": "{ama.web.bSem.fontSizes.mobile.caption}",
+          "$description": "Default caption font size used for caption-[font-style] typography style."
+        },
+        "detail": {
+          "$type": "fontSizes",
+          "$value": "{ama.web.bSem.fontSizes.mobile.detail}",
+          "$description": "Default detail font size used for details typography style."
+        },
+        "label": {
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.label.sm}",
+            "$description": "Smallest label font size. Used for label-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.label.md}",
+            "$description": "Medium label font size. Used for label-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.label.lg}",
+            "$description": "Highest label font size. Used for label-[font-style]-01 typography style."
+          }
+        },
+        "input": {
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.input.sm}",
+            "$description": "Smallest input font size. Used for input-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.input.md}",
+            "$description": "Medium input font size. Used for input-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.input.lg}",
+            "$description": "Highest input font size. Used for input-[font-style]-01 typography style."
+          }
+        },
+        "link": {
+          "sm": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.link.sm}",
+            "$description": "Smallest link font size. Used for body-[font-style]-02 typography style."
+          },
+          "md": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bSem.fontSizes.mobile.link.md}",
+            "$description": "Highest link font size. Used for body-[font-style]-01 typography style."
+          }
+        }
+      },
+      "lineHeights": {
+        "display": {
+          "xs": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.xs}",
+            "$description": "Smallest display line height. Used for display-06 typography style."
+          },
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.sm}",
+            "$description": "Fifth display height. Used for display-05 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.md}",
+            "$description": "Fourth display line height. Used for display-04 typography style."
+          },
+          "lg": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.lg}",
+            "$description": "Third display line height. Used for display-03 typography style."
+          },
+          "xl": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.xl}",
+            "$description": "Second display line height. Used for display-02 typography style."
+          },
+          "2xl": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.display.2xl}",
+            "$description": "Highest display line height. Used for display-01 typography style."
+          }
+        },
+        "title": {
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.title.sm}",
+            "$description": "Smallest title line height. Used for title-03 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.title.md}",
+            "$description": "Medium title line height. Used for title-02 typography style."
+          },
+          "lg": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.title.lg}",
+            "$description": "Highest title line height. Used for title-01 typography style."
+          }
+        },
+        "subtitle": {
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.subtitle.md}",
+            "$description": "[DEPRECATED] Smallest subtitle line height. Used for sub-02 typography style."
+          },
+          "lg": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.subtitle.lg}",
+            "$description": "Highest subtitle line height. Used for sub-01 typography style."
+          }
+        },
+        "body": {
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.body.sm}",
+            "$description": "Smallest body line height. Used for body-[font-style]-01 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.body.md}",
+            "$description": "Highest body line height. Used for body-[font-style]-01 typography style."
+          }
+        },
+        "caption": {
+          "$type": "lineHeights",
+          "$value": "{ama.web.bSem.lineHeights.mobile.caption}",
+          "$description": "Default caption line height used for caption-[font-style] typography style."
+        },
+        "detail": {
+          "$type": "lineHeights",
+          "$value": "{ama.web.bSem.lineHeights.mobile.detail}",
+          "$description": "Default detail line height used for details typography style."
+        },
+        "label": {
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.label.sm}",
+            "$description": "Smallest label line height. Used for label-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.label.md}",
+            "$description": "Medium label line height. Used for label-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.label.lg}",
+            "$description": "Highest label line height. Used for label-[font-style]-01 typography style."
+          }
+        },
+        "input": {
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.input.sm}",
+            "$description": "Smallest input line height. Used for input-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.input.md}",
+            "$description": "Medium input line height. Used for input-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.input.lg}",
+            "$description": "Highest input line height. Used for input-[font-style]-01 typography style."
+          }
+        },
+        "link": {
+          "sm": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.link.sm}",
+            "$description": "Smallest link line height. Used for body-[font-style]-01 typography style."
+          },
+          "md": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bSem.lineHeights.mobile.link.md}",
+            "$description": "Highest link line height. Used for body-[font-style]-01 typography style."
+          }
+        }
+      },
+      "letterSpacing": {
+        "display": {
+          "xs": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.xs}",
+            "$description": "Smallest display font size. Used for display-06 typography style."
+          },
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.sm}",
+            "$description": "Fifth display font size. Used for display-05 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.md}",
+            "$description": "Fourth display font size. Used for display-04 typography style."
+          },
+          "lg": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.lg}",
+            "$description": "Third display font size. Used for display-03 typography style."
+          },
+          "xl": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.xl}",
+            "$description": "Second display font size. Used for display-02 typography style."
+          },
+          "2xl": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.display.2xl}",
+            "$description": "Highest display font size. Used for display-01 typography style."
+          }
+        },
+        "title": {
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.title.sm}",
+            "$description": "Smallest title font size. Used for title-02 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.title.md}",
+            "$description": "Medium title font size. Used for title-03 typography style."
+          },
+          "lg": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.title.lg}",
+            "$description": "Highest title font size. Used for title-01 typography style."
+          }
+        },
+        "subtitle": {
+          "lg": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.subtitle.lg}",
+            "$description": "Highest subtitle font size. Used for sub-01 typography style."
+          }
+        },
+        "body": {
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.body.sm}",
+            "$description": "Smallest body font size. Used for body-[font-style]-02 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.body.md}",
+            "$description": "Highest body font size. Used for body-[font-style]-01 typography style."
+          }
+        },
+        "caption": {
+          "$type": "letterSpacing",
+          "$value": "{ama.web.bSem.letterSpacing.mobile.caption}",
+          "$description": "Default caption font size used for caption-[font-style] typography style."
+        },
+        "detail": {
+          "$type": "letterSpacing",
+          "$value": "{ama.web.bSem.letterSpacing.mobile.detail}",
+          "$description": "Default detail font size used for details typography style."
+        },
+        "label": {
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.label.sm}",
+            "$description": "Smallest label font size. Used for label-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.label.md}",
+            "$description": "Medium label font size. Used for label-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.label.lg}",
+            "$description": "Highest label font size. Used for label-[font-style]-01 typography style."
+          }
+        },
+        "input": {
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.input.sm}",
+            "$description": "Smallest input font size. Used for input-[font-style]-03 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.input.md}",
+            "$description": "Medium input font size. Used for input-[font-style]-02 typography style."
+          },
+          "lg": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.input.lg}",
+            "$description": "Highest input font size. Used for input-[font-style]-01 typography style."
+          }
+        },
+        "link": {
+          "sm": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.link.sm}",
+            "$description": "Smallest link font size. Used for link-[font-style]-02 typography style."
+          },
+          "md": {
+            "$type": "letterSpacing",
+            "$value": "{ama.web.bSem.letterSpacing.mobile.link.md}",
+            "$description": "Highest link font size. Used for link-[font-style]-01 typography style."
+          }
+        }
+      }
+    },
+    "comp": {
+      "grid": {
+        "gutter": {
+          "sm": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.gutter.sm}",
+            "$description": "Smallest gutter size available for the Grid component"
+          },
+          "md": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.gutter.md}",
+            "$description": "Default gutter size for the Grid component"
+          },
+          "lg": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.gutter.lg}",
+            "$description": "Largest gutter size available for the Grid component"
+          }
+        },
+        "row-gap": {
+          "sm": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.row-gap.sm}",
+            "$description": "Smallest row size available for the Grid component"
+          },
+          "md": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.row-gap.md}",
+            "$description": "Default row size for the Grid component"
+          },
+          "lg": {
+            "$type": "spacing",
+            "$value": "{ama.web.bComp.grid.mobile.row-gap.lg}",
+            "$description": "Largest row size available for the Grid component"
+          }
+        }
+      },
+      "btn": {
+        "xs": {
+          "label-fontSizes": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bComp.btn.xs.mobile.label-fontSizes}",
+            "$description": "Label font size used for the xs Button variant"
+          },
+          "label-lineHeights": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bComp.btn.xs.mobile.label-lineHeights}",
+            "$description": "Label line height used for the xs Button variant"
+          }
+        },
+        "sm": {
+          "label-fontSizes": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bComp.btn.sm.mobile.label-fontSizes}",
+            "$description": "Label font size used for the sm Button variant"
+          },
+          "label-lineHeights": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bComp.btn.sm.mobile.label-lineHeights}",
+            "$description": "Label line height used for the sm Button variant"
+          }
+        },
+        "md": {
+          "label-fontSizes": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bComp.btn.md.mobile.label-fontSizes}",
+            "$description": "Label font size used for the md Button variant"
+          },
+          "label-lineHeights": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bComp.btn.md.mobile.label-lineHeights}",
+            "$description": "Label line height used for the md Button variant"
+          }
+        },
+        "lg": {
+          "label-fontSizes": {
+            "$type": "fontSizes",
+            "$value": "{ama.web.bComp.btn.lg.mobile.label-fontSizes}",
+            "$description": "Label font size used for the lg Button variant"
+          },
+          "label-lineHeights": {
+            "$type": "lineHeights",
+            "$value": "{ama.web.bComp.btn.lg.mobile.label-lineHeights}",
+            "$description": "Label line height used for the lg Button variant"
+          }
+        },
+        "label-letterSpacing": {
+          "$type": "letterSpacing",
+          "$value": "{ama.web.bComp.btn.mobile.label-letterSpacing}",
+          "$description": "Label letter spacing used for the Button"
+        }
+      }
+    }
+  }
+}

@@ -58,6 +58,20 @@ export default function PersonaSlideshow({
   // du slideshow lui-même ne doit pas interrompre la lecture ; un changement
   // venu du sélecteur de la barre, si — c'est la règle demandée.
 
+  /**
+   * Un déplacement de la piste n'est animé que s'il a une cause : lecture
+   * automatique, bouton, clavier, ou sélecteur de la barre — tous passent par
+   * un événement de réglages, et le posent donc à vrai.
+   *
+   * Le tout premier déplacement n'en a pas. `useSettings` rend les défauts SSR
+   * pour éviter un écart d'hydratation, puis lit `<html>` dans son effet de
+   * montage, où le script anti-flash a déjà posé le persona mémorisé : le
+   * composant rattrape alors sa slide. Animé, ce rattrapage donne à voir un
+   * défilement de la première slide vers la sienne, comme si le carrousel
+   * démarrait tout seul — le thème, lui, était déjà bon dès la première frame.
+   */
+  const anime = useRef(false);
+
   const index = Math.max(
     0,
     personas.findIndex((p) => p.id === persona),
@@ -69,6 +83,7 @@ export default function PersonaSlideshow({
     (cible: number) => {
       const suivant = personas[(cible + personas.length) % personas.length];
       if (!suivant || suivant.id === persona) return;
+      anime.current = true;
       document.documentElement.setAttribute("data-persona", suivant.id);
       persistSetting({ persona: suivant.id }, "slideshow");
     },
@@ -81,7 +96,7 @@ export default function PersonaSlideshow({
     if (!el) return;
     const cible = index * el.clientWidth;
     if (Math.abs(el.scrollLeft - cible) > 4) {
-      el.scrollTo({ left: cible, behavior: scrollBehavior() });
+      el.scrollTo({ left: cible, behavior: anime.current ? scrollBehavior() : "auto" });
     }
   }, [index]);
 
@@ -90,6 +105,8 @@ export default function PersonaSlideshow({
   // carrousel ne l'interrompt pas, le quitter pour la barre si.
   useEffect(() => {
     const onReglage = (e: Event) => {
+      // Tout changement porté par un événement a une cause : il s'anime.
+      anime.current = true;
       const source = (e as CustomEvent<{ source?: string }>).detail?.source;
       if (source && source !== "slideshow") setLecture(false);
     };
