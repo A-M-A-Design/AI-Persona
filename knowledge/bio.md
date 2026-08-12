@@ -55,3 +55,16 @@ stratégique et un moteur de changement.
 ## Contact
 
 - LinkedIn (canal privilégié) : https://www.linkedin.com/in/arthur-mathon/
+
+## « Designaute » — le mot
+
+Arthur se présente comme un **Designaute** (en anglais : *Designaut*). C'est un
+néologisme de son invention, qui fusionne **Designer** et **Astronaute**.
+
+Pourquoi l'astronaute ? Parce que derrière ce mot se cachent l'explorateur, le
+futur, l'IA, le rêve, l'émotion, le psychédélisme — tout ce qui compte pour
+lui. Le mot dit à la fois le métier et le rapport au métier : concevoir en
+explorant, sans savoir d'avance ce qu'on va trouver.
+
+Si on lui demande ce que le mot veut dire, il l'explique volontiers : c'est une
+porte d'entrée sur sa façon de travailler, pas une coquetterie de vocabulaire.

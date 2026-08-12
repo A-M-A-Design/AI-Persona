@@ -127,6 +127,36 @@ test.describe("Clavier", () => {
     expect(page.url()).toContain("#contenu");
   });
 
+  test("tout arrêt de tabulation a un nom et un anneau visible", async ({ page }) => {
+    // Relevé du parcours réel plutôt qu'une liste de sélecteurs : c'est ainsi
+    // qu'on attrape un élément rendu focalisable sans avoir été nommé — la
+    // piste du slideshow l'a été.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await visit(page);
+
+    const anomalies: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press("Tab");
+      const r = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (!el || el === document.body) return null;
+        const cs = getComputedStyle(el);
+        const etiquette = el.id
+          ? document.querySelector(`label[for="${el.id}"]`)?.textContent
+          : null;
+        return {
+          repere: el.tagName.toLowerCase() + "." + (el.className || "").toString().split(" ")[0],
+          nomme: Boolean(el.getAttribute("aria-label") || etiquette || el.textContent?.trim()),
+          anneau: cs.outlineStyle !== "none" && Number.parseFloat(cs.outlineWidth) > 0,
+        };
+      });
+      if (!r) break;
+      if (!r.nomme) anomalies.push(`${r.repere} : sans nom accessible`);
+      if (!r.anneau) anomalies.push(`${r.repere} : sans anneau de focus`);
+    }
+    expect(anomalies.join("\n")).toBe("");
+  });
+
   test("les chips de réglage montrent leur focus", async ({ page }) => {
     // Le <select> est en opacity 0 : sans style dédié, l'anneau de focus du
     // navigateur est invisible et le clavier navigue à l'aveugle.
@@ -154,6 +184,54 @@ test.describe("Clavier", () => {
   });
 });
 
+test.describe("Raccourcis clavier", () => {
+  const cible = (page: Page) =>
+    page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      return el.tagName + (el.id ? "#" + el.id : "");
+    });
+
+  test("les trois raccourcis mènent à leur cible", async ({ page }) => {
+    await visit(page);
+    for (const [touche, attendu] of [
+      ["m", /MAIN#contenu/],
+      ["f", /^A$/],
+      ["n", /^SELECT/],
+    ] as const) {
+      await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+      await page.keyboard.press(touche);
+      expect(await cible(page), `touche ${touche}`).toMatch(attendu);
+    }
+  });
+
+  test("ils se taisent dans un champ de saisie", async ({ page }) => {
+    // Sans cette réserve, on ne pourrait plus écrire les lettres concernées.
+    await visit(page);
+    await page.locator(".launcher__row input").fill("");
+    await page.locator(".launcher__row input").focus();
+    await page.keyboard.type("formation");
+    await expect(page.locator(".launcher__row input")).toHaveValue("formation");
+  });
+
+  test("ils sont désactivables, et l'aide reste le chemin du retour", async ({ page }) => {
+    // Première échappatoire de WCAG 2.1.4 : un mécanisme permet de les couper.
+    await visit(page);
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await page.keyboard.press("?");
+    await expect(page.locator(".shortcuts__panel")).toBeVisible();
+
+    await page.locator(".shortcuts__toggle input").uncheck();
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+    await page.keyboard.press("f");
+    expect(await cible(page), "coupés, ils ne font plus rien").toBe("BODY");
+
+    // L'aide reste atteignable : c'est là qu'on les rallume.
+    await page.keyboard.press("?");
+    await expect(page.locator(".shortcuts__panel")).toBeVisible();
+  });
+});
+
 test.describe("Annonce de la réponse", () => {
   test.beforeEach(async ({ page }) => {
     await stubChat(page);
@@ -168,7 +246,9 @@ test.describe("Annonce de la réponse", () => {
 
     await expect(page.locator(".chat-modal__body")).not.toHaveAttribute("aria-live", /./);
 
-    const statut = page.locator("[role=status]");
+    // Le slideshow porte lui aussi une région de statut, pour annoncer le
+    // persona actif : on vise celle du panneau.
+    const statut = page.locator(".chat-modal [role=status]");
     await expect(statut).toHaveCount(1);
     await expect(statut).toContainText("Réponse simulée");
   });

@@ -4,6 +4,9 @@ Audit du 12 août 2026, cible **WCAG 2.2 niveau AA**. Couvre l'accueil, les
 pages articles et le panneau de conversation, sur les trois personas, les deux
 modes de couleur et quatre largeurs (1440 / 1000 / 375 / 320).
 
+**Complété le même jour pour la v2** — le héro est devenu un slideshow, et le
+panneau de conversation a gagné des liens. Voir « La v2 » en fin de document.
+
 La page `/dev/kit` est hors périmètre : elle n'est pas publiée.
 
 ## Ce que l'outillage couvre
@@ -126,6 +129,102 @@ en anglais : la synthèse vocale ne lit pas du français avec une voix anglaise.
   l'action à une icône ; le libellé est retiré de l'écran, jamais du nom
   accessible.
 
+## La v2 — slideshow et liens dans la conversation
+
+Le héro est devenu un carrousel de trois slides, une par persona, et les
+réponses du bot portent désormais des éléments interactifs. Deux défauts réels
+en sont sortis, **tous deux invisibles au balayage automatique**.
+
+### Ce qui a été trouvé
+
+| Sév. | Constat | Correction |
+| --- | --- | --- |
+| **B** | La piste défilante était un **arrêt de tabulation sans nom**. Rendue focalisable pour répondre à une violation axe (`scrollable-region-focusable`, les slides inactives étant `inert`), elle n'avait jamais reçu de libellé : le clavier s'y posait sans savoir où il était. | `role="group"` et un nom — « Faire défiler les personas ». |
+| **M** | L'accroche du héro était à **3,18:1** sur les trois personas, sous le seuil AA. Elle est posée sur le voile fort de l'illustration : `check-contrast.mjs` ne connaissait que les paires de tokens, et la règle `color-contrast` d'axe ne se prononce pas sur du texte au-dessus d'une image. | Passée de `on-surface-mid` à `on-surface-hi`, soit 5,11:1 — même arbitrage que les surtitres de card. Les deux paires du slideshow sont entrées dans le script. |
+
+Le premier a été trouvé en **relevant le parcours clavier arrêt par arrêt** ;
+une liste figée de sélecteurs ne l'aurait pas vu, l'élément fautif ayant été
+ajouté après coup. Ce relevé est désormais un test : il exige de chacun des dix
+premiers arrêts un nom accessible et un anneau de focus visible.
+
+### Le slideshow
+
+- `role="region"`, `aria-roledescription="carrousel"`, nommé « Choisir un
+  persona ». Chaque slide est un `group` « 2 sur 3 — La Corneille ».
+- **Les slides inactives sont `inert`** : trois titres de niveau 1 identiques
+  annoncés à la suite n'apprendraient rien.
+- Bascule de lecture avec `aria-pressed`, flèches nommées, et une **région de
+  statut** qui annonce le persona actif — sans elle, le changement de thème de
+  toute la page serait muet.
+- **Lecture automatique** : elle satisfait WCAG 2.2.2 par sa bascule, et
+  `prefers-reduced-motion` la neutralise entièrement. Elle se suspend aussi au
+  survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
+  panneau s'ouvre.
+
+### Les raccourcis clavier du carrousel
+
+Les flèches gauche et droite changent de slide, **uniquement quand le focus est
+dans le carrousel**. C'est la troisième échappatoire de **WCAG 2.1.4 Character
+Key Shortcuts** : le raccourci n'existe pas ailleurs dans la page, ce qui
+dispense d'un mécanisme de désactivation ou de remappage.
+
+Deux réserves, délibérées :
+
+- **Les flèches sont rendues au champ de saisie** dès que le focus s'y trouve —
+  il vit dans le carrousel, et sans cette réserve on ne pourrait plus y déplacer
+  le curseur. Même chose pour les `select` et tout champ éditable.
+- **Pas de raccourci sur l'espace** pour la lecture, pour la même raison : dans
+  un champ de texte, l'espace sert à écrire.
+
+Les deux boutons portent `aria-keyshortcuts`, qui déclare le raccourci sans
+l'activer — le comportement reste porté par le gestionnaire.
+
+Ce périmètre volontairement étroit évite le risque principal des raccourcis à
+touche unique : en mode exploration, les lecteurs d'écran réservent les lettres
+à leur propre navigation, et un raccourci global n'atteindrait pas la page ou
+entrerait en collision.
+
+### Les raccourcis globaux
+
+Trois raccourcis à touche unique valent partout dans le site — **M** vers le
+contenu, **N** vers les réglages, **F** vers le pied de page — plus **?** qui
+ouvre l'aide.
+
+Valant partout, ils relèvent de la **première échappatoire de 2.1.4** : une case
+à cocher dans l'aide les désactive, et le choix est persisté. **L'aide reste
+atteignable raccourcis coupés** — c'est le chemin du retour, sans quoi la
+désactivation serait sans appel.
+
+Trois gardes protègent la saisie :
+
+- aucun modificateur (`Ctrl`, `Alt`, `Meta`) ne déclenche quoi que ce soit ;
+- **jamais dans un champ ni un `select`** — ce dernier utilise déjà les lettres
+  pour choisir une option ;
+- `Échap` ferme l'aide, comme toute boîte de dialogue.
+
+La découverte passe par un bouton « Raccourcis clavier », hors écran au repos et
+visible dès qu'il reçoit le focus, sur le modèle du lien d'évitement. Un
+raccourci que personne ne connaît ne sert personne.
+
+**Ce que cela ne résout pas** : en mode exploration, les lecteurs d'écran
+réservent les lettres à leur propre navigation. M, N et F ne leur parviendront
+probablement pas. Les flèches du carrousel, portées au focus, échappent à cette
+limite — c'est la raison de leur périmètre plus étroit.
+
+### Les liens dans les réponses
+
+Le nom d'un persona cité devient un **bouton** de bascule, le titre d'un article
+publié un **lien** vers sa page. Tous deux sont soulignés et en gras, jamais
+distingués par la seule couleur (WCAG 1.4.1), et portent un anneau de focus.
+Le bouton de persona a un nom accessible explicite — « Basculer vers la
+Libellule » — le libellé visible seul n'annonçant pas ce qu'il fait.
+
+### Ce qui reste à vérifier
+
+L'arbre d'accessibilité du panneau, avec ses nouveaux liens, n'a pas été relevé
+comme l'a été celui de l'accueil. Le balayage axe n'y signale rien, mais ce
+document doit dire ce qui est annoncé, pas seulement ce qui est conforme.
+
 ## Vérification manuelle
 
 Le balayage automatique et les tests ne remplacent pas une passe réelle. À
@@ -142,4 +241,8 @@ rejouer après tout changement de structure :
 3. **Zoom à 200 %** et fenêtre à 320 px : aucun défilement horizontal, aucun
    contenu tronqué.
 4. **`prefers-reduced-motion`** activé au niveau du système : les défilements du
-   carousel et des questions suggérées doivent être instantanés.
+   carousel et des questions suggérées doivent être instantanés, et **le
+   slideshow du héro ne doit pas défiler seul**.
+5. **Le slideshow au clavier** : tabuler jusqu'à la piste, la faire défiler aux
+   flèches, vérifier que le persona et le thème suivent et que la lecture
+   automatique se suspend tant que le focus y reste.

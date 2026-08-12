@@ -73,6 +73,7 @@ img {
 
 /* `:focus` et non `:focus-visible` : un lien d'évitement n'est atteint qu'au
    clavier, et l'heuristique de `:focus-visible` n'a rien à arbitrer ici. */
+.shortcuts__hint:focus,
 .skip-link:focus {
   transform: none;
   outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
@@ -109,6 +110,101 @@ img {
     gap: 16px;
     padding: 32px 16px;
   }
+}
+
+/* --- Raccourcis clavier -------------------------------------------------- */
+
+/* L'appel à l'aide suit le lien d'évitement : hors écran au repos, il descend
+   dès qu'il reçoit le focus. C'est le seul moyen de découvrir les raccourcis
+   sans les connaître d'avance. */
+.shortcuts__hint {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 20;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--wel-sem-border-radius-element-full);
+  background: var(--wel-sem-color-primary);
+  color: var(--wel-sem-color-on-primary);
+  font-family: inherit;
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  line-height: var(--wel-sem-line-heights-body-sm);
+  cursor: pointer;
+  /* Hors du flux ET hors de l'écran : sans `position: fixed`, ce bouton est un
+     enfant flex de `body` et décale toute la page vers le bas. */
+  transform: translateY(calc(-100% - 16px));
+}
+
+.shortcuts {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--modal-scrim);
+}
+
+.shortcuts__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 420px;
+  max-width: 100%;
+  padding: 28px;
+  border-radius: var(--wel-sem-border-radius-container-low);
+  background: var(--wel-sem-color-surface);
+  color: var(--wel-sem-color-on-surface-hi);
+}
+
+.shortcuts__panel h2 {
+  margin: 0;
+  font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
+  font-size: var(--wel-sem-font-sizes-display-sm);
+  line-height: var(--wel-sem-line-heights-display-sm);
+}
+
+.shortcuts__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.shortcuts__list > div {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.shortcuts__list dt {
+  flex: 0 0 44px;
+}
+
+.shortcuts__list dd {
+  margin: 0;
+  color: var(--wel-sem-color-on-surface-mid);
+}
+
+.shortcuts__list kbd {
+  display: inline-block;
+  min-width: 28px;
+  padding: 4px 8px;
+  border: var(--wel-sem-border-width-default, 1px) solid var(--wel-sem-color-outline-low);
+  border-radius: var(--wel-sem-border-radius-element-interactive-low);
+  background: var(--wel-sem-color-surface-container-mid);
+  font-family: var(--wel-sem-font-families-body), monospace;
+  font-size: var(--wel-sem-font-sizes-body-sm);
+  text-align: center;
+}
+
+.shortcuts__toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
 }
 
 /* --- Barre de navigation collante --------------------------------------- */
@@ -309,116 +405,192 @@ img {
   text-decoration: none;
 }
 
-/* --- Héro --------------------------------------------------------------- */
+/* --- Slideshow du héro --------------------------------------------------- */
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 44px;
-  padding-top: 56px;
+/* Une slide par persona, pleine largeur. Le défilement est celui du
+   navigateur — `scroll-snap` sur la piste, comme le carousel d'articles : le
+   geste tactile, la molette et le clavier fonctionnent d'origine. */
+.slideshow {
+  position: relative;
+  width: 100%;
+  height: 800px;
+  overflow: hidden;
+  background: var(--wel-sem-color-surface-container-mid);
 }
 
 @media (max-width: 767px) {
-  .hero {
-    gap: 28px;
-    padding-top: 24px;
+  .slideshow {
+    height: 600px;
   }
 }
 
-.hero__heading {
+.slideshow__track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.slideshow__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* La piste est un point d'entrée clavier : son anneau doit se voir, posé sur
+   une image et non sur la surface de la page. */
+.slideshow__track:focus-visible {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: -4px;
+}
+
+.slideshow__slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+}
+
+.slideshow__image {
+  object-fit: cover;
+}
+
+/* Voile fort repris de la maquette (`overlay-strong`) : le titre et le
+   lanceur se posent dessus, il leur faut un fond tenu. */
+.slideshow__slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--media-veil-strong);
+  pointer-events: none;
+}
+
+.slideshow__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 28px;
+  padding: 150px 28px 56px;
   text-align: center;
-  max-width: 866px;
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {
-  .hero__heading {
-    gap: 16px;
+  .slideshow__content {
+    padding: 150px 12px 24px;
   }
 }
 
-.hero__title {
+.slideshow__title {
   margin: 0;
+  max-width: 866px;
   font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
   font-size: var(--wel-sem-font-sizes-display-2xl);
   line-height: var(--wel-sem-line-heights-display-2xl);
   color: var(--wel-sem-color-on-surface-hi);
 }
 
-.hero__subtitle {
+/* `on-surface-hi` et non `mid` : posée sur le voile, l'accroche tombait à
+   3,18:1 sur les trois personas. C'est l'arbitrage déjà retenu pour les
+   surtitres de card — aucun palier intermédiaire n'atteint AA sans épaissir le
+   voile, et la hiérarchie reste portée par la taille et l'italique. */
+.slideshow__tagline {
   margin: 0;
+  max-width: 866px;
   font-family: var(--wel-sem-font-families-display), system-ui, sans-serif;
   font-style: italic;
   font-size: var(--wel-sem-font-sizes-display-sm);
   line-height: var(--wel-sem-line-heights-display-sm);
-  color: var(--wel-sem-color-on-surface-mid);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
-/* La scène : barre de chat posée en débord sur l'image (gap -55 dans la
-   maquette, porté ici par --hero-overlap). */
-.hero__stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.hero__bar {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding-inline: 64px;
-}
-
-@media (max-width: 1279px) {
-  .hero__bar {
-    padding-inline: 32px;
-  }
-}
-
-@media (max-width: 767px) {
-  .hero__bar {
-    padding-inline: 0;
-  }
-}
-
-.hero__media {
-  position: relative;
-  width: 100%;
-  margin-top: calc(var(--hero-overlap) * -1);
-  aspect-ratio: 1312 / 596;
-  overflow: hidden;
-  /* Fond tenu avant le chargement de l'image — et tant que les visuels
-     Figma ne sont pas exportés. */
-  background: var(--wel-sem-color-surface-container-mid);
-}
-
-/* Mobile : pas de débord — la maquette met le gap du bloc héro à 0 — et
-   l'image passe en 3/2 (343 × 229). */
-@media (max-width: 767px) {
-  .hero__media {
-    margin-top: 0;
-    aspect-ratio: 343 / 229;
-  }
-}
-
-.hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.hero__media::after {
-  content: "";
+/* Contrôles en haut de l'image : bascule de lecture à gauche, pas à pas à
+   droite. Ils survolent la piste, d'où le z-index. */
+.slideshow__controls {
   position: absolute;
-  inset: 0;
-  background: var(--media-veil);
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px var(--wel-sem-sizing-grid-margins, 64px);
+}
+
+@media (max-width: 767px) {
+  .slideshow__controls {
+    padding: 12px var(--wel-sem-sizing-grid-margins, 16px);
+  }
+}
+
+.slideshow__steps {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slideshow__controls .wel-button-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* Le lanceur ne défile pas avec les slides : il est unique, et son intitulé
+   comme ses questions suivent le persona affiché. */
+.slideshow__launcher {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 0 var(--wel-sem-sizing-grid-margins, 64px)
+    var(--wel-sem-sizing-grid-margins, 64px);
+}
+
+@media (max-width: 767px) {
+  .slideshow__launcher {
+    padding: 0 var(--wel-sem-sizing-grid-margins, 16px)
+      var(--wel-sem-sizing-grid-margins, 16px);
+  }
+}
+
+/* Persona cité dans une réponse : cliquable pour basculer sans quitter la
+   conversation. Souligné plutôt que coloré — le fil est déjà dense, et la
+   couleur seule ne suffirait pas à le distinguer (WCAG 1.4.1). */
+.chat-modal__persona-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Article publié cité dans une réponse : lien vers sa page. Même traitement
+   que le persona cliquable — le fil ne distingue pas deux styles de lien. */
+.chat-modal__article-link {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.chat-modal__article-link:hover,
+.chat-modal__persona-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.chat-modal__article-link:focus-visible,
+.chat-modal__persona-link:focus-visible {
+  outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* --- Lanceur de chat / composer ---------------------------------------- */
@@ -434,6 +606,22 @@ img {
   background: var(--wel-sem-color-surface);
   box-shadow: 0 var(--wel-sem-number-shadow-down-y, 2px)
     var(--wel-sem-number-shadow-blur, 8px) rgb(7 5 24 / 12%);
+}
+
+/* Variante v2 : le lanceur est posé sur l'image du slideshow. Il porte donc
+   le mode sombre localement — les deux attributs sur le même élément, les
+   thèmes étant scopés `[data-persona][data-color-mode]` — et sa propre
+   surface fournit l'aplat sur lequel le texte reste lisible. */
+.launcher--hero {
+  gap: 20px;
+  padding: 28px;
+}
+
+.launcher__heading {
+  margin: 0;
+  font-size: var(--wel-sem-font-sizes-title-sm);
+  line-height: var(--wel-sem-line-heights-title-sm);
+  color: var(--wel-sem-color-on-surface-hi);
 }
 
 .launcher__row {
@@ -470,6 +658,17 @@ img {
     border-radius: 0;
     background: none;
     box-shadow: none;
+  }
+
+  /* La v2 garde le panneau à toutes les largeurs — la maquette lui donne le
+     même aplat en mobile qu'en desktop. Seules les règles internes du champ
+     ci-dessous restent partagées : flèche dans la pilule, chips défilantes. */
+  .launcher--hero {
+    gap: 20px;
+    padding: 28px;
+    margin-inline: 0;
+    border-radius: var(--wel-sem-border-radius-container-low);
+    background: var(--wel-sem-color-surface);
   }
 
   /* L'action n'est pas posée à côté du champ mais dedans, à droite : une

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollBehavior } from "../../lib/motion";
+import { ArrowRightIcon } from "../Icons";
 
 type Props = {
   label: string;
@@ -75,7 +76,7 @@ export default function SuggestedQuestions({
           aria-label={nextLabel}
           onClick={() => rowRef.current?.scrollBy({ left: 220, behavior: scrollBehavior() })}
         >
-          <span aria-hidden="true">›</span>
+          <ArrowRightIcon />
         </button>
       )}
     </div>

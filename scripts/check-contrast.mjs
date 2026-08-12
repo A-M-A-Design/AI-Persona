@@ -56,6 +56,12 @@ const CARD_PAIRS = [
   // La maquette lie le surtitre à on-surface-low (2,21:1 ici) ; on-surface-hi
   // est le seul palier conforme sans épaissir le voile — cf. app/globals.css.
   ["Card · surtitre", "--wel-sem-color-on-surface-hi"],
+  // Même situation pour le héro de la v2 : titre et accroche posés sur le
+  // voile fort de l'illustration du persona, en mode sombre forcé. L'accroche
+  // visait on-surface-mid et tombait à 3,18:1 sur les trois personas — même
+  // arbitrage que le surtitre de card, la hiérarchie passant par la taille.
+  ["Slideshow · titre", "--wel-sem-color-on-surface-hi"],
+  ["Slideshow · accroche", "--wel-sem-color-on-surface-hi"],
 ];
 
 function blocks(css) {

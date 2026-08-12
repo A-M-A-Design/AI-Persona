@@ -7,6 +7,7 @@
 // rendu WDS sans réimplémenter un menu déroulant accessible (clavier, lecteur
 // d'écran et sélecteur natif mobile fonctionnent d'origine).
 import { t, type StringKey } from "../../lib/i18n";
+import { DaylightIcon, NightIcon } from "../Icons";
 import { persistSetting, useSettings, type Settings } from "../useSettings";
 import HomeLink from "./HomeLink";
 
@@ -101,7 +102,7 @@ export default function SiteHeader({ withHomeLink = false }: { withHomeLink?: bo
           aria-label={`${t(lang, "colorMode")} — ${t(lang, nextMode === "dark" ? "optionDark" : "optionLight")}`}
           onClick={() => apply({ colorMode: nextMode })}
         >
-          <span aria-hidden="true">{settings.colorMode === "dark" ? "☾" : "☀"}</span>
+          {settings.colorMode === "dark" ? <NightIcon /> : <DaylightIcon />}
         </button>
       </div>
     </header>

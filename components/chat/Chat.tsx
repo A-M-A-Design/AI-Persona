@@ -3,7 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
-import Hero from "../Hero";
+import PersonaSlideshow from "../hero/PersonaSlideshow";
 import { readCurrentSettings, useSettings } from "../useSettings";
 import ChatModal, { type Exchange } from "./ChatModal";
 
@@ -12,6 +12,10 @@ import ChatModal, { type Exchange } from "./ChatModal";
 export type PersonaPublic = {
   id: string;
   emoji: string;
+  name: Record<"fr" | "en", string>;
+  tagline: Record<"fr" | "en", string>;
+  chatHeading: Record<"fr" | "en", string>;
+  footerHeading: Record<"fr" | "en", string>;
   suggestedQuestions: Record<"fr" | "en", string[]>;
 };
 
@@ -74,17 +78,21 @@ export default function Chat({ personas }: Props) {
 
   return (
     <>
-      <Hero
-        lang={settings.lang}
-        persona={settings.persona}
+      <PersonaSlideshow
+        personas={personas}
         colorMode={settings.colorMode}
         disabled={busy}
         questions={questions}
         onSend={send}
+        // Le panneau ouvert fige le persona : sinon il changerait tout seul
+        // sous une conversation en cours, et la voix du bot avec.
+        paused={open}
       />
       {open && (
         <ChatModal
           lang={settings.lang}
+          personas={personas}
+          persona={settings.persona}
           exchanges={exchanges}
           questions={questions}
           busy={busy}

@@ -3,7 +3,8 @@
 // L'ordre stable-d'abord prépare le prompt caching (activé en M2).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { getPersona, type Lang, type PersonaId } from "./personas";
+import { ARTICLES } from "./articles";
+import { getPersona, getPersonas, PERSONA_IDS, type Lang, type PersonaId } from "./personas";
 
 const KNOWLEDGE_DIR = join(process.cwd(), "knowledge");
 
@@ -42,6 +43,64 @@ function section(tag: string, content: string): string {
   return `<${tag}>\n${content.trim()}\n</${tag}>`;
 }
 
+/**
+ * Chaque persona porte un domaine : l'ours le design system, la corneille le
+ * produit, la libellule l'IA et les operations. Le domaine ne restreint pas ce
+ * à quoi le bot répond — il oriente l'angle, et déclenche une invitation à
+ * changer de persona quand le sujet relève clairement d'un autre.
+ *
+ * Le garde-fou « une seule fois » n'est pas décoratif : sans lui, la
+ * redirection devient un tic de fin de message et pollue chaque réponse.
+ *
+ * Les deux moyens de bascule cités doivent rester en phase avec l'interface —
+ * le sélecteur de la barre et le carrousel de l'accueil.
+ */
+function skillInstruction(persona: PersonaId, lang: Lang): string {
+  const personas = getPersonas();
+  const moi = personas[persona];
+  const autres = PERSONA_IDS.filter((id) => id !== persona).map(
+    (id) => `- ${personas[id].name[lang]} : ${personas[id].skill[lang]}`,
+  );
+
+  if (lang === "fr") {
+    return [
+      `Ton domaine de prédilection : ${moi.skill[lang]}.`,
+      "",
+      "Tu réponds à TOUTES les questions, y compris hors de ce domaine — jamais",
+      "de refus au motif que « ce n'est pas mon sujet ». Ce que le domaine change,",
+      "c'est l'angle : tes exemples, tes critères et tes points d'entrée viennent",
+      "d'abord de là.",
+      "",
+      "Les deux autres personas portent d'autres domaines :",
+      ...autres,
+      "",
+      "Quand une question relève principalement du domaine de l'un d'eux, réponds",
+      "d'abord complètement, puis ajoute UNE phrase invitant à basculer vers lui :",
+      "nomme-le, et dis comment — le sélecteur en haut de la page, ou le carrousel",
+      "de la page d'accueil. Une seule invitation par réponse, et jamais deux",
+      "réponses de suite. Si la question relève de ton propre domaine, n'invite à",
+      "rien.",
+    ].join("\n");
+  }
+
+  return [
+    `Your home ground: ${moi.skill[lang]}.`,
+    "",
+    "You answer EVERY question, including those outside that ground — never",
+    "decline on the grounds that it is not your subject. What the ground changes",
+    "is the angle: your examples, criteria and entry points come from there first.",
+    "",
+    "The two other personas cover other ground:",
+    ...autres,
+    "",
+    "When a question belongs mainly to one of them, answer it fully first, then",
+    "add ONE sentence inviting the visitor to switch to that persona: name it, and",
+    "say how — the selector at the top of the page, or the carousel on the home",
+    "page. One invitation per answer at most, and never twice in a row. If the",
+    "question is on your own ground, do not invite anything.",
+  ].join("\n");
+}
+
 function readDirSections(dir: string): string {
   if (!existsSync(dir)) return "";
   return readdirSync(dir)
@@ -61,6 +120,28 @@ function loadStablePrefix(): string {
   if (existsSync(tonePath)) {
     parts.push(section("tone_of_voice", readFileSync(tonePath, "utf8")));
   }
+
+  // Les articles sont aussi des pages du site. Sans cet index, le bot les cite
+  // de mémoire, en paraphrasant le titre : l'application ne peut alors pas le
+  // reconnaître pour poser le lien.
+  parts.push(
+    section(
+      "published_articles",
+      [
+        "Ces articles sont publiés sur ce site, chacun à sa propre page :",
+        ...ARTICLES.map(
+          (a) => `- « ${a.title.fr} » (en anglais : « ${a.title.en} »)`,
+        ),
+        "",
+        "Quand tu fais référence à l'un d'eux, cite-le par son titre EXACT, tel",
+        "qu'écrit ci-dessus, dans la langue de ta réponse. L'application",
+        "reconnaît le titre et le transforme en lien vers l'article — un titre",
+        "paraphrasé ou tronqué ne sera pas reconnu, et le lecteur n'aura aucun",
+        "moyen d'y accéder. N'invente jamais de titre : si l'article dont tu",
+        "parles n'est pas dans cette liste, ne le présente pas comme publié ici.",
+      ].join("\n"),
+    ),
+  );
 
   const topLevel = readdirSync(KNOWLEDGE_DIR)
     .filter((f) => f.endsWith(".md") && f !== "_meta.md" && f !== "tone-of-voice.md")
@@ -98,8 +179,15 @@ export function buildSystemPrompt({
       ? "LANGUE DE TA RÉPONSE : français. Rédige l'intégralité de ta réponse en français."
       : "LANGUAGE OF YOUR ANSWER: English. Write your entire answer in English, translating the French knowledge base as needed.";
 
+  // Le domaine va dans la partie variable, avec le ton : il change d'un persona
+  // à l'autre, il ne peut donc pas rejoindre le préfixe stable qui porte le
+  // point de cache partagé par les six combinaisons persona × langue.
   return {
     stable: loadStablePrefix(),
-    variable: [section("persona_style", p.modulator[lang]), langInstruction].join("\n\n"),
+    variable: [
+      section("persona_style", p.modulator[lang]),
+      section("persona_skill", skillInstruction(persona, lang)),
+      langInstruction,
+    ].join("\n\n"),
   };
 }

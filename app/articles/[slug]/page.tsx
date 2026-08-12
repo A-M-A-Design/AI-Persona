@@ -5,6 +5,7 @@ import SiteHeader from "../../../components/header/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import { hasTranslation, readArticleBodies } from "../../../lib/article-body";
 import { ARTICLES } from "../../../lib/articles";
+import { getPublicPersonas } from "../../../lib/personas";
 
 // Les quatre articles de la grille sont connus au build : leurs pages sont
 // générées statiquement, et toute autre valeur de slug donne un 404.
@@ -40,7 +41,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <main className="page page--article" id="contenu" tabIndex={-1}>
         <ArticleView article={article} blocks={blocks} translated={translated} others={others} />
       </main>
-      <SiteFooter />
+      <SiteFooter personas={getPublicPersonas()} />
     </>
   );
 }

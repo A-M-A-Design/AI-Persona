@@ -13,6 +13,11 @@ const VIEWPORTS = {
   etroit: { width: 320, height: 800 },
 };
 
+// Le port est réglable : la v2 se développe dans un worktree, sur 3001, pour
+// tourner en parallèle de la v1 restée sur 3000 — Next refuse deux serveurs de
+// développement dans le même dossier.
+const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -21,7 +26,7 @@ export default defineConfig({
     // localhost, pas 127.0.0.1 : Next 16 restreint les origines autorisées en
     // développement et renvoie 403 sur /_next/* pour les autres. Les chunks ne
     // se chargent alors pas, la page n'hydrate jamais, et tout paraît inerte.
-    baseURL: "http://localhost:3000",
+    baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
   },
   projects: Object.entries(VIEWPORTS).map(([name, viewport]) => ({
@@ -32,8 +37,8 @@ export default defineConfig({
     ...(name === "etroit" ? { testMatch: /a11y\.spec\.ts/ } : {}),
   })),
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
+    command: `npm run dev -- -p ${PORT}`,
+    url: `http://localhost:${PORT}`,
     // Réutilise le serveur déjà lancé pendant le développement.
     reuseExistingServer: true,
     timeout: 180_000,

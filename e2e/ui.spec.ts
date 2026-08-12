@@ -4,7 +4,7 @@ import { MODES, openChat, PERSONAS, stubChat, visit } from "./helpers";
 test.describe("Accueil", () => {
   test("rend le héro et les six cards, sans carte contact", async ({ page }) => {
     await visit(page);
-    await expect(page.locator(".hero__title")).toBeVisible();
+    await expect(page.locator(".slideshow__slide:not([inert]) .slideshow__title")).toBeVisible();
     await expect(page.locator(".article-card")).toHaveCount(6);
 
     // Le contact a quitté la grille : il vit dans le pied de page, présent
@@ -78,6 +78,51 @@ test.describe("Panneau de conversation", () => {
     // Le contenu doit être atteignable : on remonte puis on redescend.
     await body.evaluate((el) => { el.scrollTop = 0; });
     expect(await body.evaluate((el) => el.scrollTop)).toBe(0);
+  });
+
+  test("le persona cité dans la réponse bascule sans fermer le panneau", async ({ page }) => {
+    // Le bot invite à changer de persona quand la question relève d'un autre
+    // domaine : le nom cité est cliquable, pour creuser dans la foulée.
+    await stubChat(
+      page,
+      "Pour l'IA, va voir **la Libellule**, elle est plus calée que moi.",
+    );
+    await visit(page);
+    await openChat(page, "Comment tu utilises l'IA ?");
+
+    const lien = page.locator(".chat-modal__persona-link");
+    await expect(lien).toHaveCount(1);
+    // Les astérisques du markdown ne se retrouvent pas dans le libellé.
+    await expect(lien).toHaveText("la Libellule");
+    await expect(lien).toHaveAttribute("aria-label", /Basculer vers/);
+
+    await lien.click();
+    await expect(page.locator("html")).toHaveAttribute("data-persona", "libellule");
+    // On ne quitte pas la conversation pour autant.
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(1);
+  });
+
+  test("un article cité par son titre exact devient un lien vers sa page", async ({ page }) => {
+    await stubChat(
+      page,
+      "J'en parle dans Comment mesurer le ROI d'un Design Système ? — va voir la Libellule aussi.",
+    );
+    await visit(page);
+    await openChat(page, "Tu as écrit sur le ROI ?");
+
+    const lien = page.locator(".chat-modal__article-link");
+    await expect(lien).toHaveCount(1);
+    await expect(lien).toHaveAttribute("href", "/articles/roi-design-system");
+    // Le persona cité dans la même phrase reste cliquable de son côté : les
+    // deux détections cohabitent dans le même passage.
+    await expect(page.locator(".chat-modal__persona-link")).toHaveCount(1);
+  });
+
+  test("le persona qui parle n'est pas cliquable dans sa propre réponse", async ({ page }) => {
+    await stubChat(page, "En tant qu'Ours, je dirais que le design system prime.");
+    await visit(page);
+    await openChat(page, "Ton avis ?");
+    await expect(page.locator(".chat-modal__persona-link")).toHaveCount(0);
   });
 
   test("Échap ferme le panneau", async ({ page }) => {
@@ -230,16 +275,9 @@ test.describe("Pied de page", () => {
 });
 
 test.describe("Lanceur", () => {
-  test("mobile : pas de carte, action compacte, chips défilantes", async ({ page }, testInfo) => {
+  test("mobile : action compacte, chips défilantes", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
     await visit(page);
-
-    const launcher = page.locator(".launcher");
-    await expect(launcher).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-    await expect(launcher).toHaveCSS("box-shadow", "none");
-    // Plus de carte : ni fond, ni ombre, ni retrait — sauf en bas, où la
-    // maquette laisse 28 px avant l'illustration.
-    await expect(launcher).toHaveCSS("padding", "0px 0px 28px");
 
     // La ligne reste horizontale et le libellé du bouton est masqué.
     await expect(page.locator(".launcher__row")).toHaveCSS("flex-direction", "row");
@@ -266,23 +304,18 @@ test.describe("Lanceur", () => {
     });
     await expect(page.locator(".suggestions__next")).toHaveCount(0);
     await expect(chips).toHaveCSS("mask-image", "none");
-
-    // Retrait bas du bloc, avant l'illustration.
-    await expect(launcher).toHaveCSS("padding-bottom", "28px");
   });
 
-  test("mobile : champ en pilule, flèche à l'intérieur, image pleine largeur", async ({
-    page,
-  }, testInfo) => {
+  test("mobile : champ en pilule, flèche à l'intérieur", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
     await visit(page);
 
-    // La maquette met le champ et les chips en retrait de 16 px de plus que
-    // l'illustration : 311 contre 343 sur une base de 375.
+    // Le panneau fait 343 sur une base de 375, et son retrait de 28 laisse
+    // 287 au champ — les valeurs de la maquette v2.
     const field = await page.locator(".launcher__row .wel-input-text__wrapper").boundingBox();
-    const media = await page.locator(".hero__media").boundingBox();
-    expect(Math.round(field?.width ?? 0)).toBe(311);
-    expect(Math.round(media?.width ?? 0)).toBe(343);
+    const panneau = await page.locator(".launcher--hero").boundingBox();
+    expect(Math.round(panneau?.width ?? 0)).toBe(343);
+    expect(Math.round(field?.width ?? 0)).toBe(287);
 
     // Le champ est une pilule, et l'action est posée dedans — pas à côté.
     await expect(page.locator(".launcher__row .wel-input-text__wrapper")).toHaveCSS(
@@ -294,19 +327,15 @@ test.describe("Lanceur", () => {
     const buttonRight = (button?.x ?? 0) + (button?.width ?? 0);
     expect(buttonRight).toBeLessThanOrEqual(fieldRight);
     expect(button?.x ?? 0).toBeGreaterThan(field?.x ?? 0);
-
-    // Et le bloc ne déborde plus sur l'illustration.
-    await expect(page.locator(".hero__media")).toHaveCSS("margin-top", "0px");
   });
 
-  test("desktop : la carte déborde sur l'illustration", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "desktop", "spécifique au breakpoint desktop");
+  test("le panneau garde son aplat à toutes les largeurs", async ({ page }) => {
+    // La v1 le faisait disparaître en mobile ; la v2 le pose sur l'image, il
+    // lui faut donc un fond tenu partout, sinon le texte est illisible.
     await visit(page);
-    await expect(page.locator(".launcher")).not.toHaveCSS("box-shadow", "none");
-    const margin = await page
-      .locator(".hero__media")
-      .evaluate((el) => parseFloat(getComputedStyle(el).marginTop));
-    expect(margin).toBeLessThan(0);
+    const launcher = page.locator(".launcher--hero");
+    await expect(launcher).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(page.locator(".launcher__heading")).toBeVisible();
   });
 });
 
@@ -343,7 +372,7 @@ test.describe("Thèmes", () => {
     test(`${persona} — le visuel du héro diffère entre clair et sombre`, async ({ page }) => {
       const source = async () =>
         decodeURIComponent(
-          await page.locator(".hero__image").evaluate((el: HTMLImageElement) => el.currentSrc),
+          await page.locator(".slideshow__slide:not([inert]) img").evaluate((el: HTMLImageElement) => el.currentSrc),
         );
 
       await visit(page, { persona, mode: "light" });
@@ -355,7 +384,7 @@ test.describe("Thèmes", () => {
       expect(sombre).toContain(`/hero/${persona}-dark.`);
       // Les deux visuels sont chargés, pas seulement référencés.
       const charge = await page
-        .locator(".hero__image")
+        .locator(".slideshow__slide:not([inert]) img")
         .evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0);
       expect(charge).toBe(true);
     });
@@ -388,7 +417,7 @@ test.describe("Thèmes", () => {
 
   test("le visuel du héro suit la bascule de mode sans rechargement", async ({ page }) => {
     await visit(page, { mode: "light" });
-    const image = page.locator(".hero__image");
+    const image = page.locator(".slideshow__slide:not([inert]) img");
     const avant = await image.evaluate((el: HTMLImageElement) => el.currentSrc);
 
     await page.locator(".site-nav__toggle").click();

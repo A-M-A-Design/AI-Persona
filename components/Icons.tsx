@@ -5,13 +5,17 @@
 
 type IconProps = { className?: string };
 
-function Icon({ children, className }: IconProps & { children: React.ReactNode }) {
+function Icon({
+  children,
+  className,
+  viewBox = "0 0 16 16",
+}: IconProps & { children: React.ReactNode; viewBox?: string }) {
   return (
     <svg
       className={className}
       width="16"
       height="16"
-      viewBox="0 0 16 16"
+      viewBox={viewBox}
       fill="currentColor"
       aria-hidden="true"
       focusable="false"
@@ -40,6 +44,101 @@ export function MailIcon({ className }: IconProps) {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M3 4.95609L3 11.6667L13 11.6667L13 4.95609L8.32925 9.043C8.14074 9.20794 7.85926 9.20794 7.67075 9.043L3 4.95609ZM12.1931 4.33337L3.80692 4.33337L8 8.00232L12.1931 4.33337ZM2 4.00004C2 3.63185 2.29848 3.33337 2.66667 3.33337L13.3333 3.33337C13.7015 3.33337 14 3.63185 14 4.00004L14 12C14 12.3682 13.7015 12.6667 13.3333 12.6667L2.66667 12.6667C2.29848 12.6667 2 12.3682 2 12L2 4.00004Z"
+      />
+    </Icon>
+  );
+}
+
+/*
+  Lecture, pause et flèches du slideshow. En SVG et non en caractères (« ▶ »,
+  « ❚❚ », « ← ») : l'encre d'un glyphe repose sur la ligne de base, si bien que
+  centrer sa boîte ne centre pas le dessin. Le décalage variait en plus d'un
+  persona à l'autre, les trois thèmes n'ayant pas la même police.
+*/
+/** `player-play-24`, repris tel quel de la bibliothèque. */
+export function PlayIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path d="M12 8L5.33331 12L5.33331 4L12 8Z" />
+    </Icon>
+  );
+}
+
+/**
+ * La bibliothèque ne fournit pas de pause — la maquette ne dessine la bascule
+ * qu'à l'arrêt. Les deux barres tiennent exactement dans les limites du
+ * triangle de lecture (x 5,33 → 12, y 4 → 12) : même masse optique, la bascule
+ * ne saute pas d'un état à l'autre.
+ */
+export function PauseIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path d="M5.33331 4H7.33331V12H5.33331V4ZM10 4H12V12H10V4Z" />
+    </Icon>
+  );
+}
+
+/** `arrow-left-24`, repris tel quel de la bibliothèque. */
+export function ArrowLeftIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M7.02024 3.64645C6.82498 3.45119 6.50839 3.45119 6.31313 3.64645L2.31313 7.64645C2.11787 7.84171 2.11787 8.15829 2.31313 8.35355L6.31313 12.3536C6.50839 12.5488 6.82498 12.5488 7.02024 12.3536C7.2155 12.1583 7.2155 11.8417 7.02024 11.6464L3.87379 8.5L13.3334 8.5C13.6095 8.5 13.8334 8.27614 13.8334 8C13.8334 7.72386 13.6095 7.5 13.3334 7.5L3.87379 7.5L7.02024 4.35355C7.2155 4.15829 7.2155 3.84171 7.02024 3.64645Z"
+      />
+    </Icon>
+  );
+}
+
+/** `arrow-right-24`, repris tel quel de la bibliothèque. */
+export function ArrowRightIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.9798 12.3536C9.17506 12.5488 9.49165 12.5488 9.68691 12.3536L13.6869 8.35355C13.8822 8.15829 13.8822 7.84171 13.6869 7.64645L9.68691 3.64645C9.49165 3.45118 9.17506 3.45118 8.9798 3.64645C8.78454 3.84171 8.78454 4.15829 8.9798 4.35355L12.1262 7.5L2.66669 7.5C2.39054 7.5 2.16669 7.72386 2.16669 8C2.16669 8.27614 2.39054 8.5 2.66669 8.5H12.1262L8.9798 11.6464C8.78454 11.8417 8.78454 12.1583 8.9798 12.3536Z"
+      />
+    </Icon>
+  );
+}
+
+/**
+ * `daylight`, repris tel quel. La maquette pose la même icône dans les deux
+ * modes : c'est le fond du toggle qui porte l'état, pas le dessin. Le nom
+ * accessible du bouton dit vers quel mode il bascule.
+ */
+export function DaylightIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path d="M4.96667 5.03333C5.17333 4.82667 5.18 4.5 4.98667 4.28L4.54667 3.78667C4.34 3.55333 3.98 3.54667 3.76 3.76667C3.55333 3.97333 3.54667 4.3 3.74 4.51333L4.18 5.00667C4.38667 5.24 4.74667 5.24667 4.96667 5.02667V5.03333ZM2 7.97333C2 7.67333 2.24667 7.42667 2.54667 7.42667H3.45333C3.75333 7.42667 4 7.67333 4 7.97333C4 8.27333 3.75333 8.52 3.45333 8.52H2.54667C2.24667 8.52 2 8.27333 2 7.97333ZM7.45333 2.54667C7.45333 2.24667 7.7 2 8 2C8.3 2 8.54667 2.24667 8.54667 2.54667V3.45333C8.54667 3.75333 8.3 4 8 4C7.7 4 7.45333 3.75333 7.45333 3.45333V2.54667ZM11.4533 3.74667C11.6667 3.53333 12.0067 3.53333 12.22 3.74667C12.4333 3.96 12.4333 4.3 12.22 4.51333L11.78 4.95333C11.5667 5.16667 11.2267 5.16667 11.0133 4.95333C10.8 4.74 10.8 4.4 11.0133 4.18667L11.4533 3.74667ZM11.0267 11.04C10.8133 11.2533 10.8133 11.6 11.0267 11.8133L11.44 12.2133C11.6533 12.42 11.9933 12.4133 12.2 12.2133C12.4067 12.0133 12.4133 11.6467 12.1933 11.44L11.7733 11.04C11.56 10.8333 11.2267 10.84 11.0133 11.0467L11.0267 11.04ZM12 7.97333C12 7.67333 12.2467 7.42667 12.5467 7.42667L13.4533 7.42667C13.7533 7.42667 14 7.67333 14 7.97333C14 8.27333 13.7533 8.52 13.4533 8.52L12.5467 8.52C12.2467 8.52 12 8.27333 12 7.97333ZM8 4.7C6.19333 4.7 4.72667 6.16667 4.72667 7.97333C4.72667 9.78 6.19333 11.2467 8 11.2467C9.80667 11.2467 11.2733 9.78 11.2733 7.97333C11.2733 6.16667 9.80667 4.7 8 4.7ZM8 10.1533C6.79333 10.1533 5.82 9.18 5.82 7.97333C5.82 6.76667 6.79333 5.79333 8 5.79333C9.20667 5.79333 10.18 6.76667 10.18 7.97333C10.18 9.18 9.20667 10.1533 8 10.1533ZM7.45333 12.5467C7.45333 12.2467 7.7 12 8 12C8.3 12 8.54667 12.2467 8.54667 12.5467L8.54667 13.4C8.54667 13.7 8.3 13.9467 8 13.9467C7.7 13.9467 7.45333 13.7 7.45333 13.4L7.45333 12.5467ZM3.77333 11.4267C3.56 11.64 3.56 11.98 3.77333 12.1933C3.98667 12.4067 4.33333 12.4067 4.54 12.1933L5.04667 11.68C5.26 11.4667 5.26 11.1267 5.04667 10.9133C4.83333 10.7 4.48667 10.7 4.28 10.9133L3.77333 11.4267Z" />
+    </Icon>
+  );
+}
+
+/**
+ * `dark-mode`, tracé repris tel quel. Son repère d'origine est en 24, où
+ * l'encre n'occupe qu'une moitié — rendue à 16 px, la lune paraissait deux
+ * fois plus petite que le soleil de l'autre état. Le repère est donc resserré
+ * autour du tracé, sans y toucher : les deux états gardent la même masse.
+ */
+export function NightIcon({ className }: IconProps) {
+  return (
+    <Icon className={className} viewBox="6 4 14 14">
+      <path d="M11.0569 5.52344C11.201 5.52344 11.3131 5.58748 11.3932 5.71558C11.4732 5.82766 11.4892 5.94775 11.4412 6.07584C11.217 6.62024 11.105 7.21267 11.105 7.85313C11.105 8.71776 11.3371 9.54236 11.8015 10.3269C12.2818 11.0955 12.9063 11.7199 13.6748 12.2003C14.4594 12.6646 15.284 12.8968 16.1486 12.8968C16.7731 12.8968 17.3655 12.7847 17.926 12.5606C18.0861 12.4965 18.2222 12.5285 18.3343 12.6566C18.4624 12.7687 18.5024 12.9048 18.4543 13.0649C18.0541 14.1217 17.3735 14.9543 16.4128 15.5627C15.4521 16.1711 14.3713 16.4754 13.1705 16.4754C12.1457 16.4594 11.201 16.2032 10.3364 15.7068C9.47178 15.1945 8.78328 14.514 8.27091 13.6654C7.77455 12.8007 7.52637 11.856 7.52637 10.8313C7.52637 9.63043 7.83059 8.54964 8.43903 7.58894C9.04748 6.62824 9.88008 5.95575 10.9368 5.57147C10.9689 5.55546 11.0089 5.53945 11.0569 5.52344Z" />
+    </Icon>
+  );
+}
+
+/** Croix de fermeture, reprise telle quelle — son tracé est en repère 24. */
+export function CloseIcon({ className }: IconProps) {
+  return (
+    <Icon className={className} viewBox="0 0 24 24">
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M19.5303 5.53033C19.8232 5.23744 19.8232 4.76256 19.5303 4.46967C19.2374 4.17678 18.7626 4.17678 18.4697 4.46967L12 10.9393L5.53033 4.46967C5.23744 4.17678 4.76256 4.17678 4.46967 4.46967C4.17678 4.76256 4.17678 5.23744 4.46967 5.53033L10.9393 12L4.46967 18.4697C4.17678 18.7626 4.17678 19.2374 4.46967 19.5303C4.76256 19.8232 5.23744 19.8232 5.53033 19.5303L12 13.0607L18.4697 19.5303C18.7626 19.8232 19.2374 19.8232 19.5303 19.5303C19.8232 19.2374 19.8232 18.7626 19.5303 18.4697L13.0607 12L19.5303 5.53033Z"
       />
     </Icon>
   );
