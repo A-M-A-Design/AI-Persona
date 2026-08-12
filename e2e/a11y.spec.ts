@@ -56,6 +56,16 @@ test.describe("Balayage axe", () => {
     await visit(page);
     await openChat(page, "Raconte-moi ton parcours");
     await expect(page.locator(".chat-modal__answer")).toContainText("Réponse simulée");
+
+    // Le panneau entre en fondu : balayé pendant l'animation, il est encore
+    // partiellement transparent et axe calcule les contrastes sur des couleurs
+    // composées avec ce qui se trouve derrière — d'où des échecs qui ne disent
+    // rien de la page posée. On attend la fin des animations en cours plutôt
+    // qu'une durée arbitraire.
+    await page
+      .locator(".chat-modal__panel")
+      .evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+
     const { violations } = await analyse(page);
     expect(resume(violations)).toBe("");
   });
