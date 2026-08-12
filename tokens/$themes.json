@@ -1,0 +1,84 @@
+[
+  {
+    "id": "brand-ours",
+    "name": "ours",
+    "group": "brands",
+    "selectedTokenSets": {
+      "primitives/numbers": "source",
+      "primitives/ours": "source",
+      "brands/ours": "enabled"
+    }
+  },
+  {
+    "id": "brand-corneille",
+    "name": "corneille",
+    "group": "brands",
+    "selectedTokenSets": {
+      "primitives/numbers": "source",
+      "primitives/corneille": "source",
+      "brands/corneille": "enabled"
+    }
+  },
+  {
+    "id": "brand-libellule",
+    "name": "libellule",
+    "group": "brands",
+    "selectedTokenSets": {
+      "primitives/numbers": "source",
+      "primitives/libellule": "source",
+      "brands/libellule": "enabled"
+    }
+  },
+  {
+    "id": "mode-light",
+    "name": "light",
+    "group": "colorModes",
+    "selectedTokenSets": {
+      "colorModes/light": "enabled"
+    }
+  },
+  {
+    "id": "mode-dark",
+    "name": "dark",
+    "group": "colorModes",
+    "selectedTokenSets": {
+      "colorModes/dark": "enabled"
+    }
+  },
+  {
+    "id": "breakpoint-desktopMD",
+    "name": "desktop-md (1280-1439)",
+    "group": "breakpoints",
+    "selectedTokenSets": {
+      "breakpoints/crossBpts": "enabled",
+      "breakpoints/desktopMD": "enabled"
+    }
+  },
+  {
+    "id": "breakpoint-desktopSM",
+    "name": "desktop-sm (1024-1279)",
+    "group": "breakpoints",
+    "selectedTokenSets": {
+      "breakpoints/crossBpts": "enabled",
+      "breakpoints/desktopSM": "enabled"
+    }
+  },
+  {
+    "id": "breakpoint-tablet",
+    "name": "tablet (768-1023)",
+    "group": "breakpoints",
+    "selectedTokenSets": {
+      "breakpoints/crossBpts": "enabled",
+      "breakpoints/tablet": "enabled"
+    }
+  },
+  {
+    "id": "breakpoint-mobile",
+    "name": "mobile (320-767)",
+    "group": "breakpoints",
+    "selectedTokenSets": {
+      "breakpoints/crossBpts": "enabled",
+      "breakpoints/mobile": "enabled"
+    }
+  }
+]

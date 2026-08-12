@@ -77,6 +77,8 @@ reste utilisable hors du réseau de l'entreprise.
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
 | `npm run welds:install` | Extraction des assets WDS depuis le zip |
 | `npm run themes:build` | Génération des 3 thèmes persona (M3) |
+| `npm run tokens:build` | Construction de `tokens/` — l'export `1.0.0_AMaDesignTokens` ([doc](docs/tokens.md)) |
+| `npm run tokens:check` | Vérification que l'export de tokens redonne exactement `styles/generated/*.css` |
 | `npm run a11y` | Audit d'accessibilité complet : contraste puis balayage axe-core |
 | `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
 | `npm run test:e2e` | Tests Playwright (1440 / 1000 / 375, plus 320 pour l'accessibilité) |

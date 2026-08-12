@@ -10,6 +10,30 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **`1.0.0_AMaDesignTokens`** : l'export de tokens du portfolio, dérivé de
+  l'export Accor 2.2.2. Trois marques, une par avatar, toutes issues de
+  `brands/brandbook` — les treize autres marques Accor et leurs primitives
+  disparaissent. Préfixe `ama`, format DTCG, chaîne **sémantique → alias →
+  primitive** conservée telle quelle. `npm run tokens:build` construit `tokens/`
+  depuis le zip gitignoré ; la doc complète est dans `docs/tokens.md`.
+
+  La couleur de l'avatar ne vit que dans les **primitives** : les couches d'alias
+  et sémantique sont identiques d'un avatar à l'autre. C'est possible parce que
+  la teinte est une fonction pure de la couleur — teinter puis résoudre donne le
+  même résultat que résoudre puis teinter, ce que fait déjà `build-themes.mjs`.
+
+  L'export est un artefact **parallèle** : `styles/generated/*.css` reste produit
+  depuis le `theme.css` WDS. `styles/welds-src/components.css` consomme
+  `var(--wel-…)` en dur, donc les thèmes doivent continuer d'émettre `--wel-*`
+  jusqu'à la réécriture perso des composants.
+- **`npm run tokens:check`, vérificateur de non-régression.** Il résout la chaîne
+  complète pour 3 avatars × 2 modes × 5 breakpoints et compare chaque valeur à la
+  variable CSS correspondante de `styles/generated/*.css` : **4875 valeurs
+  comparées, 0 divergence**, et aucune variable du CSS sans token qui la produise.
+  Écrit **avant** le générateur, et sans partager une ligne avec lui — pas même
+  la transformation de teinte : un oracle qui importerait le générateur
+  validerait ses propres erreurs. Testé par mutation, décaler d'une unité une
+  primitive lève 50 divergences par propagation.
 - **Chaque persona porte un domaine** : l'ours le design system, la corneille
   le produit, la libellule l'IA et les operations. Le domaine vit dans
   `personas/*.json` — sous-titre du héro, intitulé du lanceur et questions
@@ -37,6 +61,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **La transformation de teinte des personas passe dans
+  `scripts/lib/persona-color.mjs`**, partagée par le générateur de thèmes et
+  celui de tokens. Les deux chaînes doivent rendre la même couleur au bit près,
+  ce qui ne peut être vrai que si la fonction est littéralement la même. Sortie
+  de `build-themes.mjs` identique au bit près après extraction.
 - **L'invitation du pied de page devient propre au persona** et ne dit plus
   « Discutons » : c'était le libellé du bouton d'envoi, et le doublon laissait
   croire que le pied de page ouvrait lui aussi la conversation. L'ours propose
