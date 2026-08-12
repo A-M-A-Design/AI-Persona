@@ -150,6 +150,28 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Les thèmes sont générés depuis `tokens/`.** `build-themes.mjs` résout la
+  chaîne sémantique → alias → primitive et écrit `styles/generated/*.css` ; le
+  `theme.css` du WDS n'alimente plus le site. Aucune valeur ne change : +328
+  octets bruts et +484 gzip sur les trois thèmes, soit les deux primitives du
+  `surface-alternative` que la référence ne porte pas, et l'en-tête.
+
+  **L'ancien pipeline devient l'oracle**, sous `scripts/build-themes-wds.mjs`.
+  Il ne produit plus rien de servi : il dérive les mêmes couleurs par une tout
+  autre route — teinte des littéraux du CSS aplati, sans jamais résoudre un
+  alias ni lire `tokens/` — et `tokens:check` le lance dans un dossier
+  temporaire pour comparer les 4875 valeurs des sept portées, dans les deux sens.
+
+  C'est ce qui empêche l'oracle de devenir circulaire : un vérificateur qui
+  relirait `tokens/` pour valider un CSS engendré depuis `tokens/` resterait
+  vert quoi qu'il arrive. `check-tokens.mjs` n'importe donc rien de
+  `scripts/lib/token-css.mjs`, où vit toute la connaissance du format. Éprouvé
+  par mutation des deux côtés : quatre erreurs d'encodage du générateur
+  (graisses, diviseur rem, opacité, alpha) et trois retouches du fichier servi,
+  toutes détectées.
+
+  La référence disparaîtra avec `styles/welds-src/`, à la réécriture des
+  composants — il faudra alors un autre oracle.
 - **Le contrat CSS bascule sur `--ama-*`, sans couche d'alias.** Tout ce que sert
   le navigateur consomme `--ama-*` : le CSS applicatif (191 occurrences dans
   `app/`, `components/`, `persona-extras.css`, `check-contrast.mjs`) comme les

@@ -16,15 +16,32 @@ les zips — la source de vérité reste le dossier `tokens/`. `tokens:pack` rel
 `tokens:check` avant d'emballer et refuse d'écrire s'il échoue : distribuer un
 paquet dont personne n'a vérifié la non-régression n'aurait pas de sens.
 
-## Ce que c'est, et ce que ce n'est pas encore
+## `tokens/` est la source des thèmes
 
-C'est un **artefact parallèle**. Les thèmes servis au navigateur —
-`styles/generated/*.css` — restent produits par `scripts/build-themes.mjs` à
-partir du `theme.css` du paquet WDS installé. `tokens/` ne les alimente pas
-encore ; `tokens:check` prouve seulement que les deux chaînes coïncident.
+`scripts/build-themes.mjs` résout la chaîne depuis `tokens/` et écrit
+`styles/generated/<persona>.css`. Le `theme.css` du WDS n'alimente plus le site.
 
-En revanche le **contrat CSS a basculé** : `--ama-*` est la seule source, et
-`--wel-*` n'existe plus nulle part.
+```
+tokens/  ──build-themes.mjs──▶  styles/generated/*.css  ──▶  le site
+                                          ▲
+template.theme.css ──build-themes-wds.mjs─┘  (référence, comparaison seule)
+```
+
+**L'ancien pipeline est conservé comme oracle.** `scripts/build-themes-wds.mjs`
+ne produit plus rien de servi : il dérive les mêmes couleurs par une tout autre
+route — teinte des littéraux du CSS aplati, sans jamais résoudre un alias ni
+lire `tokens/` — et `npm run tokens:check` le lance dans un dossier temporaire
+pour comparer valeur par valeur.
+
+C'est ce qui empêche l'oracle de devenir circulaire. Un vérificateur qui
+relirait `tokens/` pour valider un CSS engendré depuis `tokens/` resterait vert
+quoi qu'il arrive. `check-tokens.mjs` n'importe donc **rien** de
+`scripts/lib/token-css.mjs`, où vit toute la connaissance du format.
+
+La référence disparaîtra avec `styles/welds-src/`, à la réécriture des
+composants. Ce jour-là, `tokens/` sera seul et il faudra un autre oracle.
+
+Le **contrat CSS** est `--ama-*`, seul : `--wel-*` n'existe plus nulle part.
 
 ## Un seul contrat, `--ama-*`
 
@@ -139,18 +156,35 @@ pour toutes les paires texte/fond à la fois.
 
 ## La vérification
 
-`npm run tokens:check` résout la chaîne complète pour **3 avatars × 2 modes ×
-5 breakpoints** et compare chaque valeur à la variable CSS correspondante de
-`styles/generated/*.css`. Toute divergence fait échouer la commande.
+`npm run tokens:check` régénère les trois thèmes par la route WDS dans un
+dossier temporaire, puis compare **valeur par valeur** au CSS que le site sert,
+sur les sept portées. Toute divergence fait échouer la commande.
 
 ```
-4875 valeurs comparées · 0 divergence(s) · 0 variable(s) CSS sans token
-6 primitive(s) propres à AMa, déclarées et hors comparaison
-6 fichier(s) CSS vérifiés sans aucune référence à --wel-*
+4875 valeurs comparées à la référence WDS · 0 divergence(s)
+6 variable(s) hors référence, déclarées
+6 fichier(s) CSS sans aucune référence à --wel-*
 ```
 
-Le préfixe comparé est réglable par `TOKENS_CSS_PREFIX` (`ama` par défaut) :
-c'est ce qui a permis de vérifier la bascule du contrat sans réécrire l'oracle.
+Il vérifie **les deux sens** : rien ne doit être servi que la référence ignore.
+Les seules exceptions forment une liste fermée, `HORS_RÉFÉRENCE` — deux
+primitives par avatar, celles du `surface-alternative`, que le paquet WDS
+installé ne livre pas et qui ne peuvent donc figurer dans aucune référence.
+
+**Testé par mutation**, dans les deux directions :
+
+| mutation | détection |
+| --- | --- |
+| table des graisses de police faussée | 12 divergences |
+| conversion rem au mauvais diviseur | 1703 divergences |
+| opacité divisée par 50 au lieu de 100 | 6 divergences |
+| alpha des couleurs arrondi à 254 | 120 divergences |
+| une valeur retouchée dans le CSS servi | la variable exacte |
+| une variable retirée du CSS servi | « absente du thème servi » |
+| une variable inventée dans le CSS servi | « sans contrepartie dans la référence » |
+
+Les quatre premières sont des erreurs du **générateur**, les trois dernières du
+**fichier servi** : les deux moitiés du dispositif sont éprouvées.
 
 Le vérificateur ne partage **aucun code** avec le générateur, pas même la
 transformation de teinte : il relit le CSS et refait la résolution de son côté.
@@ -250,8 +284,6 @@ dans git », qui vaut toujours pour `styles/welds-src/` et les zips.
 
 ## Reste à faire
 
-- Brancher le pipeline sur `tokens/` — les thèmes sortent encore du `theme.css`
-  WDS, pas de l'export.
 - **Réécrire les composants WDS.** Le contrat de tokens est migré, mais le CSS
   des composants reste celui d'Accor : 125 Ko pour les six réellement utilisés
   (`button`, `chip`, `message`, `inputtext`, `select`, `skeleton`), plus 47 Ko
@@ -259,7 +291,9 @@ dans git », qui vaut toujours pour `styles/welds-src/` et les zips.
   `separator`, `link`, `badge`, `card`, à retirer de `COMPONENTS` dans
   `install-welds.mjs` si personne ne les réclame. La réécriture est un chantier
   à part : elle ne sert plus à débloquer le contrat, seulement à ne plus
-  dépendre de l'IP Accor.
+  dépendre de l'IP Accor. **Elle emportera la référence WDS avec elle** — il
+  faudra alors un autre oracle pour `tokens:check`, faute de quoi il ne restera
+  que les tests de contraste et Playwright.
 - Retirer les familles de primitives héritées (`ama.prim.color.leg.*`, 130
   tokens) une fois qu'aucun composant ne les référence. Elles sont conservées
   pour l'instant parce que le CSS généré les émet, et que le vérificateur exige

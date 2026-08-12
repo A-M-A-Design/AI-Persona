@@ -7,8 +7,9 @@ parcours, ses projets et sa façon de travailler. Trois personas switchables —
 (rétro 16-bit) — en light/dark et FR/EN.
 
 L'interface est elle-même une démo de compétence design system : chaque persona
-est un thème complet respectant un contrat de ~870 variables CSS (`--wel-*`),
-sur le modèle du theming multi-marques d'Accor.
+est un thème complet respectant un contrat de ~1600 variables CSS (`--ama-*`),
+résolu depuis l'export de tokens [`tokens/`](docs/tokens.md), sur le modèle du
+theming multi-marques d'Accor.
 
 ## Prérequis (Windows)
 
@@ -76,9 +77,9 @@ reste utilisable hors du réseau de l'entreprise.
 | `npm run build` / `start` | Build et serveur de prod |
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
 | `npm run welds:install` | Extraction des assets WDS depuis le zip |
-| `npm run themes:build` | Génération des 3 thèmes persona (M3) |
+| `npm run themes:build` | Génération des 3 thèmes persona depuis `tokens/` |
 | `npm run tokens:build` | Construction de `tokens/` — l'export `1.0.0_AMaDesignTokens` ([doc](docs/tokens.md)) |
-| `npm run tokens:check` | Vérification que l'export de tokens redonne exactement `styles/generated/*.css` |
+| `npm run tokens:check` | Compare les thèmes servis à une référence dérivée du WDS par un autre chemin |
 | `npm run tokens:pack` | Emballage de `tokens/` en `1.0.0_AMaDesignTokens_<date>.zip`, importable dans Tokens Studio |
 | `npm run a11y` | Audit d'accessibilité complet : contraste puis balayage axe-core |
 | `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
@@ -152,10 +153,11 @@ mécaniques, il ne remplace pas la lecture du code ni la passe manuelle.
 2. **Chaque PR met à jour le CHANGELOG** (section `[Unreleased]`, format Keep a Changelog)
 3. Commits conventionnels : `feat(chat): …`, `kb(projects): …` — scopes : `chat`, `theme`, `kb`, `i18n`, `ui`, `infra`, `docs`
 4. **IP Accor** : `styles/welds-src/`, les zips et PDF sont gitignorés et ne doivent jamais apparaître dans un diff
-5. **Tokens** : le CSS applicatif ne consomme que `--wel-sem-*` et
-   `--wel-comp-*` — jamais les primitives `--wel-prim-*` ni les alias
+5. **Tokens** : le CSS applicatif ne consomme que `--ama-sem-*` et
+   `--ama-comp-*` — jamais les primitives `--ama-prim-*` ni les alias
    `bsem`/`bcomp` (couches internes du système). Les fichiers de thème
-   *générés* définissent toutes les couches : c'est leur rôle.
+   *générés* définissent toutes les couches : c'est leur rôle. `--wel-*`
+   n'existe plus nulle part ([`docs/tokens.md`](docs/tokens.md)).
 
 ### Mettre à jour la base de connaissance (rituel)
 
