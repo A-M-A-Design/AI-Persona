@@ -28,13 +28,22 @@
   d'ateliers avec les designers, pas d'une inférence. Le pipeline compte les
   sections restant à écrire pour prioriser les ateliers suivants.
 
-## Résultats
+## Gains
 
-- Un format de documentation pensé pour la lecture machine, décliné sur le
-  catalogue et contrôlé par validateur.
-- La bascule d'un format JSON vers du Markdown à en-tête structuré : plus
-  lisible pour un modèle, et surtout relisible par un designer — c'est ce qui a
-  permis de réintroduire les sections de jugement.
+- **Un agent sait désormais quand *ne pas* utiliser un composant.** La
+  génération de code passe du plausible au conforme, et l'équipe design system
+  cesse d'être le goulot d'étranglement de chaque décision d'usage.
+- **La connaissance tacite devient un actif écrit.** Les interdits, les
+  associations, les intentions — ce que trois personnes savaient et
+  transmettaient de vive voix — sont documentés, versionnés et opposables. Ils
+  survivent aux départs.
+- **Une seule source sert les deux publics.** La partie structurelle est dérivée
+  du contrat d'extraction, jamais ressaisie : il n'y a pas une documentation
+  humaine et une documentation machine à maintenir en parallèle.
+- **Le choix du Markdown à en-tête structuré a débloqué la contribution.** Le
+  format précédent, en JSON, était illisible pour un designer ; le rendre
+  relisible est ce qui a permis de réintroduire les sections de jugement et de
+  faire entrer les designers dans la boucle.
 
 ## Ce que ce projet illustre
 

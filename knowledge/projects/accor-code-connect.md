@@ -37,15 +37,20 @@
   composant — et non tout purger puis tout republier — évite la fenêtre pendant
   laquelle le design system apparaît déconnecté.
 
-## Résultats
+## Gains
 
-- Une cinquantaine de composants liés, déclinés en **trois saveurs de code**
-  sur les mêmes nœuds Figma — HTML/BEM, Vue et Nuxt — pour que chaque
-  développeur reçoive l'idiome de sa stack depuis la même maquette.
-- Publication conditionnée à zéro liaison manquante et zéro écart au rendu.
-- L'historique Git comme seul mécanisme de retour arrière : la plateforme
-  n'historise pas les snippets publiés, donc la discipline de commit *est* la
-  sécurité.
+- **Le développeur ne réinvente plus le markup : il le copie.** Une étape entière
+  — lire la maquette, deviner l'anatomie, retrouver la bonne classe — disparaît
+  du travail quotidien, et avec elle les divergences qu'elle produisait.
+- **Une maquette, trois stacks servies.** Une cinquantaine de composants liés en
+  trois saveurs de code sur les mêmes nœuds Figma — HTML/BEM, Vue et Nuxt : le
+  développeur AEM, le développeur Vue et le développeur Nuxt reçoivent chacun
+  son idiome depuis la même sélection, sans que personne n'ait à traduire.
+- **L'accessibilité arrive avec le code, pas après.** Sélectionner une variante
+  en erreur donne le markup complet — attributs sur le bon élément, sous-arbre
+  de message compris —, là où un rattrapage en recette était la norme.
+- **Ce qui est publié est prouvé** : zéro liaison manquante et zéro écart au
+  rendu sont des conditions de publication, vérifiées contre le Figma vivant.
 
 ## Ce que ce projet illustre
 

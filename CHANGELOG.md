@@ -14,16 +14,25 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   `knowledge/projects/` : extraction Figma et contrats de données, documentation
   AI-ready, versioning outillé, QA automatisée, Code Connect, assistant
   conversationnel sur le corpus. Chacune suit la même trame — problème,
-  démarche, résultats, ce que le projet illustre. La base ne décrivait la
+  démarche, **gains**, ce que le projet illustre. La base ne décrivait la
   mission Accor que par cinq puces génériques ; le persona Libellule (« l'IA et
   les Operations ») n'avait donc rien de concret à citer, et Code Connect
   n'apparaissait nulle part. `accor-wds.md` devient le hub qui les annonce, et
   `expertise.md` remplace la mention isolée des serveurs MCP par les six
   chantiers.
+
   **Curation** : ordres de grandeur et méthode uniquement. Aucun compte de
   défauts (overrides, violations d'accessibilité, verdicts par composant) — ce
   sont des audits du produit du client. Aucun identifiant Figma, dépôt, branche,
   préfixe CSS ou chemin de token Accor, aucun nom de tiers.
+
+  **Les sections de résultats disent un gain, pas un volume vérifié.** Retirer
+  les comptes de défauts avait laissé des fiches qui énuméraient ce qu'on
+  contrôle au lieu de ce qu'on y gagne : une extraction sept fois plus rapide,
+  un contexte d'IA qui porte une fois et demie plus de composants, un développeur
+  qui copie le vrai code au lieu de le réinventer, une latence divisée par
+  quatre. Seuls des chiffres mesurés sont repris — aucune estimation de temps
+  économisé.
 - **Golden questions étendues à 27** (`docs/eval-questions.md`), renumérotées :
   cinq questions sur l'industrialisation, dont une qui vérifie que le bot ne
   prétend **pas** que le versioning « bumpe tout seul », et deux nouveaux pièges

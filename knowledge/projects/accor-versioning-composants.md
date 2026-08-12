@@ -34,13 +34,21 @@
   décision tient en une phrase — « est-ce que régresser ce changement peut
   casser un flux de travail ? ».
 
-## Résultats
+## Gains
 
-- Près de 500 changelogs de composants sur environ 270 composants, plus une
-  centaine de changelogs d'outillage rangés par thème.
-- Un cas de gouvernance qui résume la philosophie : un renommage de propriétés,
-  rupture d'API sur le papier, a été **tenu à version constante** tant que le
-  code ne l'avait pas adopté. La version suit l'usage réel, pas la maquette.
+- **« Est-ce que ça me casse ? » a désormais une réponse écrite**, datée et
+  toujours au même format. Un intégrateur évalue le coût d'une montée de version
+  sans ouvrir Figma ni solliciter l'équipe design system.
+- **Le changelog a cessé d'être un coût.** C'est ce qui décide tout : une
+  discipline qu'on paie à chaque changement finit par être contournée. Ici le
+  diff et la prose sont produits par l'agent contre le barème, l'humain relit et
+  tranche — c'est ce qui a rendu tenable d'en produire près de 500 sur quelque
+  270 composants, plus une centaine sur l'outillage lui-même.
+- **La dette d'adoption devient visible, donc arbitrable.** Le cas qui résume la
+  philosophie : un renommage de propriétés, rupture d'API sur le papier, a été
+  **tenu à version constante** tant que le code ne l'avait pas adopté. La
+  version suit l'usage réel, pas la maquette — et l'écart entre les deux se lit
+  au lieu de se subir.
 
 ## Ce que ce projet illustre
 

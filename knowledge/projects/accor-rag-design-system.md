@@ -10,7 +10,7 @@
   dizaine de sources, et personne ne détient l'ensemble. Des questions
   quotidiennes — « quels composants cassent si je touche ce token ? », « d'où
   vient cette règle d'usage ? » — n'ont pas de réponse rapide, et coûtent à
-  chaque fois une demi-journée à quelqu'un.
+  chercher, et croiser plusieurs sources à la main.
 
 ## Démarche
 
@@ -35,17 +35,25 @@
   un jeu de questions de référence versionné, dont plusieurs dont la bonne
   réponse *est* un refus.
 
-## Résultats
+## Gains
 
-- Un jeu de référence de 37 questions couvrant douze cas d'usage, dont quatre
-  questions-pièges hors index.
-- Seuils tenus : **rappel de 1,00** (seuil fixé à 0,80), **97 % de réponses
-  notées A ou B** (seuil à 70 %), **quatre refus corrects sur quatre**
-  (seuil à 100 %).
-- Latence ramenée de 12,3 à 3,1 secondes grâce à un serveur résident gardant les
-  modèles chargés.
-- La récupération reste entièrement locale ; seule la rédaction passe par un
-  modèle, avec deux backends interchangeables.
+- **Une question qui demandait de croiser plusieurs sources à la main se règle
+  en quelques secondes.** « Quels composants consomment ce token ? », « d'où
+  vient cette règle d'usage ? » : la réponse arrive sourcée, et l'expertise
+  cesse de dépendre de la disponibilité d'une personne.
+- **La réponse est vérifiable.** Chaque affirmation porte sa source : on peut
+  remonter au fichier, ce qui transforme un assistant en outil de travail plutôt
+  qu'en oracle. Et le refus est une fonctionnalité — quatre refus corrects sur
+  quatre sur les questions hors index.
+- **Qualité mesurée avant mise en service, contre des seuils fixés à
+  l'avance** : rappel de 1,00 pour un seuil à 0,80, 97 % de réponses notées A ou
+  B pour un seuil à 70 %. Le jeu de référence de 37 questions est versionné, donc
+  rejouable à chaque évolution.
+- **Latence divisée par quatre**, de 12,3 à 3,1 secondes, avec un serveur
+  résident gardant les modèles chargés — le seuil à partir duquel on interroge
+  l'outil par réflexe plutôt qu'en dernier recours.
+- **Le corpus ne sort pas** : la récupération est entièrement locale, seule la
+  rédaction passe par un modèle, avec deux backends interchangeables.
 
 ## Ce que ce projet illustre
 

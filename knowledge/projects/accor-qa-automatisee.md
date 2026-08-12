@@ -42,27 +42,32 @@ Deux principes ont été posés explicitement. Les conventions de nommage sont u
 état. Et aucune vérification ne devient bloquante au seul motif qu'il manque une
 source déterministe.
 
-Le résultat est contre-intuitif et c'est tout l'intérêt : **supprimer le repli
-heuristique global a fait baisser le taux de conformité affiché**. Ce qui était
-compté comme conforme par défaut est devenu explicitement « hors audit ». Le
-rapport est passé d'un document qu'on discutait à un document qu'on croit.
+Le gain est contre-intuitif et c'est tout l'intérêt : **le taux de conformité
+affiché a baissé, et les rapports sont devenus utilisables**. Ce qui était
+compté conforme par défaut est désormais explicitement « hors audit ». Chaque
+ligne portant sa source, plus personne ne perd de réunion à contester un
+constat : on discute de la correction, plus de la mesure.
 
-## Résultats
+## Gains
 
-- Environ 150 composants suivis, dont environ 90 audités par campagne, pour
-  quelques centaines de cas sondés et plusieurs milliers de liaisons de tokens
-  vérifiées à chaque passe.
-- Provenance affichée sur la totalité des vérifications, et 63 tests unitaires
-  sur l'outillage de QA lui-même — un outil de contrôle qui n'est pas testé ne
-  contrôle rien.
+- **Ce qui n'était vérifiable qu'à l'œil l'est en continu.** Environ 150
+  composants suivis, environ 90 audités à chaque campagne, quelques centaines
+  de cas sondés et plusieurs milliers de liaisons de tokens contrôlées par
+  passe — un volume qu'aucune relecture manuelle n'atteint.
+- **La dérive se mesure au lieu de se deviner.** Un écart de token ou
+  d'accessibilité est détecté à la passe suivante, pas en recette : il se
+  corrige quand il coûte encore peu.
+- **Chaque écart devient une décision, pas un débat** : corriger l'intégration,
+  ou étendre le contrat. La provenance affichée sur la totalité des
+  vérifications est ce qui rend cet arbitrage possible.
+- **L'outil de contrôle est lui-même sous contrôle** : 63 tests unitaires — un
+  outil de QA non testé ne contrôle rien, il rassure.
 
 ## Ce que ce projet illustre
 
-Qu'un rapport de QA ne vaut que par la confiance qu'on lui accorde. Il est plus
-utile d'afficher honnêtement ce qu'on ne sait pas vérifier que de produire un
-score flatteur : c'est le taux « hors audit » qui a rendu le reste crédible, et
-qui a transformé chaque écart détecté en arbitrage explicite — corriger
-l'intégration, ou étendre le contrat.
+Qu'un rapport de QA ne vaut que par la confiance qu'on lui accorde, et qu'un
+score flatteur ne fait gagner personne. Afficher honnêtement ce qu'on ne sait
+pas vérifier est ce qui rend le reste crédible — et donc actionnable.
 
 *(Les résultats d'audit détaillés relèvent du client et ne sont pas partagés
 ici : contactez Arthur pour parler de la méthode.)*

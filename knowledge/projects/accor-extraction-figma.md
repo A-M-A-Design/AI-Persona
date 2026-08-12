@@ -28,16 +28,22 @@
   stockage plugin, chaque lot ne transporte plus qu'un talon de quelques lignes,
   et les composants d'un même lot sont extraits en parallèle.
 
-## Résultats
+## Gains
 
-- Près de 300 contrats de composants, versionnés dans Git.
-- Refonte du format d'extraction mesurée sur 279 composants appariés :
-  **−33 % de volume**, **97 % des composants compactés**, aucune perte
-  sémantique — et au passage la capture d'informations que l'ancien format
-  perdait silencieusement, notamment les surcharges d'instances imbriquées.
-- Extraction concurrente : six composants en 1,5 seconde contre une dizaine de
-  secondes en séquentiel, et environ 95 % de code embarqué en moins grâce au
-  talon.
+- **La spécification d'un composant n'est plus rédigée, elle est dérivée.** Près
+  de 300 contrats vivent dans Git et se régénèrent : la divergence entre la
+  maquette et sa description cesse d'être une fatalité de calendrier.
+- **Une ré-extraction complète du catalogue redevient une opération de
+  routine** là où c'était un chantier. Six composants sont
+  extraits en 1,5 seconde contre une dizaine en séquentiel, soit un facteur
+  sept, et le talon de démarrage divise par vingt le code transporté à chaque
+  lot.
+- **Un contexte d'IA porte environ une fois et demie plus de composants** : la
+  refonte du format a retiré 33 % du volume sur 279 composants appariés, avec
+  97 % d'entre eux compactés et aucune perte sémantique.
+- **Moins de volume et pourtant plus de fidélité** : le format capture ce que le
+  précédent perdait en silence, notamment les surcharges d'instances
+  imbriquées — des écarts de rendu qui ne se voyaient qu'à l'œil, en recette.
 
 ## Ce que ce projet illustre
 
