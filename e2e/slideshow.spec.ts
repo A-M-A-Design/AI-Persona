@@ -104,6 +104,11 @@ test.describe("Slideshow", () => {
 
     await bascule.click();
     expect(await enLecture(page)).toBe("true");
+
+    // Le curseur est reste sur la bascule, donc sur le carrousel : la
+    // suspension au survol tient tant qu'on ne s'en eloigne pas. On s'ecarte,
+    // comme le ferait un vrai clic.
+    await page.mouse.move(0, 0);
     await page.waitForTimeout(TOUR);
     expect(await persona(page)).not.toBe(fige);
   });

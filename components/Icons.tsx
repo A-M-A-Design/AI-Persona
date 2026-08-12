@@ -45,6 +45,61 @@ export function MailIcon({ className }: IconProps) {
   );
 }
 
+/*
+  Lecture, pause et flèches du slideshow. En SVG et non en caractères (« ▶ »,
+  « ❚❚ », « ← ») : l'encre d'un glyphe repose sur la ligne de base, si bien que
+  centrer sa boîte ne centre pas le dessin. Le décalage variait en plus d'un
+  persona à l'autre, les trois thèmes n'ayant pas la même police.
+*/
+/** `player-play-24`, repris tel quel de la bibliothèque. */
+export function PlayIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path d="M12 8L5.33331 12L5.33331 4L12 8Z" />
+    </Icon>
+  );
+}
+
+/**
+ * La bibliothèque ne fournit pas de pause — la maquette ne dessine la bascule
+ * qu'à l'arrêt. Les deux barres tiennent exactement dans les limites du
+ * triangle de lecture (x 5,33 → 12, y 4 → 12) : même masse optique, la bascule
+ * ne saute pas d'un état à l'autre.
+ */
+export function PauseIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path d="M5.33331 4H7.33331V12H5.33331V4ZM10 4H12V12H10V4Z" />
+    </Icon>
+  );
+}
+
+/** `arrow-left-24`, repris tel quel de la bibliothèque. */
+export function ArrowLeftIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M7.02024 3.64645C6.82498 3.45119 6.50839 3.45119 6.31313 3.64645L2.31313 7.64645C2.11787 7.84171 2.11787 8.15829 2.31313 8.35355L6.31313 12.3536C6.50839 12.5488 6.82498 12.5488 7.02024 12.3536C7.2155 12.1583 7.2155 11.8417 7.02024 11.6464L3.87379 8.5L13.3334 8.5C13.6095 8.5 13.8334 8.27614 13.8334 8C13.8334 7.72386 13.6095 7.5 13.3334 7.5L3.87379 7.5L7.02024 4.35355C7.2155 4.15829 7.2155 3.84171 7.02024 3.64645Z"
+      />
+    </Icon>
+  );
+}
+
+/** `arrow-right-24`, repris tel quel de la bibliothèque. */
+export function ArrowRightIcon({ className }: IconProps) {
+  return (
+    <Icon className={className}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.9798 12.3536C9.17506 12.5488 9.49165 12.5488 9.68691 12.3536L13.6869 8.35355C13.8822 8.15829 13.8822 7.84171 13.6869 7.64645L9.68691 3.64645C9.49165 3.45118 9.17506 3.45118 8.9798 3.64645C8.78454 3.84171 8.78454 4.15829 8.9798 4.35355L12.1262 7.5L2.66669 7.5C2.39054 7.5 2.16669 7.72386 2.16669 8C2.16669 8.27614 2.39054 8.5 2.66669 8.5H12.1262L8.9798 11.6464C8.78454 11.8417 8.78454 12.1583 8.9798 12.3536Z"
+      />
+    </Icon>
+  );
+}
+
 export function HomeIcon({ className }: IconProps) {
   return (
     <Icon className={className}>

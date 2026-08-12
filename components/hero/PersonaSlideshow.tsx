@@ -15,6 +15,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HERO_IMAGES, type ColorMode } from "../../lib/articles";
+import { ArrowLeftIcon, ArrowRightIcon, PauseIcon, PlayIcon } from "../Icons";
 import { t, tf } from "../../lib/i18n";
 import { prefersReducedMotion, scrollBehavior } from "../../lib/motion";
 import type { PersonaPublic } from "../chat/Chat";
@@ -229,7 +230,7 @@ export default function PersonaSlideshow({
             setLecture((v) => !v);
           }}
         >
-          <span aria-hidden="true">{lecture ? "❚❚" : "▶"}</span>
+          {lecture ? <PauseIcon /> : <PlayIcon />}
         </button>
 
         <div className="slideshow__steps">
@@ -239,7 +240,7 @@ export default function PersonaSlideshow({
             aria-label={t(lang, "previousPersona")}
             onClick={() => allerA(index - 1)}
           >
-            <span aria-hidden="true">←</span>
+            <ArrowLeftIcon />
           </button>
           <button
             type="button"
@@ -247,7 +248,7 @@ export default function PersonaSlideshow({
             aria-label={t(lang, "nextPersona")}
             onClick={() => allerA(index + 1)}
           >
-            <span aria-hidden="true">→</span>
+            <ArrowRightIcon />
           </button>
         </div>
       </div>
