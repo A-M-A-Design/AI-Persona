@@ -102,6 +102,22 @@ test.describe("Panneau de conversation", () => {
     await expect(page.locator(".chat-modal__panel")).toHaveCount(1);
   });
 
+  test("un article cité par son titre exact devient un lien vers sa page", async ({ page }) => {
+    await stubChat(
+      page,
+      "J'en parle dans Comment mesurer le ROI d'un Design Système ? — va voir la Libellule aussi.",
+    );
+    await visit(page);
+    await openChat(page, "Tu as écrit sur le ROI ?");
+
+    const lien = page.locator(".chat-modal__article-link");
+    await expect(lien).toHaveCount(1);
+    await expect(lien).toHaveAttribute("href", "/articles/roi-design-system");
+    // Le persona cité dans la même phrase reste cliquable de son côté : les
+    // deux détections cohabitent dans le même passage.
+    await expect(page.locator(".chat-modal__persona-link")).toHaveCount(1);
+  });
+
   test("le persona qui parle n'est pas cliquable dans sa propre réponse", async ({ page }) => {
     await stubChat(page, "En tant qu'Ours, je dirais que le design system prime.");
     await visit(page);

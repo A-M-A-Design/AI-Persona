@@ -472,10 +472,21 @@ img {
   cursor: pointer;
 }
 
+/* Article publié cité dans une réponse : lien vers sa page. Même traitement
+   que le persona cliquable — le fil ne distingue pas deux styles de lien. */
+.chat-modal__article-link {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.chat-modal__article-link:hover,
 .chat-modal__persona-link:hover {
   text-decoration-thickness: 2px;
 }
 
+.chat-modal__article-link:focus-visible,
 .chat-modal__persona-link:focus-visible {
   outline: var(--wel-sem-border-width-strong, 2px) solid var(--wel-sem-color-focus);
   outline-offset: 2px;

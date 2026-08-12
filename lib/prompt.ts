@@ -3,6 +3,7 @@
 // L'ordre stable-d'abord prépare le prompt caching (activé en M2).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { ARTICLES } from "./articles";
 import { getPersona, getPersonas, PERSONA_IDS, type Lang, type PersonaId } from "./personas";
 
 const KNOWLEDGE_DIR = join(process.cwd(), "knowledge");
@@ -119,6 +120,28 @@ function loadStablePrefix(): string {
   if (existsSync(tonePath)) {
     parts.push(section("tone_of_voice", readFileSync(tonePath, "utf8")));
   }
+
+  // Les articles sont aussi des pages du site. Sans cet index, le bot les cite
+  // de mémoire, en paraphrasant le titre : l'application ne peut alors pas le
+  // reconnaître pour poser le lien.
+  parts.push(
+    section(
+      "published_articles",
+      [
+        "Ces articles sont publiés sur ce site, chacun à sa propre page :",
+        ...ARTICLES.map(
+          (a) => `- « ${a.title.fr} » (en anglais : « ${a.title.en} »)`,
+        ),
+        "",
+        "Quand tu fais référence à l'un d'eux, cite-le par son titre EXACT, tel",
+        "qu'écrit ci-dessus, dans la langue de ta réponse. L'application",
+        "reconnaît le titre et le transforme en lien vers l'article — un titre",
+        "paraphrasé ou tronqué ne sera pas reconnu, et le lecteur n'aura aucun",
+        "moyen d'y accéder. N'invente jamais de titre : si l'article dont tu",
+        "parles n'est pas dans cette liste, ne le présente pas comme publié ici.",
+      ].join("\n"),
+    ),
+  );
 
   const topLevel = readdirSync(KNOWLEDGE_DIR)
     .filter((f) => f.endsWith(".md") && f !== "_meta.md" && f !== "tone-of-voice.md")

@@ -19,6 +19,10 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   ce garde-fou, la redirection devient un tic de fin de message. **Le nom du
   persona cité est cliquable** dans la réponse : la bascule se fait sans
   quitter la conversation, pour creuser dans la foulée.
+- **Les articles cités dans une réponse deviennent des liens vers leur page.**
+  Le prompt liste les articles publiés et demande le titre exact, faute de quoi
+  l'application ne peut pas le reconnaître ; les deux détections — persona et
+  article — cohabitent dans le même passage sur le texte.
 - **Le héro devient un slideshow**, une slide par persona, d'après la maquette
   v2. Reprend le comportement du composant slideshow du WDS : lecture
   automatique au moment où le carrousel entre dans la fenêtre, 5 s entre deux
