@@ -22,6 +22,12 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le titre du pied de page écrasait les boutons sur la libellule.** Press
+  Start 2P est une pixel font à chasse fixe : chaque glyphe occupe un em plein,
+  et « Discutons ! » y faisait 286 px contre 136 pour le même texte en
+  Fraunces, ne laissant que 15 px de marge sur 343 en mobile.
+  `subtitle-lg` passe à 1 rem pour ce seul persona, comme `display-md` et
+  `display-sm` le font déjà pour la même raison.
 - **Audit d'accessibilité complet** (WCAG 2.2 AA), consigné dans
   `docs/accessibilite.md` — treize anomalies corrigées. Les trois bloquantes :
   la réponse du chat était ré-annoncée en entier à chaque token reçu, faute

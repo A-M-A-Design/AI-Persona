@@ -182,6 +182,37 @@ test.describe("Pied de page", () => {
     }
   });
 
+  for (const persona of PERSONAS) {
+    test(`${persona} — le titre tient dans la barre`, async ({ page }) => {
+      // La police d'affichage de la libellule est une pixel font à chasse
+      // fixe : à la taille du token, « Discutons ! » faisait deux fois la
+      // largeur du même texte en Fraunces et écrasait les deux boutons.
+      await visit(page, { persona });
+
+      const boites = await page.evaluate(() => {
+        const r = (s: string) => document.querySelector(s)!.getBoundingClientRect();
+        const inner = document.querySelector(".site-footer__inner")!;
+        const cs = getComputedStyle(inner);
+        const dispo =
+          r(".site-footer__inner").width -
+          parseFloat(cs.paddingLeft) -
+          parseFloat(cs.paddingRight);
+        return {
+          dispo,
+          contenu: r(".site-footer__title").width + r(".site-footer__links").width + 16,
+          hauteurTitre: r(".site-footer__title").height,
+          barre: r(".site-footer__inner").height,
+        };
+      });
+
+      // Tenir tout juste ne suffit pas : à la taille du token, la libellule
+      // laissait 15 px de marge sur 343 en mobile — le titre touchait presque
+      // les boutons. On exige un pas de grille de respiration.
+      expect(boites.dispo - boites.contenu).toBeGreaterThanOrEqual(32);
+      expect(boites.hauteurTitre).toBeLessThanOrEqual(boites.barre);
+    });
+  }
+
   test("expose les deux liens de contact", async ({ page }) => {
     await visit(page);
     const liens = page.locator(".site-footer__link");
