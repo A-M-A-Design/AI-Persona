@@ -10,6 +10,36 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Le contraste est mesuré sur le rendu, plus seulement sur les tokens.** La
+  limite de l'outillage était structurelle : `a11y:contrast` compare des paires
+  **déclarées**, donc ne voit rien de ce que personne n'a déclaré. C'est par là
+  qu'un indice de saisie à 3,86:1 est passé, sur le champ le plus visible du
+  site. Corriger l'instance ne corrigeait pas la classe.
+
+  `audit-a11y.spec.ts` part maintenant de l'autre bout : **chaque texte visible**,
+  sa couleur calculée, et le fond effectif obtenu en remontant les ancêtres et en
+  composant les transparences. Peu importe l'origine des couleurs — token, valeur
+  par défaut du navigateur, héritage. Les indices de saisie sont mesurés aussi,
+  par `::placeholder`. Trois personas × deux modes sur l'accueil, plus l'article
+  et le panneau : 17 textes mesurés sur l'accueil, 45 sur un article.
+
+  Deux exclusions écrites et motivées : le texte posé sur une image — couvert
+  autrement, sur le pire fond possible — et le texte masqué.
+
+  **Détecter le premier cas a demandé deux essais, et les deux ratés sont
+  instructifs.** Chercher un `background-image` ne suffit pas : les images du
+  site sont des balises `<img>`, si bien que le titre du héro ressortait à
+  1,00:1 — sa couleur comparée à celle du fond de page, qu'il ne touche jamais.
+  `elementsFromPoint` ne convient pas davantage : c'est un test de **pointeur**,
+  qui ignore ce qui est en `pointer-events: none` — précisément le calque de
+  texte du héro, absent de la pile retournée. Ce qui marche : une image qui
+  recouvre l'élément **et se trouve dans celui qui fournit l'aplat opaque**.
+  Sans cette seconde condition, le panneau du lanceur était exclu à tort.
+
+  `docs/accessibilite.md` porte désormais un tableau des angles morts de chaque
+  outil — mieux vaut les écrire que les redécouvrir.
+
+
 - **`npm run a11y:contrast` calcule APCA en parallèle du ratio WCAG.** C'est la
   posture que recommande l'article de Kortic du 2026-04-18 tant que WCAG 3 n'est
   pas ratifié : mesurer les deux pour voir où ils divergent. Seul le ratio fait

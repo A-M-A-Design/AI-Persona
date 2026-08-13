@@ -361,3 +361,197 @@ test.describe("Audit — contraste rendu", () => {
     }
   }
 });
+
+/**
+ * Balayage du contraste **rendu** — la limite que l'outillage ne couvrait pas.
+ *
+ * `npm run a11y:contrast` compare des **paires de tokens** : il ne voit que ce
+ * que quelqu'un a déclaré. L'indice de saisie du champ de question gardait la
+ * couleur par défaut du navigateur, `rgb(117, 117, 117)` — 3,86:1, sous le
+ * seuil AA, sur le champ le plus visible du site — et ni lui ni axe ne le
+ * signalaient. Le trou était dans la liste, pas dans le calcul.
+ *
+ * Ce balayage part de l'autre bout : **chaque texte visible de la page**, sa
+ * couleur calculée, et le fond effectif obtenu en remontant les ancêtres et en
+ * composant les transparences. Peu importe d'où viennent les couleurs — token,
+ * valeur par défaut du navigateur, héritage, composition.
+ *
+ * Deux exclusions, écrites et motivées :
+ *
+ * - **le texte posé sur une image** (héro, cards) : le fond n'est pas une
+ *   couleur, et le composer contre celle qui est derrière donnerait un chiffre
+ *   faux. Ces cas sont couverts autrement — `check-contrast.mjs` les évalue sur
+ *   le pire fond possible, une image blanche sous le voile ;
+ * - **le texte masqué** (`.a11y-hidden`, `aria-hidden`, `[inert]`), qui n'est
+ *   pas lu à l'écran.
+ */
+const SEUIL_NORMAL = 4.5;
+const SEUIL_LARGE = 3; // ≥ 24 px, ou ≥ 18,66 px en gras — WCAG 1.4.3.
+
+async function balaye(page: Page) {
+  return page.evaluate(() => {
+    const p = (c: string) => (c.match(/[\d.]+/g) ?? []).map(Number);
+    const lin = (v: number) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    const lum = (c: number[]) => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+    const ratio = (a: number[], b: number[]) => {
+      const [h, l] = [lum(a), lum(b)].sort((x, y) => y - x);
+      return (h + 0.05) / (l + 0.05);
+    };
+    /** Compose `c` (rgba) sur `sur` (rgb opaque). */
+    const sur = (c: number[], fond: number[]) => {
+      const a = c.length > 3 ? c[3] : 1;
+      return [0, 1, 2].map((i) => c[i] * a + fond[i] * (1 - a));
+    };
+
+    /**
+     * Fond effectif d'un texte, et l'élément qui le fournit — `null` si aucun
+     * aplat opaque n'est atteint, ou si un `background-image` s'interpose.
+     */
+    function fondDe(el: HTMLElement): { couleur: number[]; source: HTMLElement } | null {
+      const couches: number[][] = [];
+      let n: HTMLElement | null = el;
+      while (n) {
+        const cs = getComputedStyle(n);
+        if (cs.backgroundImage !== "none") return null;
+        const c = p(cs.backgroundColor);
+        const a = c.length > 3 ? c[3] : 1;
+        if (a > 0) couches.push(c.length > 3 ? c : [...c, 1]);
+        if (a >= 1) {
+          let acc = couches.pop()!.slice(0, 3);
+          while (couches.length) acc = sur(couches.pop()!, acc);
+          // On retient **qui** a fourni l'aplat opaque : c'est ce qui permet de
+          // savoir si une image s'intercale entre lui et le texte.
+          return { couleur: acc, source: n };
+        }
+        n = n.parentElement;
+      }
+      return null;
+    }
+
+    const masque = (el: Element) =>
+      el.closest("[inert],[aria-hidden='true'],.a11y-hidden") !== null;
+
+    const constats: { repere: string; ratio: number; seuil: number; detail: string }[] = [];
+    let surImage = 0;
+    let mesures = 0;
+
+    /**
+     * Le texte est-il posé sur une image ? Le héro et les cards en ont une — une
+     * balise `<img>`, pas un `background-image` : remonter le DOM n'y voit
+     * qu'une couleur, et la comparer donne un chiffre faux. C'est ainsi que le
+     * titre du héro est ressorti à 1,00:1, sa couleur étant celle du fond de
+     * page qu'il ne touche jamais.
+     *
+     * On cherche donc une image qui **recouvre géométriquement** l'élément sans
+     * le contenir. `elementsFromPoint` serait plus direct, mais ne convient
+     * pas : c'est un test de **pointeur**, qui ignore ce qui est en
+     * `pointer-events: none` — précisément le calque de texte du héro, dont le
+     * `h1` ne figurait donc même pas dans la pile retournée.
+     */
+    const surUneImage = (el: HTMLElement, source: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) return false;
+      return [...document.querySelectorAll("img,svg,video")].some((im) => {
+        if (im.contains(el) || el.contains(im)) return false;
+        /*
+          L'image ne compte que si elle est **dans** l'élément qui fournit
+          l'aplat opaque : elle se peint alors par-dessus lui, donc entre lui et
+          le texte. Si l'aplat vient d'un élément qui ne contient pas l'image —
+          le panneau du lanceur, posé sur le héro avec son propre fond — c'est
+          l'aplat qui est au-dessus, et l'image ne regarde pas ce texte.
+        */
+        if (!source.contains(im)) return false;
+        const ri = im.getBoundingClientRect();
+        return (
+          ri.left <= r.left && ri.right >= r.right && ri.top <= r.top && ri.bottom >= r.bottom
+        );
+      });
+    };
+
+    const evalue = (el: HTMLElement, couleur: string, quoi: string) => {
+      const trouve = fondDe(el);
+      if (!trouve || surUneImage(el, trouve.source)) {
+        surImage++;
+        return;
+      }
+      const fond = trouve.couleur;
+      const cs = getComputedStyle(el);
+      const taille = Number.parseFloat(cs.fontSize);
+      const gras = Number.parseFloat(cs.fontWeight) >= 700;
+      const seuil = taille >= 24 || (gras && taille >= 18.66) ? 3 : 4.5;
+      const r = ratio(sur(p(couleur), fond), fond);
+      mesures++;
+      if (r < seuil) {
+        constats.push({
+          repere: `${el.tagName.toLowerCase()}${el.className ? "." + String(el.className).split(" ")[0] : ""}`,
+          ratio: r,
+          seuil,
+          detail: `${quoi} ${couleur} sur rgb(${fond.map(Math.round).join(", ")}) — ${Math.round(taille)}px${gras ? " gras" : ""}`,
+        });
+      }
+    };
+
+    document.querySelectorAll<HTMLElement>("body *").forEach((el) => {
+      if (masque(el)) return;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) === 0) return;
+      if (el.offsetParent === null && cs.position !== "fixed") return;
+
+      // Le texte propre à l'élément, hors descendants.
+      const propre = [...el.childNodes].some(
+        (n) => n.nodeType === 3 && (n.textContent ?? "").trim().length > 0,
+      );
+      if (propre) evalue(el, cs.color, "texte");
+
+      // L'indice de saisie, que rien n'oblige à déclarer — c'est par lui que
+      // le défaut est passé.
+      if (el instanceof HTMLInputElement && el.placeholder) {
+        const ph = getComputedStyle(el, "::placeholder");
+        const c = p(ph.color);
+        const a = c.length > 3 ? c[3] : 1;
+        evalue(el, `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a * Number(ph.opacity || 1)})`, "indice");
+      }
+    });
+
+    return { constats, surImage, mesures };
+  });
+}
+
+test.describe("Audit — contraste rendu, balayage complet", () => {
+  for (const persona of ["ours", "corneille", "libellule"] as const) {
+    for (const mode of ["light", "dark"] as const) {
+      test(`accueil — ${persona} / ${mode}`, async ({ page }) => {
+        await visit(page, { persona, mode });
+        const r = await balaye(page);
+        expect(
+          r.constats.map((c) => `${c.repere} ${c.ratio.toFixed(2)}:1 < ${c.seuil} — ${c.detail}`),
+        ).toEqual([]);
+        expect(r.mesures, "rien mesuré : le balayage ne trouve plus de texte").toBeGreaterThan(10);
+      });
+    }
+  }
+
+  test("page article", async ({ page }) => {
+    await page.goto(ARTICLE);
+    await page.waitForLoadState("networkidle");
+    const r = await balaye(page);
+    expect(
+      r.constats.map((c) => `${c.repere} ${c.ratio.toFixed(2)}:1 < ${c.seuil} — ${c.detail}`),
+    ).toEqual([]);
+  });
+
+  test("panneau de conversation", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+    await openChat(page);
+    await page.locator(".chat-modal__panel").waitFor();
+    await page.waitForTimeout(400);
+    const r = await balaye(page);
+    expect(
+      r.constats.map((c) => `${c.repere} ${c.ratio.toFixed(2)}:1 < ${c.seuil} — ${c.detail}`),
+    ).toEqual([]);
+  });
+});

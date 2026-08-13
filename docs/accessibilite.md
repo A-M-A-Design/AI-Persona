@@ -73,6 +73,57 @@ Sévérité : **B** bloquant · **M** majeur · **m** mineur. Tous corrigés.
 | **m** | L'arrière-plan restait exploitable quand le panneau était ouvert. `aria-modal` suffit aux lecteurs récents, mais ne retire ni les liens de la tabulation ni le contenu du mode exploration des plus anciens. | Le panneau est monté en portail sur `<body>` — il est en position fixe, le rendu ne change pas — et ses frères reçoivent `inert` le temps de la conversation. |
 | **m** | La redistribution à 320 px (WCAG 1.4.10) n'avait jamais été vérifiée : les tests s'arrêtaient à 375. | Quatrième projet Playwright à 320 px, sur lequel seule la suite d'accessibilité tourne — les autres décrivent la maquette, qui s'arrête à 375. |
 
+## Les limites de l'outillage, et ce qui les couvre
+
+Chaque outil de ce projet a un angle mort, et il vaut mieux l'écrire que le
+redécouvrir.
+
+| Outil | Ce qu'il voit | Son angle mort |
+| --- | --- | --- |
+| `a11y:contrast` | des **paires de tokens** déclarées | toute couleur qui n'est pas un token |
+| axe-core | les manquements mécaniques du DOM | ce qui est *annoncé*, et dans quel ordre |
+| `audit-a11y.spec.ts` | les classes de défauts déjà rencontrées | celles qu'on n'a pas encore vues |
+
+**Le trou du script de contraste a coûté un défaut réel.** L'indice de saisie du
+champ de question gardait la couleur par défaut du navigateur —
+`rgb(117, 117, 117)`, soit **3,86:1** sur le panneau du lanceur, en 16 px, sous
+le seuil AA. Personne ne l'avait déclarée : elle n'était donc dans aucune paire,
+et le script ne pouvait pas la voir. **Le trou était dans la liste, pas dans le
+calcul** — et une liste ne se complète que quand on pense à la compléter.
+
+### Le balayage du contraste rendu
+
+`audit-a11y.spec.ts` part désormais de l'autre bout : **chaque texte visible de
+la page**, sa couleur calculée, et le fond effectif obtenu en remontant les
+ancêtres et en composant les transparences. Peu importe d'où viennent les
+couleurs — token, valeur par défaut du navigateur, héritage, composition. Les
+indices de saisie sont mesurés aussi, par le pseudo-élément `::placeholder`.
+
+Trois personas × deux modes sur l'accueil, plus la page article et le panneau.
+Volumes réels : 17 textes mesurés sur l'accueil, 45 sur un article, 9 dans le
+panneau — le reste de la page y étant `inert`.
+
+**Deux exclusions, écrites et motivées :**
+
+- **le texte posé sur une image** — héro, cards. Le fond n'est pas une couleur ;
+  le composer contre celle qui est derrière donnerait un chiffre faux. Ces cas
+  sont couverts autrement : `check-contrast.mjs` les évalue sur le pire fond
+  possible, une image blanche sous le voile ;
+- **le texte masqué** (`.a11y-hidden`, `aria-hidden`, `[inert]`), qui n'est pas
+  lu à l'écran.
+
+Détecter le premier cas a demandé deux essais. Un `background-image` ne suffit
+pas : les images du site sont des balises `<img>`, et remonter le DOM n'y voit
+qu'une couleur — le titre du héro ressortait à 1,00:1, sa couleur étant celle du
+fond de page qu'il ne touche jamais. `elementsFromPoint` ne convient pas non
+plus : c'est un test de **pointeur**, qui ignore ce qui est en
+`pointer-events: none`, précisément le calque de texte du héro.
+
+Ce qui marche : chercher une image qui **recouvre** l'élément **et se trouve
+dans celui qui fournit l'aplat opaque** — elle se peint alors entre cet aplat et
+le texte. Sans cette seconde condition, le panneau du lanceur était exclu à
+tort : il a son propre fond, posé par-dessus l'image du héro.
+
 ## Ce que le lecteur d'écran annonce
 
 Relevé sur l'arbre d'accessibilité réel du navigateur, après correction.
