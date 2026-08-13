@@ -10,6 +10,29 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le focus ne revenait pas après la fermeture du panneau de conversation.**
+  Il retombait sur `<body>` : au lecteur d'écran, l'exploration repartait du
+  haut de la page. Le document d'accessibilité affirmait pourtant le contraire —
+  le mécanisme existait, il capturait simplement le mauvais élément.
+
+  Deux pièges, tous deux logés dans le panneau. `autoFocus` sur son champ
+  s'applique à **l'insertion du nœud dans le DOM**, donc avant que le moindre
+  effet ne tourne : un effet lisant `document.activeElement` capturait ce champ,
+  et la fermeture y « revenait » — sur un élément qu'elle était en train de
+  démonter. Et en **mode strict**, React joue montage → purge → montage, si bien
+  qu'une restauration posée dans une purge se déclenchait panneau encore ouvert,
+  faisant sortir le focus puis le perdre quand la page redevenait `inert`.
+
+  La restauration passe donc dans `Chat`, qui capture l'ouvrant **dans le
+  gestionnaire d'envoi** — un événement, à l'abri du double montage — et le
+  rétablit sur la transition de fermeture, après que le panneau a levé l'`inert`.
+
+  Repli assumé : poser une question suggérée la retire des chips, donc l'ouvrant
+  a **disparu** à la fermeture. C'est le cas courant, pas l'exception. On revient
+  alors au champ du lanceur, là où la conversation a commencé, plutôt qu'en haut
+  de page. Trois tests : l'ouvrant quand il survit, le champ quand il a disparu,
+  et jamais `<body>`.
+
 - **Le lien « Poser une question » cachait le champ sous la barre.** La barre de
   navigation est collante ; une ancre pose la cible à `top: 0`, donc **dessous**,
   invisible — pendant que le reste de l'écran montrait les articles. On croyait

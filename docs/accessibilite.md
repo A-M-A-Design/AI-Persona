@@ -102,7 +102,14 @@ pied de page
 2. Statut : « Réponse en cours… » — **une fois**.
 3. Statut : la réponse complète — **une fois**, à la fin du flux.
 4. Le fil reste lisible en exploration : « Qui es-tu ? » puis la réponse.
-5. Échap ferme, le focus revient sur l'élément qui avait ouvert le panneau.
+5. Échap ferme, et le focus revient sur l'élément qui avait ouvert le panneau
+   — ou, quand il a disparu, sur le champ du lanceur. Poser une question
+   suggérée la retire des chips : l'ouvrant n'existe alors plus, et c'est le
+   cas courant. **Jamais `<body>`**, d'où l'exploration repartirait du haut de
+   la page. La restauration vit dans `Chat` et non dans le panneau : celui-ci
+   prend le focus par `autoFocus` avant tout effet, et le mode strict de React
+   joue montage → purge → montage, ce qui déclenchait une restauration
+   panneau encore ouvert.
 
 Pendant toute la conversation, la page derrière est `inert` : ni tabulation, ni
 exploration.

@@ -97,9 +97,20 @@ export default function ChatModal({
     return () => voisins.forEach((el) => el.removeAttribute("inert"));
   }, []);
 
+  /*
+    Le retour du focus à la fermeture n'est **pas** géré ici, mais dans `Chat` :
+    seul l'appelant sait ce qui avait le focus avant l'ouverture.
+
+    Deux raisons de ne pas le faire dans ce composant. `autoFocus` sur le champ
+    du panneau s'applique à l'insertion du nœud dans le DOM, donc **avant** tout
+    effet : lu depuis un effet, `document.activeElement` désigne déjà ce champ.
+    Et en mode strict, React joue montage → purge → montage, si bien qu'une
+    restauration posée dans une purge se déclenche pendant que le panneau est
+    encore ouvert.
+  */
+
   // Échap ferme, Tab reste dans le panneau, et la page ne défile plus derrière.
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -128,7 +139,6 @@ export default function ChatModal({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = overflow;
-      previous?.focus();
     };
   }, [requestClose]);
 

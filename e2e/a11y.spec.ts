@@ -281,3 +281,60 @@ test.describe("Annonce de la réponse", () => {
     await expect(page.locator("main")).not.toHaveAttribute("inert", /.*/);
   });
 });
+
+test.describe("Retour du focus après le panneau", () => {
+  /*
+    Le focus retombait sur `<body>` à la fermeture : au lecteur d'écran,
+    l'exploration repartait du haut de la page. Deux pièges, tous deux dans le
+    panneau — d'où la reprise dans `Chat`. `autoFocus` sur son champ
+    s'applique à l'insertion du nœud, **avant** tout effet, si bien qu'un effet
+    lisant `document.activeElement` capturait ce champ et « revenait » dessus
+    en le démontant. Et en mode strict, React joue montage → purge → montage :
+    une restauration posée dans une purge se déclenche panneau encore ouvert.
+  */
+  test("il revient sur l'élément qui a ouvert, quand il existe encore", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+
+    // Le bouton d'envoi survit à l'ouverture, contrairement aux chips.
+    await page.locator(".launcher__row input").fill("Bonjour");
+    const bouton = page.locator(".launcher__row button[type=submit]");
+    await bouton.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".chat-modal__panel").waitFor();
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    await expect(bouton).toBeFocused();
+  });
+
+  test("et sur le champ du lanceur quand l'ouvrant a disparu", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+
+    /*
+      Poser une question suggérée la retire des chips : le bouton qui a ouvert
+      le panneau n'existe plus à la fermeture. C'est le cas courant, pas
+      l'exception — on revient donc au champ du lanceur, là où la conversation
+      a commencé, plutôt qu'en haut de page.
+    */
+    const chip = page.locator(".launcher__suggestions .ama-chip").first();
+    await chip.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".chat-modal__panel").waitFor();
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    await expect(page.locator("#question")).toBeFocused();
+  });
+
+  test("jamais sur body", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+    await openChat(page);
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    const tag = await page.evaluate(() => document.activeElement?.tagName.toLowerCase());
+    expect(tag).not.toBe("body");
+  });
+});
