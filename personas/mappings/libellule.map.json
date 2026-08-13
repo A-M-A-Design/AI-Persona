@@ -30,5 +30,14 @@
     "--ama-sem-line-heights-display-md": "1.5rem",
     "--ama-sem-font-sizes-subtitle-lg": "1rem",
     "--ama-sem-line-heights-subtitle-lg": "1.5rem"
+  },
+  "$commentVarsByBreakpoint": "Press Start 2P occupe environ deux fois la largeur d'une grotesque à taille égale : à 38 px le titre du héro passait à 3 lignes sur mobile contre 2 pour les autres avatars, et son accroche à 4 lignes à 320 px. Ces valeurs alignent la hauteur du bloc sur celle des autres — pas le nombre de lignes, qui n'est pas la bonne mesure. Aux autres largeurs la taille commune tient, et rien n'y est touché.",
+  "varsByBreakpoint": {
+    "mobile": {
+      "--ama-sem-font-sizes-display-2xl": "1.5rem",
+      "--ama-sem-line-heights-display-2xl": "2rem",
+      "--ama-sem-font-sizes-display-sm": "0.875rem",
+      "--ama-sem-line-heights-display-sm": "1.25rem"
+    }
   }
 }

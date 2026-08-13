@@ -114,14 +114,6 @@ export default function Chat({ personas }: Props) {
     sendMessage({ text }, { body: { persona: s.persona, lang: s.lang } });
   }
 
-  // Repartir de zéro : le fil est vidé et les questions suggérées reviennent,
-  // le panneau reste ouvert sur son état d'accueil.
-  function reset() {
-    clearError();
-    setMessages([]);
-    setUsed([]);
-  }
-
   return (
     <>
       <PersonaSlideshow
@@ -161,7 +153,6 @@ export default function Chat({ personas }: Props) {
           }
           onSend={send}
           onClose={() => setOpen(false)}
-          onReset={reset}
         />
       )}
     </>

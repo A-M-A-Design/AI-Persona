@@ -30,8 +30,6 @@ type Props = {
   error: "jour" | "rafale" | "panne" | null;
   onSend: (text: string) => void;
   onClose: () => void;
-  /** Vide le fil et restaure les questions suggérées, sans fermer le panneau. */
-  onReset: () => void;
 };
 
 const FOCUSABLE =
@@ -47,7 +45,6 @@ export default function ChatModal({
   error,
   onSend,
   onClose,
-  onReset,
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -170,24 +167,11 @@ export default function ChatModal({
         }}
       >
         <header className="chat-modal__header">
+          {/* La croix seule. Le bouton « nouvelle conversation » vivait ici ;
+              il posait une action destructrice — effacer le fil — juste à côté
+              de la sortie, et n'apportait rien qu'une fermeture puis une
+              nouvelle question ne fasse déjà. */}
           <div className="chat-modal__actions">
-            {/* Rien à effacer tant que le fil est vide : le bouton n'apparaît
-                qu'une fois la conversation entamée. */}
-            {exchanges.length > 0 ? (
-              <button
-                type="button"
-                // Tertiaire et non secondaire : la maquette montre une pastille
-                // contournée sur fond transparent, ce que porte le variant
-                // tertiaire (bg transparent, bordure et libellé sombres).
-                className="ama-button ama-button--tertiary chat-modal__new"
-                onClick={onReset}
-                disabled={busy}
-              >
-                {t(lang, "newChat")}
-              </button>
-            ) : (
-              <span />
-            )}
             <button
               type="button"
               className="chat-modal__close"

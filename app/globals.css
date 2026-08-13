@@ -553,9 +553,10 @@ img {
   background: var(--ama-sem-color-surface-container-mid);
 }
 
+/* 550 px : la hauteur de la frame mobile `web.slideshow` (375 × 550). */
 @media (max-width: 767px) {
   .slideshow {
-    height: 600px;
+    height: 550px;
   }
 }
 
@@ -612,9 +613,12 @@ img {
   pointer-events: none;
 }
 
+/* Le retrait haut place le titre : la maquette mobile pose son bloc `content`
+   en `padding: [100, 12, 24, 12]`, et le titre commence donc à 100 px du haut
+   de l'image — 50 de moins qu'avant, la hauteur ayant elle aussi baissé de 50. */
 @media (max-width: 767px) {
   .slideshow__content {
-    padding: 150px 12px 24px;
+    padding: 100px 12px 24px;
   }
 }
 
@@ -830,27 +834,32 @@ img {
   }
 
   /* L'action n'est pas posée à côté du champ mais dedans, à droite : une
-     simple flèche sans fond ni bordure, dans un champ en pilule. */
-  .launcher__row {
+     simple flèche sans fond ni bordure, dans un champ en pilule.
+
+     Les deux champs du site le partagent — celui du héro et celui du panneau de
+     conversation. Le panneau y gagne surtout de la place : le bouton posé à
+     côté prenait 133 px sur un écran de 375, et il n'en restait que 174 pour
+     écrire. */
+  :is(.launcher__row, .chat-modal__composer) {
     position: relative;
     gap: 0;
   }
 
-  .launcher__row .composer__field {
+  :is(.launcher__row, .chat-modal__composer) .composer__field {
     flex: 1;
     min-width: 0;
   }
 
-  .launcher__row .ama-input-text__wrapper {
+  :is(.launcher__row, .chat-modal__composer) .ama-input-text__wrapper {
     border-radius: var(--pill-radius);
   }
 
   /* Réserve la place de la flèche pour que la saisie ne passe pas dessous. */
-  .launcher__row .ama-input-text__input {
+  :is(.launcher__row, .chat-modal__composer) .ama-input-text__input {
     padding-right: 48px;
   }
 
-  .launcher__row button[type="submit"] {
+  :is(.launcher__row, .chat-modal__composer) button[type="submit"] {
     position: absolute;
     right: 8px;
     top: 50%;
@@ -866,13 +875,18 @@ img {
   }
 
   /* Inactive, la flèche s'estompe sur une couleur de texte qui reste
-     contrastée — jamais un aplat translucide, illisible à cette taille. */
-  .launcher__row button[type="submit"]:disabled {
+     contrastée — jamais un aplat translucide, illisible à cette taille.
+
+     `[aria-disabled="true"]` et non `:disabled` : le bouton ne porte jamais
+     l'attribut `disabled`, qui le sortirait de la tabulation (cf.
+     Composer.tsx). La règle écrite en `:disabled` ne s'appliquait donc jamais —
+     mesuré, la flèche gardait la même couleur champ vide ou rempli. */
+  :is(.launcher__row, .chat-modal__composer) button[type="submit"][aria-disabled="true"] {
     background: none;
     color: var(--ama-sem-color-on-surface-mid);
   }
 
-  .launcher__row .composer__label {
+  :is(.launcher__row, .chat-modal__composer) .composer__label {
     display: none;
   }
 
@@ -1020,17 +1034,13 @@ img {
   padding-bottom: 16px;
 }
 
-/* Maquette : la pastille « nouvelle conversation » à gauche, la croix à
-   droite, sur la même ligne. */
+/* La croix seule, calée à droite. `space-between` tenait tant que le bandeau
+   portait aussi la pastille « nouvelle conversation » ; avec un seul enfant il
+   l'aurait renvoyée à gauche. */
 .chat-modal__actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.chat-modal__new {
-  border-radius: var(--pill-radius);
+  justify-content: flex-end;
 }
 
 .chat-modal__close {
@@ -1137,11 +1147,8 @@ img {
   gap: 20px;
 }
 
-@media (max-width: 767px) {
-  .chat-modal__composer {
-    gap: 12px;
-  }
-}
+/* Le traitement mobile du composer — flèche dans le champ, libellé masqué — est
+   celui du lanceur, déclaré une fois pour les deux (voir plus haut). */
 
 /* --- Grilles d'articles ------------------------------------------------- */
 

@@ -13,7 +13,6 @@ const STRINGS = {
     readArticle: "Lire l'article",
     chatTitle: "Arthur Mathon",
     closeChat: "Fermer la conversation",
-    newChat: "Démarrer une nouvelle conversation",
     mail: "E-mail",
     error: "Oups, quelque chose a coincé. Réessayez dans un instant.",
     // Trois messages là où il n'y avait qu'une erreur générique. Un visiteur
@@ -84,7 +83,6 @@ const STRINGS = {
     readArticle: "Read the article",
     chatTitle: "Arthur Mathon",
     closeChat: "Close the conversation",
-    newChat: "Start a new conversation",
     mail: "Mail",
     error: "Oops, something went wrong. Please try again.",
     errorRateBurst:
