@@ -80,7 +80,8 @@ bannière
 contenu principal
   titre niveau 1 « Bonjour, je suis Arthur ! »
   paragraphe « Designaut passionné de Design System, Product et Operations »
-  zone de texte « Votre question »
+  zone de texte « Votre question » — **une seule fois** : un `<label>` masqué
+    visuellement aurait été lu en plus, comme texte, avant le champ lui-même
   bouton « Discutons » (indisponible)
   groupe « Questions suggérées »
     bouton « Raconte-moi ton parcours »

@@ -89,17 +89,30 @@ test.describe("Nom accessible", () => {
     expect(nom).not.toContain(kicker!.trim());
   });
 
-  test("le champ de saisie a un libellé distinct de son indice", async ({ page }) => {
+  test("le champ de saisie a un libellé distinct de son indice, annoncé une seule fois", async ({
+    page,
+  }) => {
     await visit(page);
     const champ = page.locator(".launcher__row input");
     const { nom, placeholder } = await champ.evaluate((el: HTMLInputElement) => ({
-      nom: document.querySelector<HTMLLabelElement>(`label[for="${el.id}"]`)?.textContent?.trim(),
+      nom: el.getAttribute("aria-label"),
       placeholder: el.placeholder,
     }));
+    // Le défaut d'origine : un nom accessible recopiant l'indice, qui s'efface
+    // à la première frappe.
     expect(nom).toBeTruthy();
     expect(nom).not.toBe(placeholder);
-    // Et plus d'aria-label qui écraserait le <label>.
-    await expect(champ).not.toHaveAttribute("aria-label", /./);
+
+    /*
+      Et le nom ne doit apparaître **qu'une fois** dans l'arbre. Un `<label>`
+      masqué visuellement donne le même nom accessible, mais reste un nœud de
+      texte : en exploration, le lecteur d'écran lisait « Votre question », puis
+      « Votre question, zone d'édition, … ». Signalé à l'écoute le 2026-08-13 —
+      inaudible pour qui teste sans lecteur d'écran, et invisible pour axe.
+    */
+    const arbre = await page.locator(".launcher--hero").ariaSnapshot();
+    const occurrences = arbre.split(nom!).length - 1;
+    expect(occurrences, `« ${nom} » apparaît ${occurrences} fois dans l'arbre`).toBe(1);
   });
 
   test("le groupe de questions suggérées porte un rôle et un nom", async ({ page }) => {

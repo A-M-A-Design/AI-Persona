@@ -10,6 +10,22 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le champ de question était annoncé deux fois.** Son nom accessible venait
+  d'un `<label>` masqué visuellement : même nom accessible qu'un
+  `aria-label`, mais **un nœud de texte de plus dans l'arbre**. En mode
+  exploration, le lecteur d'écran lisait « Votre question », puis « Votre
+  question, zone d'édition, Posez-moi n'importe quelle question ! ». Le libellé
+  passe en `aria-label`, et l'arbre ne le porte plus qu'une fois.
+
+  Ce que l'audit d'août avait corrigé reste acquis : le nom accessible est
+  **distinct de l'indice de saisie**, qui s'efface à la première frappe. C'était
+  cela le défaut d'alors, pas la nature de l'attribut — le `<label>` masqué
+  était la bonne réponse à la mauvaise question.
+
+  Défaut inaudible autrement : ni axe, ni la lecture du code, ni un test de nom
+  accessible ne le voient. Il fallait écouter. Le test compte désormais les
+  occurrences du nom dans l'arbre du lanceur et en exige **une seule**.
+
 - **L'anneau de focus ne suivait pas la bordure des éléments visés.** Deux
   causes distinctes derrière le même symptôme.
 
