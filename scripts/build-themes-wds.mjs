@@ -41,6 +41,7 @@ import {
   hex2,
   transformRgb,
 } from "./lib/persona-color.mjs";
+import { SCOPES } from "./lib/token-css.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const templatePath = join(root, "styles", "welds-src", "template.theme.css");
@@ -107,6 +108,37 @@ function applyVarOverrides(css, vars) {
   return css;
 }
 
+/**
+ * Les mêmes overrides, mais confinés à une seule media query.
+ *
+ * Cette route travaille le CSS comme du texte : il faut donc découper le bloc
+ * avant de remplacer, sans quoi le motif frapperait les quatre largeurs. Les
+ * accolades sont comptées plutôt que devinées — un bloc `@media` contient au
+ * moins un bloc de sélecteur imbriqué, qu'une recherche de la première `}`
+ * couperait au mauvais endroit.
+ */
+function applyVarOverridesInMedia(css, media, vars) {
+  if (!vars) return css;
+  const debut = css.indexOf(`@media ${media} {`);
+  if (debut === -1) throw new Error(`media query absente du template : ${media}`);
+
+  let profondeur = 0;
+  let fin = -1;
+  for (let i = css.indexOf("{", debut); i < css.length; i += 1) {
+    if (css[i] === "{") profondeur += 1;
+    else if (css[i] === "}") {
+      profondeur -= 1;
+      if (profondeur === 0) {
+        fin = i + 1;
+        break;
+      }
+    }
+  }
+  if (fin === -1) throw new Error(`bloc @media ${media} non refermé`);
+
+  return css.slice(0, debut) + applyVarOverrides(css.slice(debut, fin), vars) + css.slice(fin);
+}
+
 // ---------- tokens absents du template ----------
 
 /**
@@ -168,6 +200,15 @@ for (const id of PERSONAS) {
   css = transformColors(css, mapping.colors ?? {});
   css = transformFonts(css, mapping.fonts);
   css = applyVarOverrides(css, mapping.vars);
+  // Après les overrides généraux, pour l'emporter sur eux — comme dans l'autre
+  // route (scripts/build-tokens-ama.mjs).
+  for (const [bpt, vars] of Object.entries(mapping.varsByBreakpoint ?? {})) {
+    const portee = SCOPES.find((s) => s.key === bpt);
+    if (!portee?.media) {
+      throw new Error(`varsByBreakpoint : « ${bpt} » n'est pas un point de rupture avec media query`);
+    }
+    css = applyVarOverridesInMedia(css, portee.media, vars);
+  }
   css = rescope(css, id);
   const header =
     `/* GÉNÉRÉ par scripts/build-themes-wds.mjs — ne pas éditer à la main.\n` +

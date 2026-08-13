@@ -48,18 +48,25 @@ test.describe("Panneau de conversation", () => {
     await expect(page.locator(".chat-modal__answer")).toContainText("Réponse simulée");
   });
 
-  test("le bouton « nouvelle conversation » vide le fil et rend les questions", async ({ page }) => {
+  test("le bandeau ne porte que la fermeture, calée à droite", async ({ page }) => {
+    // Le bouton « nouvelle conversation » a été retiré : une action
+    // destructrice voisine de la sortie, pour un service qu'une fermeture et
+    // une nouvelle question rendent déjà.
     await visit(page);
-    const chipsBefore = await page.locator(".launcher__suggestions .ama-chip").count();
-
     await openChat(page, "Raconte-moi ton parcours");
-    const reset = page.locator(".chat-modal__new");
-    await expect(reset).toBeVisible();
 
-    await reset.click();
-    await expect(page.locator(".chat-modal__question")).toHaveCount(0);
-    await expect(reset).toHaveCount(0); // rien à effacer : le bouton disparaît
-    await expect(page.locator(".chat-modal__chips .ama-chip")).toHaveCount(chipsBefore);
+    const actions = page.locator(".chat-modal__actions");
+    await expect(actions.locator("button")).toHaveCount(1);
+    await expect(page.locator(".chat-modal__new")).toHaveCount(0);
+
+    // Retirer l'un des deux enfants d'un `space-between` renvoie l'autre à
+    // gauche : on vérifie la position tenue, pas la déclaration.
+    const bandeau = await actions.boundingBox();
+    const croix = await page.locator(".chat-modal__close").boundingBox();
+    expect(bandeau).not.toBeNull();
+    expect(croix).not.toBeNull();
+    const ecartDroite = bandeau!.x + bandeau!.width - (croix!.x + croix!.width);
+    expect(ecartDroite).toBeLessThanOrEqual(1);
   });
 
   test("le fil défile quand il dépasse la hauteur du panneau", async ({ page }) => {

@@ -3101,7 +3101,7 @@
               },
               "sm": {
                 "$type": "fontSizes",
-                "$value": 22.4
+                "$value": 14
               },
               "md": {
                 "$type": "fontSizes",
@@ -3117,7 +3117,7 @@
               },
               "2xl": {
                 "$type": "fontSizes",
-                "$value": 38
+                "$value": 24
               }
             },
             "title": {
@@ -3535,7 +3535,7 @@
               },
               "sm": {
                 "$type": "lineHeights",
-                "$value": 24
+                "$value": 20
               },
               "md": {
                 "$type": "lineHeights",
@@ -3551,7 +3551,7 @@
               },
               "2xl": {
                 "$type": "lineHeights",
-                "$value": 48
+                "$value": 32
               }
             },
             "title": {

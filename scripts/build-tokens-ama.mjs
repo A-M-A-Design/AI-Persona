@@ -414,6 +414,29 @@ for (const persona of PERSONAS) {
 
   applyOverrides(brand, [...Object.values(modes), ...Object.values(breakpoints)], mapping.vars);
 
+  /*
+    Overrides restreints à un point de rupture.
+
+    `vars` vise tous les jeux publics à la fois, donc toutes les tailles d'un
+    même token : c'est ce qu'on veut d'une marque, dont la valeur ne dépend pas
+    de la largeur. Mais une police décorative peut déborder au seul mobile —
+    Press Start 2P occupe deux fois la largeur d'une grotesque à taille égale,
+    et le titre du héro y passait à trois lignes contre deux ailleurs.
+
+    Le mécanisme existe déjà sans qu'il faille l'inventer : le token public
+    aliase une cible **déjà nommée par sa taille**
+    (`bSem.fontSizes.mobile.display.2xl`). Il suffit donc de ne balayer que le
+    jeu voulu. Passé après `vars`, ce tour l'emporte sur lui.
+  */
+  for (const [bpt, vars] of Object.entries(mapping.varsByBreakpoint ?? {})) {
+    if (!breakpoints[bpt]) {
+      throw new Error(
+        `varsByBreakpoint : « ${bpt} » n'est pas un point de rupture connu (${BREAKPOINTS.join(", ")})`,
+      );
+    }
+    applyOverrides(brand, [breakpoints[bpt]], vars);
+  }
+
   write(`primitives/${persona}`, primitives);
   write(`brands/${persona}`, brand);
   console.log(`  ✔ primitives/${persona}.json (${primitives.size} tokens)`);

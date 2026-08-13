@@ -1020,17 +1020,13 @@ img {
   padding-bottom: 16px;
 }
 
-/* Maquette : la pastille « nouvelle conversation » à gauche, la croix à
-   droite, sur la même ligne. */
+/* La croix seule, calée à droite. `space-between` tenait tant que le bandeau
+   portait aussi la pastille « nouvelle conversation » ; avec un seul enfant il
+   l'aurait renvoyée à gauche. */
 .chat-modal__actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.chat-modal__new {
-  border-radius: var(--pill-radius);
+  justify-content: flex-end;
 }
 
 .chat-modal__close {

@@ -8,6 +8,46 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Removed
+
+- **Le bouton « nouvelle conversation »** du panneau de chat. Il posait une
+  action destructrice — effacer le fil — juste à côté de la sortie, pour un
+  service qu'une fermeture suivie d'une nouvelle question rendait déjà. Avec
+  lui partent son libellé dans les deux langues, sa règle CSS et la fonction
+  `reset` de `Chat`. Le `space-between` du bandeau devient `flex-end` : à deux
+  enfants il cadrait la croix à droite, à un seul il l'aurait renvoyée à gauche.
+  Le test qui couvrait le bouton vérifie désormais la position **tenue** de la
+  croix, pas la déclaration.
+
+### Changed
+
+- **Le héro de libellule respire sur mobile.** Press Start 2P occupe environ
+  deux fois la largeur d'une grotesque à taille égale : à 38 px le titre passait
+  à 3 lignes contre 2 pour les autres avatars, et son accroche à 4 lignes à
+  320 px. Mesuré, pas supposé. Les tailles mobiles de `display-01` (`display.2xl`)
+  et `display-05` (`display.sm`) descendent à 1,5 rem et 0,875 rem pour ce seul
+  avatar, ce qui ramène la hauteur du bloc de ~240 px à 184 px — contre 172 px
+  pour l'ours. **Le nombre de lignes n'était pas la bonne mesure** ; la hauteur
+  du bloc l'est.
+
+  Effet de bord vérifié plutôt que redouté : `display.sm` sert aussi le chapô
+  d'article, qui passe de 288 px à 160 px de haut sur mobile, contre 120 px pour
+  l'ours. La correction profite donc aussi aux articles.
+
+### Added
+
+- **Overrides de tokens restreints à un point de rupture** : `varsByBreakpoint`
+  dans les mappings persona. Les `vars` existants visent toutes les largeurs à
+  la fois — ce qu'on veut d'une marque, dont la valeur ne dépend pas du viewport.
+  Une police décorative, elle, peut ne déborder qu'au mobile.
+
+  Le mécanisme n'a rien demandé d'inventer : le token public aliase une cible
+  **déjà nommée par sa taille** (`bSem.fontSizes.mobile.display.2xl`), il
+  suffisait de ne balayer que le jeu voulu. Implémenté dans les **deux** routes
+  — celle qui résout depuis `tokens/` et celle qui teinte le CSS WDS — parce que
+  `tokens:check` ne vaut que si les deux restent indépendantes. Elles retombent
+  d'accord sur 4875 valeurs, 0 divergence.
+
 ### Security
 
 - **Les fichiers de secrets hors `.env` sont ignorés, des deux côtés.** Un
