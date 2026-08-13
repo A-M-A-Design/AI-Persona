@@ -10,6 +10,23 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le lien « Poser une question » cachait le champ sous la barre.** La barre de
+  navigation est collante ; une ancre pose la cible à `top: 0`, donc **dessous**,
+  invisible — pendant que le reste de l'écran montrait les articles. On croyait
+  avoir été envoyé au mauvais endroit. `scroll-margin-top` corrige les trois
+  cibles, et le champ de question remonte d'un panneau entier (72 px séparent le
+  haut du lanceur de son champ) pour que l'intitulé « Parlez à l'Ours en moi »
+  arrive avec lui : y atterrir seul, au milieu d'un aplat sombre, ne dit pas où
+  l'on est.
+
+- **Les commandes flottantes n'étaient pas centrées sur la barre.** Les trois
+  liens d'accès rapide et le bouton de raccourcis se collaient au bord haut
+  (`top: 8px`), soit **10 px trop haut** en desktop et 2 px en mobile, alors que
+  les chips de la barre, eux, sont centrés. Ils partagent désormais la hauteur de
+  la barre par une variable `--nav-hauteur`, et se centrent dessus quelle que
+  soit leur propre taille. Défaut antérieur à cette PR — un seul lien
+  d'évitement le rendait discret, trois le rendent voyants.
+
 - **Le champ de question était annoncé deux fois.** Son nom accessible venait
   d'un `<label>` masqué visuellement : même nom accessible qu'un
   `aria-label`, mais **un nœud de texte de plus dans l'arbre**. En mode

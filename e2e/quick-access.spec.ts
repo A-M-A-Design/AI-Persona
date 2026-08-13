@@ -72,4 +72,48 @@ test.describe("Accès rapide", () => {
       page.getByRole("navigation", { name: /Accès rapide|Quick access/ }),
     ).toBeAttached();
   });
+
+  test("les commandes flottantes sont centrées sur la barre", async ({ page }) => {
+    await visit(page);
+    await page.keyboard.press("Tab");
+    // La transition dure 150 ms : on la laisse se poser avant de mesurer.
+    await page.waitForTimeout(300);
+    const ecart = await page.evaluate(() => {
+      const l = document.querySelector(".skip-link:focus")?.getBoundingClientRect();
+      const n = document.querySelector(".site-nav__inner")?.getBoundingClientRect();
+      if (!l || !n) return null;
+      return Math.round(l.top + l.height / 2 - (n.top + n.height / 2));
+    });
+    // Elles se collaient au bord haut (8 px), soit 10 px trop haut en desktop.
+    expect(ecart).toBe(0);
+  });
+
+  test("« Poser une question » ne cache pas le champ sous la barre collante", async ({
+    page,
+  }) => {
+    await visit(page);
+    await page.locator('.skip-link[href="#question"]').focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(700);
+
+    const r = await page.evaluate(() => {
+      const champ = document.querySelector("#question")!.getBoundingClientRect();
+      const panneau = document.querySelector(".launcher--hero")!.getBoundingClientRect();
+      const barre = document.querySelector(".site-nav__inner")!.getBoundingClientRect();
+      return {
+        champSousLaBarre: champ.top >= barre.bottom,
+        champDansLaFenetre: champ.bottom <= innerHeight,
+        panneauEntier: panneau.top >= barre.bottom,
+      };
+    });
+    /*
+      Sans `scroll-margin-top`, l'ancre posait la cible à `top: 0` — donc
+      **sous** la barre collante, invisible, pendant que l'écran montrait les
+      articles. Le panneau entier doit arriver avec le champ : y atterrir seul,
+      au milieu d'un aplat sombre, ne dit pas où l'on est.
+    */
+    expect(r.champSousLaBarre).toBe(true);
+    expect(r.champDansLaFenetre).toBe(true);
+    expect(r.panneauEntier).toBe(true);
+  });
 });

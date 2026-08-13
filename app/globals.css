@@ -53,12 +53,44 @@ img {
   border: 0;
 }
 
+/* Hauteur de la barre de navigation, partagée. Elle sert deux fois : à la barre
+   elle-même, et aux commandes flottantes de l'accès rapide, qui doivent s'y
+   centrer plutôt que se coller au bord haut. Volontairement hors du préfixe
+   `--ama-` : ce n'est pas un token du design system mais une mesure de mise en
+   page, et `npm run css:check` n'a pas à la chercher dans les thèmes. */
+:root {
+  --nav-hauteur: 80px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --nav-hauteur: 64px;
+  }
+}
+
+/* Cibles d'ancre. La barre étant collante, l'ancre pose sinon la cible à
+   `top: 0` — donc **dessous**, invisible, pendant que le reste de l'écran
+   montre la suite de la page. Signalé le 2026-08-13 : « le lien m'envoie au
+   niveau des articles et l'input est hors du viewport ». */
+#contenu,
+#articles {
+  scroll-margin-top: calc(var(--nav-hauteur) + 16px);
+}
+
+/* Le champ de question remonte d'un panneau entier — 72 px séparent le haut du
+   lanceur de son champ — pour que l'intitulé « Parlez à l'Ours en moi » arrive
+   avec lui. Sans quoi on atterrit sur un champ isolé au milieu d'un aplat
+   sombre, sans savoir où l'on est. */
+#question {
+  scroll-margin-top: calc(var(--nav-hauteur) + 88px);
+}
+
 /* Premier élément focalisable de la page : il saute la barre de navigation,
    que le clavier retraverse sinon à chaque changement de page. Hors écran au
    repos, il descend dans la page dès qu'il reçoit le focus. */
 .skip-link {
   position: fixed;
-  top: 8px;
+  top: calc(var(--nav-hauteur) / 2);
   left: 8px;
   z-index: 20;
   padding: 12px 20px;
@@ -68,14 +100,17 @@ img {
   font-size: var(--ama-sem-font-sizes-body-sm);
   line-height: var(--ama-sem-line-heights-body-sm);
   text-decoration: none;
-  transform: translateY(calc(-100% - 16px));
+  /* Centré sur la barre par `top` + ce retrait de sa demi-hauteur ; au repos on
+     ajoute la hauteur de la barre pour le sortir franchement de l'écran, quelle
+     que soit sa propre taille. */
+  transform: translateY(calc(-50% - var(--nav-hauteur)));
 }
 
 /* `:focus` et non `:focus-visible` : un lien d'évitement n'est atteint qu'au
    clavier, et l'heuristique de `:focus-visible` n'a rien à arbitrer ici. */
 .shortcuts__hint:focus,
 .skip-link:focus {
-  transform: none;
+  transform: translateY(-50%);
   outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
   outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
@@ -134,7 +169,9 @@ img {
    sans les connaître d'avance. */
 .shortcuts__hint {
   position: fixed;
-  top: 8px;
+  /* Même centrage que les liens d'accès rapide : les quatre commandes
+     flottantes s'alignent sur la barre, pas sur le bord de l'écran. */
+  top: calc(var(--nav-hauteur) / 2);
   right: 8px;
   z-index: 20;
   padding: 12px 20px;
@@ -148,7 +185,7 @@ img {
   cursor: pointer;
   /* Hors du flux ET hors de l'écran : sans `position: fixed`, ce bouton est un
      enfant flex de `body` et décale toute la page vers le bas. */
-  transform: translateY(calc(-100% - 16px));
+  transform: translateY(calc(-50% - var(--nav-hauteur)));
 }
 
 .shortcuts {
@@ -244,7 +281,7 @@ img {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  height: 80px;
+  height: var(--nav-hauteur);
   max-width: 1440px;
   margin: 0 auto;
   padding-inline: 64px;
@@ -258,7 +295,6 @@ img {
 
 @media (max-width: 767px) {
   .site-nav__inner {
-    height: 64px;
     padding-inline: 16px;
   }
 }
