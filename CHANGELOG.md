@@ -8,6 +8,21 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Security
+
+- **`.vercelignore` : la règle « l'IP Accor ne sort jamais » ne dépend plus du
+  CLI.** Un déploiement depuis GitHub ne voit que le dépôt, où rien de sensible
+  n'est versionné. Mais un `vercel deploy` lancé depuis un poste téléverse le
+  dossier de travail — et mesure faite le 2026-08-13, la trace de la fonction
+  serveur y incluait `welds-mcp-v3.zip` (5,1 Mo), l'export des tokens Accor
+  (3,7 Mo), `notion arthur.zip` (22,7 Mo) et un PDF de profil.
+
+  Ces fichiers sont gitignorés, et le CLI honore vraisemblablement `.gitignore`.
+  « Vraisemblablement » ne suffit pas quand l'enjeu est de l'IP client : la
+  liste est désormais écrite noir sur blanc et vaut pour les deux chemins de
+  déploiement. Elle écarte aussi les tests, leurs rapports et les notes de
+  session, qui n'ont rien à peser dans une fonction serveur.
+
 ### Added
 
 - **Mesure d'audience et de performance**, et le guide de déploiement qui va

@@ -1,0 +1,44 @@
+# Ce que le CLI Vercel n'a pas le droit de téléverser.
+#
+# Un déploiement depuis GitHub ne voit que le dépôt : les fichiers gitignorés
+# n'existent pas pour lui. Un `vercel deploy` lancé depuis cette machine, lui,
+# téléverse le dossier de travail — qui contient les archives Accor et des
+# documents personnels. Mesuré le 2026-08-13 : la trace de la fonction serveur
+# incluait `welds-mcp-v3.zip` (5,1 Mo), l'export des tokens Accor (3,7 Mo),
+# `notion arthur.zip` (22,7 Mo) et un PDF de profil.
+#
+# La règle d'or du projet — l'IP Accor ne sort jamais — ne doit pas dépendre du
+# fait que le CLI honore ou non `.gitignore`. Elle est écrite ici, noir sur
+# blanc, et vaut pour les deux chemins de déploiement.
+
+# --- IP Accor : ne JAMAIS téléverser
+styles/welds-src/
+*.zip
+
+# --- Documents sources personnels
+*.pdf
+*.docx
+/article/
+
+# --- Secrets : les variables se posent dans Vercel, jamais dans un fichier
+.env*
+!.env.example
+
+# --- Inutile en production : ni les tests ni leurs rapports n'ont à peser dans
+# la fonction serveur, que le traçage de Turbopack embarque sinon.
+/e2e/
+/test-results/
+/playwright-report/
+/blob-report/
+playwright.config.ts
+
+# --- Historique et notes de travail
+/sessions-summary/
+/docs/
+
+# --- Dépendances & build : reconstruits par Vercel
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
