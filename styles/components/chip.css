@@ -47,8 +47,8 @@
 }
 
 .ama-chip:focus-visible {
-  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 /* La sélection est le seul état qui matérialise la bordure. `box-sizing` étant

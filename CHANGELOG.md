@@ -8,6 +8,40 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **L'anneau de focus ne suivait pas la bordure des éléments visés.** Deux
+  causes distinctes derrière le même symptôme.
+
+  **Les cibles de saut dessinaient l'anneau du navigateur.** `main` et la grille
+  d'articles portent `tabindex="-1"` pour que le focus s'y pose vraiment ; le
+  navigateur y traçait alors *son* indicateur — un rectangle de 1 px encadrant
+  tout le bloc, qui ne suit aucune bordure et ne ressemble à rien d'autre sur le
+  site. Il est retiré plutôt que stylé : ces conteneurs ne sont pas des
+  commandes, ils ne sont pas dans l'ordre de tabulation, et WCAG 2.4.7 ne vise
+  que les composants opérables au clavier. Le retour au clavier, c'est le
+  défilement ; au lecteur d'écran, c'est l'annonce du repère atteint.
+
+  **Les anneaux étaient écrits en dur** — `border-width-strong` et `2px`
+  d'offset — alors que l'export porte trois tokens faits pour ça :
+  `focus.outline-width`, `-offset` et `-style`. Douze déclarations basculées.
+  Conséquence visible : l'offset passe de 2 à **3 px**, valeur du token. Le
+  champ de saisie s'en écartait plus encore, avec un anneau de **1 px collé à sa
+  bordure**, seul de son espèce — il rejoint les autres.
+
+  **`focus-fallback` n'est pas employé, et c'est délibéré.** Le token existe
+  pour les fonds colorés où le token principal manque de contraste ; mesure
+  faite, la palette de ce site n'en présente aucun — `focus` tient partout, au
+  pire **3,99:1**, quand le repli tomberait à **2,88:1** sur
+  `surface-alternative` en mode sombre. L'employer aurait dégradé l'indicateur.
+  Trois paires sont ajoutées à `npm run a11y:contrast`, au seuil 3:1 de WCAG
+  1.4.11 : le jour où la palette bouge, c'est là qu'on le verra, au lieu de le
+  supposer.
+
+  `e2e/focus.spec.ts` vérifie que **toutes** les commandes portent le même
+  anneau (2 px, solid, offset 3 px), que les deux cibles de saut n'en portent
+  aucun, et qu'aucune valeur n'est réécrite en dur dans la feuille servie.
+
 ### Added
 
 - **Un accès rapide ouvre le document**, tiré d'une passe au lecteur d'écran.

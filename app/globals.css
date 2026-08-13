@@ -76,14 +76,29 @@ img {
 .shortcuts__hint:focus,
 .skip-link:focus {
   transform: none;
-  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .skip-link {
     transition: transform 150ms ease-in-out;
   }
+}
+
+/* Cibles de saut — `main` et la grille d'articles, que les liens d'accès rapide
+   visent. Elles portent `tabindex="-1"` pour que le focus s'y pose vraiment,
+   et le navigateur y dessine alors **son** anneau : un rectangle de 1 px qui
+   encadre tout le bloc et ne suit aucune bordure — c'est le défaut relevé le
+   2026-08-13.
+
+   On le retire plutôt que de le styler. Ces conteneurs ne sont pas des
+   commandes : ils ne sont pas dans l'ordre de tabulation, on ne les « active »
+   pas, et WCAG 2.4.7 ne vise que les composants opérables au clavier. Le retour
+   au clavier, c'est le défilement ; au lecteur d'écran, c'est l'annonce du
+   repère atteint. */
+:is(main, section)[tabindex="-1"]:focus {
+  outline: none;
 }
 
 /* --- Ossature de page --------------------------------------------------- */
@@ -305,16 +320,16 @@ img {
 }
 
 .site-nav__toggle:focus-visible {
-  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 /* Le chip enveloppe un <select> rendu transparent : c'est lui qui reçoit le
    focus, et son anneau est donc invisible. Sans cette règle, le clavier
    traverse les deux réglages sans qu'on voie jamais où l'on est. */
 .site-nav__chip:has(.site-nav__select:focus-visible) {
-  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 /* La maquette resserre les contrôles de la barre à 32 px en mobile, contre
@@ -439,7 +454,7 @@ img {
 /* La piste est un point d'entrée clavier : son anneau doit se voir, posé sur
    une image et non sur la surface de la page. */
 .slideshow__track:focus-visible {
-  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
   outline-offset: -4px;
 }
 
@@ -588,8 +603,8 @@ img {
 
 .chat-modal__article-link:focus-visible,
 .chat-modal__persona-link:focus-visible {
-  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
   border-radius: 2px;
 }
 
@@ -875,8 +890,8 @@ img {
 }
 
 .chat-modal__close:focus-visible {
-  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 .chat-modal__title {
@@ -1093,8 +1108,8 @@ img {
 }
 
 .article-card:focus-visible {
-  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 /* --- Mise en page de la démo /dev/kit ---------------------------------- */
@@ -1403,8 +1418,8 @@ img {
 /* Anneau explicite : l'anneau par défaut du navigateur se pose sur un aplat
    primaire sombre, où il se distingue mal. */
 .carousel__step:focus-visible {
-  outline: var(--ama-sem-border-width-strong, 2px) solid var(--ama-sem-color-focus);
-  outline-offset: 2px;
+  outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 .carousel__step:disabled {

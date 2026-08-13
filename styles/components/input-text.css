@@ -53,7 +53,12 @@
    quand on l'a atteint à la souris — c'est là qu'ira la frappe. */
 .ama-input-text__input:focus {
   border-color: var(--ama-sem-color-focus);
-  outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
+  outline: var(--ama-sem-sizing-focus-outline-width)
+    var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  /* Même retrait que partout ailleurs : c'est ce que les tokens
+     `focus.outline-*` formalisent. Le champ portait auparavant un anneau plus
+     fin et collé à sa bordure, seul de son espèce. */
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 .ama-input-text__input:disabled {
