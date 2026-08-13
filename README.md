@@ -175,6 +175,40 @@ Après toute modification de `personas/mappings/*.map.json`, relancer
 `npm run themes:build` puis `npm run a11y:contrast` : le script échoue (code 1)
 si une paire passe sous 4,5:1, dégradés et fonds semi-transparents compris.
 
+## Partage et indexation
+
+Rien de tout cela ne se voit à l'écran : un aperçu cassé ne se remarque qu'au
+moment où l'on partage un lien, c'est-à-dire trop tard. `e2e/seo.spec.ts` le
+vérifie donc par la mesure — y compris que **chaque image annoncée répond
+vraiment en 200**, une image absente donnant un aperçu nu sans rien signaler.
+
+| | |
+| --- | --- |
+| `metadataBase` | déduit de l'environnement (`lib/site.ts`) — sans elle, les URL d'aperçu restent relatives et aucun réseau social ne les suit |
+| Image de l'accueil | le héro de l'Ours, persona par défaut |
+| Image d'un article | **son propre visuel**, celui de sa card sur l'accueil |
+| `/sitemap.xml` | l'accueil et les six articles |
+| `/robots.txt` | ouvre le site, ferme `/dev/` et `/api/` |
+| JSON-LD | `Person` + `WebSite` sur l'accueil, `Article` sur chaque article |
+
+**Les vraies images plutôt qu'une carte générée** : un aperçu partagé montre
+ainsi ce que le lecteur retrouvera en arrivant. Une carte composée à la volée
+aurait affiché un visuel que le site ne montre nulle part.
+
+**`/api/` est fermé** : rien à y indexer, et chaque visite de la route de chat
+coûte un appel au modèle. Un robot n'a pas à consommer le quota.
+
+**Le JSON-LD dit *qui*, pas seulement *quoi*.** Les balises `og:` disent à un
+réseau comment afficher un lien ; les données structurées disent à un moteur
+qu'un humain nommé Arthur Mathon exerce un métier précis et signe ces articles.
+C'est ce qui relie le site à une personne plutôt qu'à une suite de mots-clés —
+l'objet même d'un portfolio. Rien n'y est inventé : tout y figure déjà ailleurs
+dans le site, et une donnée structurée qui affirme plus que la page est une
+donnée fausse.
+
+Le domaine se pose par `NEXT_PUBLIC_SITE_URL` le jour où il existe. D'ici là,
+Vercel fournit le sien et les aperçus fonctionnent dès le premier déploiement.
+
 ## Limite de débit
 
 `/api/chat` appelle un modèle payant avec **notre** clé. Sans limite, un script

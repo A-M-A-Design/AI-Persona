@@ -10,6 +10,36 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Métadonnées de partage, plan du site et données structurées.** Un lien vers
+  le portfolio s'affichait **nu** : ni titre, ni image, ni description. Pour un
+  site dont le canal principal est LinkedIn, c'était le poste SEO qui coûtait
+  le plus cher.
+
+  `metadataBase` se déduit de l'environnement (`lib/site.ts`) : domaine
+  explicite, sinon l'URL que Vercel fournit d'office, sinon `localhost`. Sans
+  elle, les URL d'aperçu restent relatives — et **aucun réseau social ne va
+  chercher une image ainsi désignée**.
+
+  **Les images d'aperçu sont celles du site**, pas une carte générée : le héro
+  de l'Ours sur l'accueil, et pour chaque article **son propre visuel**, celui
+  de sa card. Un aperçu partagé montre ainsi ce que le lecteur retrouvera en
+  arrivant.
+
+  `/sitemap.xml` liste l'accueil et les six articles ; `/robots.txt` ouvre le
+  site et ferme `/dev/` — un atelier, pas une page publiée — ainsi que `/api/`,
+  dont chaque visite coûte un appel au modèle.
+
+  **Le JSON-LD dit *qui*, pas seulement *quoi*.** `Person` et `WebSite` sur
+  l'accueil, `Article` sur chaque article, rattaché au même `@id` d'auteur. Les
+  balises `og:` disent à un réseau comment afficher un lien ; les données
+  structurées disent à un moteur qu'un humain nommé Arthur Mathon exerce un
+  métier précis et signe ces articles. Rien n'y est inventé — tout y figure
+  déjà ailleurs dans le site, et une donnée structurée qui affirme plus que la
+  page est une donnée fausse.
+
+  Sept tests, dont un qui **récupère chaque image annoncée et exige un 200** :
+  une image absente donne un aperçu nu, sans que rien ne le signale.
+
 - **`/api/chat` a enfin une limite de débit par adresse IP.** La route appelait
   un modèle payant avec **notre** clé, sans aucun garde : un script consommait
   le quota — ou la facture — en quelques minutes. C'était le premier poste du

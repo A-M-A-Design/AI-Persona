@@ -9,6 +9,7 @@ import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { AUTEUR, SITE_NAME, SITE_URL } from "../lib/site";
 import NavMode from "../components/NavMode";
 import Shortcuts from "../components/Shortcuts";
 import {
@@ -65,11 +66,61 @@ export const metadata: Metadata = {
     utile dans un onglet, un favori ou un partage.
   */
   title: {
-    default: "Arthur Mathon — AI Persona",
+    default: SITE_NAME,
     template: "%s — Arthur Mathon",
   },
   description:
     "Discutez avec la version IA d'Arthur Mathon, Design System Lead/Product/Ops.",
+
+  /*
+    Sans `metadataBase`, toute URL relative de partage reste relative — et aucun
+    réseau social ne va chercher une image ainsi désignée. Next émet d'ailleurs
+    un avertissement au build tant qu'elle manque. Elle vient de `lib/site.ts`,
+    qui la déduit de l'environnement.
+  */
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
+
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "fr_FR",
+    url: "/",
+    title: SITE_NAME,
+    description:
+      "Discutez avec la version IA d'Arthur Mathon, Design System Lead/Product/Ops.",
+    /*
+      Le héro de l'Ours, persona par défaut : c'est l'image qu'un visiteur voit
+      en arrivant, donc celle qu'il reconnaît dans un fil. Générer une carte à
+      la volée aurait produit un visuel que le site ne montre nulle part.
+    */
+    images: [
+      {
+        url: "/hero/ours-light.webp",
+        width: 1200,
+        height: 630,
+        alt: "Illustration de l'Ours, persona par défaut du portfolio d'Arthur Mathon",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description:
+      "Discutez avec la version IA d'Arthur Mathon, Design System Lead/Product/Ops.",
+    images: ["/hero/ours-light.webp"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    // Les aperçus riches sont l'intérêt même d'un portfolio partagé.
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+
+  authors: [{ name: AUTEUR.nom, url: AUTEUR.linkedin }],
+  creator: AUTEUR.nom,
 };
 
 // Applique les préférences (mode, persona, langue) avant le premier paint — anti-flash.
