@@ -10,6 +10,29 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **`npm run a11y:contrast` calcule APCA en parallèle du ratio WCAG.** C'est la
+  posture que recommande l'article de Kortic du 2026-04-18 tant que WCAG 3 n'est
+  pas ratifié : mesurer les deux pour voir où ils divergent. Seul le ratio fait
+  échouer la commande — on ne casse pas une CI sur un brouillon.
+
+  **L'invariant du projet résiste au changement d'algorithme.** Les thèmes sont
+  obtenus par rotation de teinte à luminance relative *WCAG 2* constante ; rien
+  ne garantissait que la promesse tienne pour APCA, qui n'a ni la même fonction
+  de transfert ni le même modèle. Mesuré : **0,8 d'écart de Lc au pire** entre
+  les trois personas. La garantie du README vaut donc au-delà de l'algorithme
+  pour lequel elle avait été conçue — vérifié plutôt que supposé.
+
+  **Une divergence réelle, et asymétrique.** En mode sombre, le texte saisi dans
+  le champ de question donne **Lc −53** pour un ratio de 7,3:1 — le seuil APCA
+  usuel d'un texte courant de 16 px est Lc 75. En mode clair, la même paire
+  donne **Lc 82**. C'est la polarité que le ratio ignore : il est symétrique,
+  la perception ne l'est pas, et le mode sombre est là où il flatte le plus.
+
+  La paire du champ de saisie **n'était pas mesurée du tout** : le script testait
+  `on-surface-low` sur `surface`, alors que le champ a son propre fond
+  (`surface-container-low`). Ajoutée.
+
+
 - **Le contraste forcé de Windows est enfin géré.** `forced-colors: active`
   remplace d'autorité les couleurs par la palette du système : les tokens ne
   s'appliquent plus, et **tout ce qui ne reposait que sur une couleur

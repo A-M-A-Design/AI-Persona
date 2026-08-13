@@ -49,6 +49,9 @@ const PAIRS = [
   ["Texte secondaire", "--ama-sem-color-on-surface-mid", "--ama-sem-color-surface"],
   ["Texte tertiaire", "--ama-sem-color-on-surface-low", "--ama-sem-color-surface"],
   ["Lien", "--ama-sem-color-link", "--ama-sem-color-surface"],
+  // Le texte qu'on tape, et la valeur d'un select : ils ne reposent pas sur
+  // `surface` mais sur leur propre fond, qui n'était pas mesuré.
+  ["Champ de saisie", "--ama-sem-color-on-surface-low", "--ama-sem-color-surface-container-low"],
 
   // L'anneau de focus, sur les trois fonds où il se pose. Mesuré le
   // 2026-08-13 en basculant le CSS sur les tokens `focus.outline-*` : le token
@@ -94,6 +97,51 @@ function blocks(css) {
   return out;
 }
 
+/**
+ * APCA 0.1.9 — le contraste perceptuel qui doit remplacer le ratio WCAG dans
+ * WCAG 3. Mesuré **en parallèle**, jamais bloquant : WCAG 3 n'est pas ratifié
+ * et APCA est encore en phase de finalisation. C'est la recommandation de
+ * l'article de Kortic du 2026-04-18, et c'est la seule posture tenable — on ne
+ * fait pas échouer une CI sur un brouillon.
+ *
+ * Ce qu'il apporte ici, et que le ratio ne dit pas :
+ *
+ * - **la polarité compte**. Le ratio est symétrique — inverser texte et fond ne
+ *   change rien. APCA, non : du clair sur du sombre et du sombre sur du clair
+ *   ne se lisent pas pareil. Ce site a les deux, et des surfaces qui basculent
+ *   d'un mode à l'autre.
+ * - **la typographie compte**. Un titre de 32 px gras et une légende de 12 px
+ *   passent le même seuil en WCAG 2. Les seuils APCA usuels : Lc 75 pour du
+ *   texte courant de 16 px, Lc 60 pour du 24 px gras, Lc 30 pour du décoratif.
+ *
+ * Renvoie une valeur signée de -108 à +106. Le signe dit la polarité, sa
+ * valeur absolue la lisibilité.
+ */
+function apcaLc(txt, bg) {
+  const Y = ([r, g, b]) =>
+    (r / 255) ** 2.4 * 0.2126729 + (g / 255) ** 2.4 * 0.7151522 + (b / 255) ** 2.4 * 0.072175;
+  // Les noirs profonds sont adoucis : l'œil n'y distingue plus rien, et sans ce
+  // rattrapage la formule y produirait des écarts qui n'existent pas.
+  const clamp = (y) => (y < 0.022 ? y + (0.022 - y) ** 1.414 : y);
+
+  const Ytxt = clamp(Y(txt));
+  const Ybg = clamp(Y(bg));
+  if (Math.abs(Ybg - Ytxt) < 0.0005) return 0;
+
+  let sapc;
+  let lc;
+  if (Ybg > Ytxt) {
+    // Sombre sur clair.
+    sapc = (Ybg ** 0.56 - Ytxt ** 0.57) * 1.14;
+    lc = sapc < 0.1 ? 0 : sapc - 0.027;
+  } else {
+    // Clair sur sombre.
+    sapc = (Ybg ** 0.65 - Ytxt ** 0.62) * 1.14;
+    lc = sapc > -0.1 ? 0 : sapc + 0.027;
+  }
+  return lc * 100;
+}
+
 function rgba(v) {
   if (!v) return null;
   v = v.trim();
@@ -124,6 +172,7 @@ const ratio = (a, b) => {
 };
 
 const failures = [];
+const apca = [];
 const lines = [];
 
 for (const persona of PERSONAS) {
@@ -152,10 +201,21 @@ for (const persona of PERSONAS) {
           return ratio(over(fg, solid), solid);
         }),
       );
+      // Même pire cas, mesuré à l'autre algorithme.
+      const lc = stops
+        .map((s) => {
+          const solid = over([s[0], s[1], s[2], s[3] * op], surface);
+          return apcaLc(over(fg, solid), solid);
+        })
+        .reduce((a, b) => (Math.abs(a) < Math.abs(b) ? a : b));
+      // `seuil` abaissé = paire non textuelle (l'anneau de focus). APCA lui
+      // demande Lc 15 à 30, pas les 75 d'un texte courant.
+      apca.push({ persona, mode, label, lc, texte: (opts.seuil ?? AA) >= AA });
+
       const ok = worst >= (opts.seuil ?? AA);
       const mark = ok ? "✔" : opts.exempt ? "·" : "✘";
       lines.push(
-        `  ${mark} ${label.padEnd(26)} ${worst.toFixed(2)}:1${opts.exempt && !ok ? "  (inactif — hors critère AA)" : ""}`,
+        `  ${mark} ${label.padEnd(26)} ${worst.toFixed(2)}:1  Lc ${lc.toFixed(0).padStart(4)}${opts.exempt && !ok ? "  (inactif — hors critère AA)" : ""}`,
       );
       if (!ok && !opts.exempt) {
         failures.push({ persona, mode, label, ratio: worst, fg: token(fgToken), bg: bgRaw });
@@ -191,3 +251,55 @@ if (failures.length) {
 }
 
 console.log(`\n✔ Toutes les paires atteignent AA (${AA}:1) sur 3 personas × 2 modes.`);
+
+/*
+  L'invariant du projet, mis à l'épreuve de l'autre algorithme.
+
+  Les thèmes sont obtenus par rotation de teinte, chaque couleur étant ramenée à
+  la **luminance relative WCAG** de l'originale. Les ratios sont donc préservés
+  par construction d'un persona à l'autre — mais c'est une garantie *WCAG 2*, et
+  rien ne dit a priori qu'elle vaille pour APCA, qui n'a ni la même fonction de
+  transfert ni le même modèle.
+
+  On le mesure au lieu de le supposer : pour chaque paire, l'écart de Lc entre
+  les trois personas. Proche de zéro, l'invariant tient aussi là. Large, la
+  promesse du README ne vaudrait que pour le ratio, et il faudrait le dire.
+*/
+const parPaire = new Map();
+for (const a of apca) {
+  const cle = `${a.mode} · ${a.label}`;
+  if (!parPaire.has(cle)) parPaire.set(cle, []);
+  parPaire.get(cle).push(a.lc);
+}
+let ecartMax = 0;
+let pire = null;
+for (const [cle, lcs] of parPaire) {
+  const e = Math.max(...lcs) - Math.min(...lcs);
+  if (e > ecartMax) {
+    ecartMax = e;
+    pire = cle;
+  }
+}
+
+/*
+  Seuils APCA usuels — ils dépendent de la typographie, ce que le ratio WCAG
+  ignore : Lc 75 pour du texte courant de 16 px, Lc 60 pour du 24 px gras,
+  Lc 30 pour du décoratif, Lc 15 pour du non-textuel.
+
+  On retient Lc 60 pour le texte : c'est le seuil du gros caractère, donc le
+  plus indulgent applicable ici, et le franchir ne prouve pas qu'un corps de
+  16 px passerait. Ce qu'on cherche n'est pas la conformité à un brouillon,
+  mais **les divergences entre les deux algorithmes** — là où le ratio dit oui
+  et la perception dit moins.
+*/
+const faibles = apca.filter((a) => (a.texte ? Math.abs(a.lc) < 60 : Math.abs(a.lc) < 15));
+
+console.log(
+  `\nAPCA en parallèle (informatif — WCAG 3 n'est pas ratifié) :` +
+    `\n  écart de Lc entre personas : ${ecartMax.toFixed(1)} au pire${pire ? ` — ${pire}` : ""}` +
+    `\n    (proche de zéro = la rotation de teinte préserve aussi le contraste perceptuel)` +
+    `\n  ${faibles.length} paire(s) de texte sous Lc 60, malgré un ratio conforme`,
+);
+for (const a of faibles) {
+  console.log(`    ${a.persona} / ${a.mode} — ${a.label} : Lc ${a.lc.toFixed(0)}`);
+}

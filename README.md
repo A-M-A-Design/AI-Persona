@@ -135,6 +135,23 @@ luminance relative contre 0,0722 pour le bleu, si bien qu'une rotation
 bleu → cyan éclaircit fortement la couleur à clarté constante et fait chuter
 le contraste d'un texte clair posé dessus.
 
+**Vérifié, et pas seulement pour WCAG.** L'invariant est construit sur la
+luminance relative *WCAG 2* ; rien ne garantissait a priori qu'il vaille pour
+APCA, l'algorithme perceptuel de WCAG 3, qui n'a ni la même fonction de
+transfert ni le même modèle. Mesure faite, l'écart de Lc entre les trois
+personas est de **0,8 au pire** : la rotation de teinte préserve aussi le
+contraste perceptuel.
+
+`npm run a11y:contrast` calcule désormais **les deux en parallèle**. Seul le
+ratio WCAG fait échouer la commande — WCAG 3 n'est pas ratifié et APCA est en
+phase de finalisation. APCA sert à voir les **divergences**, là où le ratio dit
+oui et la perception dit moins :
+
+- **En mode sombre, le texte saisi tombe à Lc −53** pour un ratio de 7,3:1.
+  Le seuil APCA usuel d'un texte courant de 16 px est Lc 75. En mode clair, la
+  même paire donne Lc 82. C'est la polarité que le ratio ignore : il est
+  symétrique, la perception ne l'est pas.
+
 Après toute modification de `personas/mappings/*.map.json`, relancer
 `npm run themes:build` puis `npm run a11y:contrast` : le script échoue (code 1)
 si une paire passe sous 4,5:1, dégradés et fonds semi-transparents compris.
