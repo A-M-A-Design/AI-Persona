@@ -311,3 +311,53 @@ test.describe("Audit — contraste forcé", () => {
     expect(carte?.largeur ?? 0).toBeGreaterThan(0);
   });
 });
+
+test.describe("Audit — contraste rendu", () => {
+  /*
+    Le script `a11y:contrast` compare des **paires de tokens**. Il ne voit donc
+    rien de ce qui n'en est pas un : l'indice de saisie gardait la couleur par
+    défaut du navigateur — `rgb(117, 117, 117)` — soit **3,86:1** sur le panneau
+    du lanceur, sous le seuil AA, sur le champ le plus visible du site. Ni le
+    script ni axe ne le signalaient. Il a fallu mesurer ce que le navigateur
+    **rend**, et non ce que la feuille déclare.
+
+    Ce test le fait sur les trois personas et les deux modes. Le panneau du
+    lanceur force le mode sombre — il est posé sur l'image — donc le champ du
+    héro est dans ce cas **quel que soit le réglage du site**.
+  */
+  const PERSONAS = ["ours", "corneille", "libellule"] as const;
+  const MODES = ["light", "dark"] as const;
+
+  for (const persona of PERSONAS) {
+    for (const mode of MODES) {
+      test(`champ du héro — ${persona} / ${mode}`, async ({ page }) => {
+        await visit(page, { persona, mode });
+        const r = await page.evaluate(() => {
+          const el = document.querySelector<HTMLElement>("#question");
+          if (!el) return null;
+          const cs = getComputedStyle(el);
+          const p = (c: string) => (c.match(/[\d.]+/g) ?? []).map(Number).slice(0, 3);
+          const bg = p(cs.backgroundColor);
+          const lin = (v: number) => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+          };
+          const lum = (c: number[]) =>
+            0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+          const ratio = (a: number[], b: number[]) => {
+            const [h, l] = [lum(a), lum(b)].sort((x, y) => y - x);
+            return (h + 0.05) / (l + 0.05);
+          };
+          return {
+            indice: ratio(p(getComputedStyle(el, "::placeholder").color), bg),
+            saisi: ratio(p(cs.color), bg),
+          };
+        });
+        expect(r, "#question introuvable").not.toBeNull();
+        // AA pour du texte courant de 16 px, qui est la taille du champ.
+        expect(r!.indice, "indice de saisie").toBeGreaterThanOrEqual(4.5);
+        expect(r!.saisi, "texte saisi").toBeGreaterThanOrEqual(4.5);
+      });
+    }
+  }
+});

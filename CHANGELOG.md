@@ -50,6 +50,31 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **L'indice de saisie du champ de question échouait au seuil AA.** Il gardait
+  la couleur par défaut du navigateur — `rgb(117, 117, 117)` — soit **3,86:1**
+  sur le panneau du lanceur, en 16 px : **sous 4,5:1**. Sur le champ le plus
+  visible du site, celui que chaque visiteur lit en arrivant.
+
+  Ni le script de contraste ni axe ne le voyaient. Le premier ne compare que des
+  **paires de tokens**, et cette couleur n'en était pas une — personne ne l'avait
+  déclarée : le trou était dans la liste, pas dans le calcul. Il a fallu mesurer
+  ce que le navigateur **rend**, et non ce que la feuille déclare.
+
+  L'indice est désormais déclaré à `on-surface-low` (7,26:1) et le texte saisi
+  passe de `low` à **`on-surface-mid`** (10,46:1) : la hiérarchie visuelle
+  demeure, les deux passent. Le select suit la même règle — c'est une valeur
+  qu'on lit.
+
+  **Le champ du héro est concerné en permanence**, pas seulement en mode
+  sombre : son panneau force `data-color-mode="dark"` puisqu'il est posé sur
+  l'image. Vérifié sur les **trois personas × deux modes**, dans le navigateur —
+  12 combinaisons, toutes au-dessus de 4,5:1, et l'écart entre personas reste
+  infime (7,26 / 7,34 / 7,30), l'invariant de rotation de teinte à l'œuvre.
+
+  `e2e/audit-a11y.spec.ts` mesure désormais le **rendu** et non la déclaration,
+  sur les six combinaisons.
+
+
 - **En mobile, la fin d'une question suggérée passait sous le bouton de
   défilement** : y taper faisait défiler au lieu de poser la question. La
   fenêtre de défilement se retire désormais de 44 px — la largeur du bouton plus

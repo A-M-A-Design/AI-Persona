@@ -91,7 +91,9 @@
   appearance: none;
   background-color: var(--ama-sem-color-surface-container-low);
   background-image: none;
-  color: var(--ama-sem-color-on-surface-low);
+  /* Même raison que le champ de saisie : c'est une valeur qu'on lit, elle passe
+     de `low` à `mid`. Cf. styles/components/input-text.css. */
+  color: var(--ama-sem-color-on-surface-mid);
   text-overflow: ellipsis;
   font-family: var(--ama-sem-font-families-input);
   font-size: var(--ama-sem-font-sizes-input-md);
