@@ -7,6 +7,7 @@
 // l'utilisateur est une pastille sombre et la réponse du texte simple.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { LINKS } from "../../lib/articles";
 import { t, type Lang } from "../../lib/i18n";
 import { CloseIcon } from "../Icons";
 import type { PersonaPublic } from "./Chat";
@@ -25,7 +26,8 @@ type Props = {
   exchanges: Exchange[];
   questions: string[];
   busy: boolean;
-  error: boolean;
+  /** `null` si tout va bien. */
+  error: "jour" | "rafale" | "panne" | null;
   onSend: (text: string) => void;
   onClose: () => void;
   /** Vide le fil et restaure les questions suggérées, sans fermer le panneau. */
@@ -52,6 +54,9 @@ export default function ChatModal({
   const bottomRef = useRef<HTMLDivElement>(null);
   // Le panneau reste monté le temps de l'animation de sortie.
   const [closing, setClosing] = useState(false);
+  // Le persona qui parle : son invitation de pied de page sert de sortie
+  // quand la limite du jour est atteinte.
+  const actif = personas.find((p) => p.id === persona) ?? personas[0];
   const requestClose = useCallback(() => setClosing(true), []);
 
   useEffect(() => {
@@ -228,8 +233,48 @@ export default function ChatModal({
           {error && (
             <div className="ama-message ama-message--warning" role="alert">
               <div className="ama-message__header">
-                <p className="ama-message__text">{t(lang, "error")}</p>
+                <p className="ama-message__text">
+                  {t(
+                    lang,
+                    error === "jour"
+                      ? "errorRateDaily"
+                      : error === "rafale"
+                        ? "errorRateBurst"
+                        : "error",
+                  )}
+                </p>
               </div>
+
+              {/*
+                La limite du jour n'est pas un incident : la conversation a dit
+                ce qu'elle avait à dire. On invite donc à la continuer ailleurs,
+                **dans la voix du persona** — `footerHeading` porte déjà les
+                trois formules (« On boit un café ? », « Croisons nos chemins »,
+                « RDV IRL ? »), inutile d'en écrire d'autres qui divergeraient.
+
+                Deux vrais liens, atteignables au clavier et nommés : c'est la
+                seule sortie offerte au visiteur à ce moment-là.
+              */}
+              {error === "jour" && (
+                <div className="chat-modal__limite">
+                  <p className="chat-modal__limite-invite">
+                    {actif?.footerHeading[lang] ?? t(lang, "errorRateDailyInvite")}
+                  </p>
+                  <p className="chat-modal__limite-liens">
+                    <a
+                      className="chat-modal__article-link"
+                      href={LINKS.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {t(lang, "linkedin")}
+                    </a>
+                    <a className="chat-modal__article-link" href={LINKS.email}>
+                      {t(lang, "mail")}
+                    </a>
+                  </p>
+                </div>
+              )}
             </div>
           )}
           <div ref={bottomRef} />

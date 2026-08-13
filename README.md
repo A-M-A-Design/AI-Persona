@@ -175,6 +175,56 @@ Après toute modification de `personas/mappings/*.map.json`, relancer
 `npm run themes:build` puis `npm run a11y:contrast` : le script échoue (code 1)
 si une paire passe sous 4,5:1, dégradés et fonds semi-transparents compris.
 
+## Limite de débit
+
+`/api/chat` appelle un modèle payant avec **notre** clé. Sans limite, un script
+consomme le quota — ou la facture — en quelques minutes.
+
+Deux fenêtres par adresse IP, qui répondent à deux abus différents :
+
+| Fenêtre | Défaut | Ce qu'elle protège |
+| --- | --- | --- |
+| Par jour | **30 questions** | l'usage : au-delà, la conversation a dit ce qu'elle avait à dire |
+| Par minute | 5 | le quota du provider, qui plafonne à ~2 réponses/minute pour **tous** les visiteurs |
+
+Le second est un **garde-fou, pas un plafond d'usage** : sans lui, une seule
+adresse tire ses 30 questions en trois secondes et épuise le quota Mistral du
+compte pour tout le monde en même temps. Les deux valeurs sont réglables par
+variable d'environnement, sans redéploiement de code.
+
+**Ce que le visiteur lit** — trois messages là où il n'y avait qu'une erreur
+générique, parce qu'une limite n'est pas une panne :
+
+- **la minute** : « Patientez une minute, puis réessayez — votre conversation
+  reste affichée. » Explicite sur la marche à suivre, et rassurant sur ce qui
+  est conservé : un visiteur qui croit avoir tout perdu s'en va au lieu
+  d'attendre ;
+- **le jour** : le remerciement, puis l'invitation du persona lui-même —
+  « On boit un café ? », « Croisons nos chemins », « RDV IRL ? » — et deux vraies
+  sorties, LinkedIn et l'e-mail. L'invitation vient de `footerHeading` : pas de
+  second texte qui divergerait du pied de page ;
+- **une panne** garde son message générique, sans quoi on ferait croire à une
+  limite atteinte.
+
+### Upstash, et pourquoi le repli ne suffit pas
+
+Sans `UPSTASH_REDIS_REST_URL` et `UPSTASH_REDIS_REST_TOKEN`, un compteur en
+mémoire prend le relais. **Il ne protège pas en production** : sur une
+plateforme sans serveur, chaque instance a sa propre mémoire et elles sont
+éphémères — un attaquant qui frappe assez vite parle à autant de compteurs
+qu'il y a d'instances. Le compteur partagé est la raison d'être d'Upstash, pas
+un luxe.
+
+Vérifier la route directement, sans passer par l'interface :
+
+```bash
+for i in $(seq 1 7); do
+  curl -s -o /dev/null -w "%{http_code} " -X POST localhost:3000/api/chat \
+    -H 'Content-Type: application/json' -H 'x-forwarded-for: 203.0.113.7' \
+    -d '{"messages":[{"role":"user","parts":[{"type":"text","text":"test"}]}]}'
+done   # 200 200 200 200 200 429 429
+```
+
 ## Accessibilité
 
 Cible **WCAG 2.2 AA**. L'audit, les constats corrigés, ce que le lecteur

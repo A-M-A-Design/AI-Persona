@@ -4,6 +4,7 @@ import { ARTICLES } from "@/lib/articles";
 import { detectLang } from "@/lib/detect-lang";
 import { buildInstructions, resolveProvider } from "@/lib/model";
 import { isPersonaId } from "@/lib/personas";
+import { adresseDe, verifieLaLimite } from "@/lib/rate-limit";
 import { buildSystemPrompt } from "@/lib/prompt";
 
 export const maxDuration = 60;
@@ -57,6 +58,27 @@ function messageText(message: UIMessage): string {
 }
 
 export async function POST(req: Request) {
+  /*
+    La limite de débit passe **avant tout le reste** : avant de lire le corps,
+    avant de résoudre le provider. Une requête refusée ne doit rien coûter — ni
+    un appel au modèle, ni la lecture d'un article depuis le disque.
+  */
+  const ip = adresseDe(req);
+  const verdict = await verifieLaLimite(ip);
+  if (!verdict.autorise) {
+    console.warn(`[/api/chat] limite ${verdict.fenetre} atteinte pour ${ip}`);
+    return Response.json(
+      { error: "rate_limited", fenetre: verdict.fenetre, retryAfter: verdict.attente },
+      {
+        status: 429,
+        // `Retry-After` est la façon normalisée de dire « reviens dans N
+        // secondes ». Les clients corrects s'en servent, et cela évite qu'un
+        // script bien intentionné ne martèle la route.
+        headers: { "Retry-After": String(verdict.attente) },
+      },
+    );
+  }
+
   let provider;
   try {
     provider = resolveProvider();
