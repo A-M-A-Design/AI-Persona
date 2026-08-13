@@ -55,7 +55,19 @@ const fontVariables = [
   .join(" ");
 
 export const metadata: Metadata = {
-  title: "Arthur Mathon — AI Persona",
+  /*
+    Gabarit plutôt qu'un titre par page. Une page article portait pour titre de
+    document le **texte exact de son `h1`** : le lecteur d'écran annonce le nom
+    de la page à l'ouverture, puis le titre de niveau 1 dès qu'on lit — soit la
+    même phrase deux fois de suite. Signalé sur VoiceOver le 2026-08-13.
+
+    Le suffixe dit aussi de qui est le site, ce qu'un titre nu ne disait pas :
+    utile dans un onglet, un favori ou un partage.
+  */
+  title: {
+    default: "Arthur Mathon — AI Persona",
+    template: "%s — Arthur Mathon",
+  },
   description:
     "Discutez avec la version IA d'Arthur Mathon, Design System Lead/Product/Ops.",
 };

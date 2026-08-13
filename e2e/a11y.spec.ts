@@ -338,3 +338,44 @@ test.describe("Retour du focus après le panneau", () => {
     expect(tag).not.toBe("body");
   });
 });
+
+test.describe("Titre de page et langue", () => {
+  /*
+    Signalé sur VoiceOver le 2026-08-13 : sur une page article, le titre était
+    lu deux fois. Le lecteur d'écran annonce le nom de la page à l'ouverture,
+    puis le titre de niveau 1 dès qu'on lit — et les deux portaient **le même
+    texte**, le `<title>` reprenant mot pour mot le `h1`.
+  */
+  test("le titre du document ne répète pas le titre de niveau 1", async ({ page }) => {
+    for (const url of ["/", ARTICLE]) {
+      await page.goto(url);
+      await page.waitForLoadState("networkidle");
+      const { titre, h1 } = await page.evaluate(() => ({
+        titre: document.title.trim(),
+        h1: document.querySelector("h1")?.textContent?.trim() ?? "",
+      }));
+      expect(titre, `${url} : titre vide`).not.toBe("");
+      expect(h1, `${url} : h1 vide`).not.toBe("");
+      expect(titre, `${url} : « ${titre} » est aussi le h1`).not.toBe(h1);
+    }
+  });
+
+  /*
+    `lang` ne se pose que sur un **changement** de langue. Le corps d'article
+    le portait toujours, y compris quand il répétait le `lang` de `<html>` :
+    une frontière de langue sur 4 000 caractères, que rien ne justifiait.
+  */
+  test("aucun attribut lang ne répète la langue du document", async ({ page }) => {
+    for (const url of ["/", ARTICLE]) {
+      await page.goto(url);
+      await page.waitForLoadState("networkidle");
+      const redondants = await page.evaluate(() => {
+        const doc = document.documentElement.lang;
+        return [...document.querySelectorAll("main [lang]")]
+          .filter((e) => e.getAttribute("lang") === doc)
+          .map((e) => e.tagName.toLowerCase() + "." + String(e.className).split(" ")[0]);
+      });
+      expect(redondants, `${url}`).toEqual([]);
+    }
+  });
+});

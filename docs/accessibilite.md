@@ -123,6 +123,14 @@ région « Autres articles » avec sa pagination : « bouton Articles précéden
 
 Le corps d'un article non traduit porte `lang="fr"` même quand l'interface est
 en anglais : la synthèse vocale ne lit pas du français avec une voix anglaise.
+**Et seulement dans ce cas** : l'attribut marque un *changement* de langue. Posé
+systématiquement, il répétait le `lang` de `<html>` sur 4 000 caractères — une
+frontière que rien ne justifiait.
+
+Le titre du document ne reprend plus le `h1` : un gabarit lui ajoute
+« — Arthur Mathon ». Le lecteur d'écran annonce le nom de la page à l'ouverture,
+puis le titre de niveau 1 dès qu'on lit ; à l'identique, la même phrase était
+entendue deux fois de suite. Relevé sur VoiceOver.
 
 ## Non-défauts vérifiés
 

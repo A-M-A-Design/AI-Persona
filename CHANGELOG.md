@@ -10,6 +10,23 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le titre d'un article était lu deux fois, et le corps mal cadré.** Relevé
+  sur VoiceOver.
+
+  Le `<title>` d'une page article reprenait **mot pour mot son `h1`**. Le
+  lecteur d'écran annonce le nom de la page à l'ouverture, puis le titre de
+  niveau 1 dès qu'on lit : la même phrase, deux fois de suite. Un gabarit de
+  métadonnées ajoute désormais « — Arthur Mathon » — ce qui dit aussi de qui est
+  le site dans un onglet, un favori ou un partage.
+
+  Le corps portait par ailleurs `lang` **en toutes circonstances**, y compris
+  quand il répétait celui de `<html>` : une frontière de langue posée sur
+  4 000 caractères, que rien ne justifiait, et que les technologies d'assistance
+  traitent comme un changement de voix. L'attribut ne marque plus qu'un vrai
+  changement — interface en anglais, article sans traduction. Ce qui le motivait
+  reste vrai : la synthèse vocale ne doit pas lire du français avec une voix
+  anglaise. C'est ce cas-là, et lui seul, qui est marqué.
+
 - **Le focus ne revenait pas après la fermeture du panneau de conversation.**
   Il retombait sur `<body>` : au lecteur d'écran, l'exploration repartait du
   haut de la page. Le document d'accessibilité affirmait pourtant le contraire —
