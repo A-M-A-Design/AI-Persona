@@ -8,6 +8,30 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **Le README est à jour de la session, à commencer par un conseil devenu
+  faux.** Sa section « Une vague de timeouts à 30,0 s » recommandait
+  `rm -rf .next` puis relance immédiate — geste qui **provoque** désormais
+  l'échec qu'il prétend écarter, le premier run payant la compilation de
+  `/articles/[slug]` pendant que seize workers tapent dessus. Elle décrit
+  maintenant les **trois** causes, dont deux sont l'inverse l'une de l'autre
+  (cache périmé / cache vide), donne la séquence avec préchauffage, et rappelle
+  que la comparaison qui tranche est la suite complète contre la suite complète.
+
+- **La section Accessibilité porte le tableau des angles morts** de chaque
+  outil, et le fait qu'**axe-core n'a signalé aucun des neuf défauts trouvés à
+  l'usage**. `npm run a11y` enchaîne désormais les trois contrôles — contraste,
+  axe, et l'audit systématique — au lieu de documenter un audit qu'il ne lançait
+  pas.
+
+- L'introduction dit que **les composants sont écrits dans ce dépôt**, donc que
+  le site se construit depuis le seul dépôt ; la règle d'or précise que
+  `styles/welds-src/` ne porte plus que l'oracle de `tokens:check` et que rien
+  de ce qu'il contient n'est servi ; la structure mentionne `e2e/` et
+  `sessions-summary/`.
+
+
 ### Added
 
 - **Résumé de la session 10** dans `sessions-summary/2026-08-13-session-10.md` :

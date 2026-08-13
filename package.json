@@ -12,7 +12,7 @@
     "welds:install": "node scripts/install-welds.mjs",
     "css:check": "node scripts/check-components-css.mjs",
     "themes:build": "node scripts/build-themes.mjs",
-    "a11y": "npm run a11y:contrast && playwright test e2e/a11y.spec.ts",
+    "a11y": "npm run a11y:contrast && playwright test e2e/a11y.spec.ts e2e/audit-a11y.spec.ts",
     "a11y:contrast": "node scripts/check-contrast.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

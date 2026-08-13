@@ -11,6 +11,10 @@ est un thème complet respectant un contrat de ~1600 variables CSS (`--ama-*`),
 résolu depuis l'export de tokens [`tokens/`](docs/tokens.md), sur le modèle du
 theming multi-marques d'Accor.
 
+Les composants sont **écrits dans ce dépôt** ([`styles/components/`](styles/components/)),
+sur ce même contrat : le site ne dépend plus d'aucun CSS extrait, et se construit
+donc depuis le seul dépôt.
+
 ## Prérequis (Windows)
 
 - Node ≥ 20 (`node --version`)
@@ -85,8 +89,8 @@ reste utilisable hors du réseau de l'entreprise.
 | `npm run tokens:build` | Construction de `tokens/` — l'export `1.0.0_AMaDesignTokens` ([doc](docs/tokens.md)) |
 | `npm run tokens:check` | Compare les thèmes servis à une référence dérivée du WDS par un autre chemin |
 | `npm run tokens:pack` | Emballage de `tokens/` en `1.0.0_AMaDesignTokens_<date>.zip`, importable dans Tokens Studio |
-| `npm run a11y` | Audit d'accessibilité complet : contraste puis balayage axe-core |
-| `npm run a11y:contrast` | Audit de contraste WCAG AA des thèmes générés |
+| `npm run a11y` | Audit d'accessibilité complet : contraste, balayage axe-core, **et l'audit systématique** |
+| `npm run a11y:contrast` | Contraste WCAG AA des thèmes, **et APCA en parallèle** (informatif) |
 | `npm run test:e2e` | Tests Playwright (1440 / 1000 / 375, plus 320 pour l'accessibilité) |
 | `npm run shots` | Captures d'écran dans `e2e/__screenshots__/` (`-- --all` pour 3 personas × 2 modes × 3 largeurs) |
 
@@ -102,26 +106,41 @@ paraît inerte sans qu'aucune erreur ne soit visible côté serveur.
 Les réponses du chat sont simulées (`e2e/helpers.ts`) : les tests ne consomment
 pas le quota du provider et ne dépendent pas d'une réponse non déterministe.
 
-#### Une vague de timeouts à 30,0 s n'est pas une régression
+#### Une vague de timeouts à 30,0 s n'est presque jamais une régression
 
-`reuseExistingServer: true` récupère le serveur de développement déjà lancé — y
-compris celui d'un run précédent, avec son cache périmé. Après un changement de
-CSS ou de configuration un peu large, cela se manifeste par une trentaine
-d'échecs groupés sur les pages articles et les tests de thème, **tous à
-exactement 30,0 s**, ce qui ressemble trait pour trait à une régression du code.
+Le signal, c'est la **durée ronde et identique**, pas le contenu des assertions.
+Trois causes le produisent, et deux d'entre elles sont l'inverse l'une de
+l'autre.
 
-Le signal, c'est la durée ronde et identique, pas le contenu des assertions.
-Avant de conclure quoi que ce soit :
+**Le cache périmé.** `reuseExistingServer: true` récupère le serveur de
+développement déjà lancé, y compris celui d'un run précédent. Après un
+changement de CSS un peu large, une trentaine d'échecs groupés sur les pages
+articles et les tests de thème.
+
+**Le cache vide — l'inverse, et le piège.** Vider `.next` puis lancer la suite
+aussitôt **provoque** l'échec : le premier run paie la compilation de
+`/articles/[slug]` pendant que seize workers tapent dessus. Il faut donc
+**préchauffer les routes** avant de mesurer quoi que ce soit.
+
+**Trop de modules CSS importés depuis `app/layout.tsx`.** Six imports séparés
+faisaient passer la suite de 1,1 à 2,8 minutes et échouer 21 tests. D'où
+`styles/components/index.css`, qui n'en présente qu'un.
+
+La séquence qui donne un résultat exploitable :
 
 ```bash
-# le PID du port 3000, puis Stop-Process — TaskStop ne tue que le wrapper npm
+# 1. le PID du port 3000, puis Stop-Process — TaskStop ne tue que le wrapper npm
 rm -rf .next
-NODE_EXTRA_CA_CERTS="$HOME/.certs/corporate-ca.pem" npx playwright test
+npm run dev &                    # attendre « Ready in »
+# 2. préchauffer : sans cela, le premier run échoue tout seul
+curl -s -o /dev/null localhost:3000/ localhost:3000/articles/roi-design-system
+npx playwright test
 ```
 
-Vécu le 2026-08-12 pendant la bascule vers `--ama-*`, qui triplait le poids des
-thèmes : 252 passés au lieu de 287, alors que le CSS était valide et l'export
-vérifié. Après ménage, 287 passés en 1,2 min.
+**Et la comparaison qui tranche est la suite complète contre la suite
+complète** — jamais un spec isolé. Vécu le 2026-08-13 : 21 tests en échec dans
+la suite, les mêmes 21 verts joués seuls. Un spec isolé passe dans les trois cas
+ci-dessus ; c'est ce qui rend le symptôme trompeur.
 
 ### Contraste des thèmes
 
@@ -162,10 +181,28 @@ Cible **WCAG 2.2 AA**. L'audit, les constats corrigés, ce que le lecteur
 d'écran annonce à chaque étape et la procédure de vérification manuelle sont
 dans [`docs/accessibilite.md`](docs/accessibilite.md).
 
-`npm run a11y` enchaîne le contrôle de contraste et le balayage axe-core. À
-retenir : sur ce site, **axe-core seul ne détectait aucune des anomalies de
-l'audit** avec les règles WCAG. Le balayage ferme la porte aux régressions
-mécaniques, il ne remplace pas la lecture du code ni la passe manuelle.
+`npm run a11y` enchaîne le contrôle de contraste et le balayage axe-core.
+
+**Chaque outil a un angle mort**, et le savoir vaut mieux que le redécouvrir.
+Sur ce site, **axe-core n'a signalé aucun des neuf défauts trouvés à l'usage** —
+ni ceux de l'audit d'août, ni ceux de la passe au lecteur d'écran du 13.
+
+| Outil | Ce qu'il voit | Son angle mort |
+| --- | --- | --- |
+| `a11y:contrast` | des **paires de tokens déclarées** | toute couleur que personne n'a déclarée |
+| axe-core | les manquements mécaniques du DOM | ce qui est *annoncé*, et dans quel ordre |
+| `audit-a11y.spec.ts` | les classes de défauts déjà rencontrées | celles qu'on n'a pas encore vues |
+
+`npx playwright test e2e/audit-a11y.spec.ts` couvre ce que les deux autres
+laissent passer : annonces en double, zones mortes au pointeur, taille de cible
+(WCAG 2.5.8), structure, contraste forcé, et le **contraste rendu** — chaque
+texte visible, sa couleur calculée, son fond composé, quelle que soit l'origine
+des couleurs. C'est ce dernier contrôle qui a rattrapé un indice de saisie à
+3,86:1, invisible aux deux autres parce que sa couleur venait du navigateur et
+n'était donc dans aucune paire.
+
+Le détail, les tolérances et leurs raisons sont dans
+[`docs/accessibilite.md`](docs/accessibilite.md).
 
 ## Règle d'or (workflow git)
 
@@ -173,7 +210,10 @@ mécaniques, il ne remplace pas la lecture du code ni la passe manuelle.
    `feat/<scope>-<sujet>`, `fix/…`, `kb/…` (base de connaissance), `chore/…`, `docs/…`
 2. **Chaque PR met à jour le CHANGELOG** (section `[Unreleased]`, format Keep a Changelog)
 3. Commits conventionnels : `feat(chat): …`, `kb(projects): …` — scopes : `chat`, `theme`, `kb`, `i18n`, `ui`, `infra`, `docs`
-4. **IP Accor** : `styles/welds-src/`, les zips et PDF sont gitignorés et ne doivent jamais apparaître dans un diff
+4. **IP Accor** : `styles/welds-src/`, les zips et PDF sont gitignorés et ne
+   doivent jamais apparaître dans un diff. Le dossier ne porte plus que le thème
+   servant d'oracle à `tokens:check` — **rien de ce qu'il contient n'est servi**,
+   et le build n'en dépend pas
 5. **Tokens** : le CSS applicatif ne consomme que `--ama-sem-*` et
    `--ama-comp-*` — jamais les primitives `--ama-prim-*` ni les alias
    `bsem`/`bcomp` (couches internes du système). Les fichiers de thème
@@ -224,5 +264,8 @@ Deux leviers quand le compteur monte :
 - `knowledge/` — base de connaissance markdown (la matière du bot)
 - `personas/` — définition des 3 personas (ton, questions suggérées, mapping de thème)
 - `styles/` — `components/` (les composants du site, `.ama-*`) · `generated/` (thèmes persona) · `welds-src/` (thème WDS extrait localement, gitignoré)
+- `e2e/` — Playwright. `a11y.spec.ts` (axe + tests nommés) et `audit-a11y.spec.ts`
+  (les classes de défauts trouvées à l'usage) tournent aussi à 320 px
 - `scripts/` — outillage Node (`.mjs`)
-- `docs/` — plan de test et golden questions
+- `docs/` — accessibilité, tokens, plan de test et golden questions
+- `sessions-summary/` — un compte rendu par session, écrit **après** la PR
