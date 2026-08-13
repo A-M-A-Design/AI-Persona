@@ -51,7 +51,7 @@ const PAIRS = [
   ["Lien", "--ama-sem-color-link", "--ama-sem-color-surface"],
   // Le texte qu'on tape, et la valeur d'un select : ils ne reposent pas sur
   // `surface` mais sur leur propre fond, qui n'était pas mesuré.
-  ["Champ de saisie", "--ama-sem-color-on-surface-mid", "--ama-sem-color-surface-container-low"],
+  ["Champ de saisie", "--ama-sem-color-on-surface-hi", "--ama-sem-color-surface-container-low"],
   /*
     L'indice de saisie. Il gardait la valeur par défaut du navigateur —
     `rgb(117, 117, 117)` — soit **3,86:1 sur le panneau du lanceur**, sous le
@@ -59,7 +59,7 @@ const PAIRS = [
     le trou était dans la liste, pas dans le calcul. Il est désormais déclaré,
     et mesuré ici.
   */
-  ["Indice de saisie", "--ama-sem-color-on-surface-low", "--ama-sem-color-surface-container-low"],
+  ["Indice de saisie", "--ama-sem-color-on-surface-mid", "--ama-sem-color-surface-container-low"],
 
   // L'anneau de focus, sur les trois fonds où il se pose. Mesuré le
   // 2026-08-13 en basculant le CSS sur les tokens `focus.outline-*` : le token
