@@ -45,9 +45,16 @@ export default function PersonaSlideshow({
   onSend,
   paused,
 }: Props) {
-  const { persona, lang, slideshowAuto } = useSettings();
+  const { persona, lang, navMode } = useSettings();
   const pisteRef = useRef<HTMLDivElement>(null);
   const [lecture, setLecture] = useState(true);
+  /**
+   * L'utilisateur a-t-il tranché lui-même, par le bouton ? Sa décision prime
+   * sur le mode de navigation : appuyer sur lecture, c'est demander la lecture,
+   * fût-ce au clavier. Sans ce drapeau, le bouton serait sans effet pour qui
+   * navigue au clavier — un contrôle qui ne contrôle rien.
+   */
+  const [explicite, setExplicite] = useState(false);
   const [visible, setVisible] = useState(false);
   // Suspension passagère : la souris survole le carrousel, ou le clavier y a
   // le focus. Contrairement à la bascule et au sélecteur, elle ne touche pas
@@ -103,11 +110,18 @@ export default function PersonaSlideshow({
   // Un changement venu d'ailleurs — le sélecteur de la barre — arrête la
   // lecture automatique. Un changement venu du slideshow, non : agir dans le
   // carrousel ne l'interrompt pas, le quitter pour la barre si.
+  //
+  // `nav-mode` est un troisième cas : il ne change pas de persona, il dit
+  // seulement comment on navigue. L'assimiler à un changement externe aurait
+  // arrêté la lecture **définitivement** à la première touche — le verrou même
+  // qu'on remplace, réintroduit par la porte de derrière. La bascule reste donc
+  // intacte, et c'est `auto` qui arbitre.
   useEffect(() => {
     const onReglage = (e: Event) => {
       // Tout changement porté par un événement a une cause : il s'anime.
-      anime.current = true;
       const source = (e as CustomEvent<{ source?: string }>).detail?.source;
+      if (source === "nav-mode") return;
+      anime.current = true;
       if (source && source !== "slideshow") setLecture(false);
     };
     window.addEventListener(SETTINGS_EVENT, onReglage);
@@ -152,60 +166,29 @@ export default function PersonaSlideshow({
     return () => observateur.disconnect();
   }, []);
 
-  // Lecture automatique : visible, non interrompue, onglet au premier plan, et
-  // mouvement non réduit. La boucle est infinie — le modulo de `allerA` s'en
-  // charge.
+  /**
+   * Lecture automatique : visible, non interrompue, onglet au premier plan,
+   * mouvement non réduit, et **navigation au pointeur**. La boucle est infinie
+   * — le modulo de `allerA` s'en charge.
+   *
+   * `navMode === "keyboard"` fige le carrousel. Ce n'est pas une détection de
+   * lecteur d'écran — rien n'expose une technologie d'assistance — mais un
+   * utilisateur de lecteur d'écran navigue au clavier et ne produit aucun
+   * événement pointeur : il reste donc en mode clavier toute sa visite, et le
+   * contenu ne change jamais sous sa lecture. Voir `components/NavMode.tsx`.
+   *
+   * Réversible, à la différence du verrou qu'il remplace : le visiteur voyant
+   * qui appuie une fois sur Tab retrouve l'animation dès qu'il reprend la
+   * souris. C'était le coût de l'ancienne version, il disparaît.
+   */
+  const auto = lecture && (explicite || navMode !== "keyboard");
+
   useEffect(() => {
-    if (!lecture || !visible || paused || survol || prefersReducedMotion()) return;
+    if (!auto || !visible || paused || survol || prefersReducedMotion()) return;
     if (typeof document !== "undefined" && document.hidden) return;
     const minuteur = setInterval(() => allerA(index + 1), DELAI);
     return () => clearInterval(minuteur);
-  }, [lecture, visible, paused, survol, index, allerA]);
-
-  /**
-   * Première navigation au clavier : la lecture automatique s'arrête, et ne
-   * repart pas — le choix est mémorisé.
-   *
-   * Ce que ça sert : un utilisateur de lecteur d'écran ne verra jamais le
-   * carrousel tourner sous sa lecture. **Aucune API ne permet de détecter un
-   * lecteur d'écran** ; la navigation au clavier est le signal observable le
-   * plus proche. La réciproque est fausse — un visiteur voyant au clavier perd
-   * l'animation lui aussi. Arbitrage d'Arthur du 2026-08-13.
-   *
-   * `Tab` est le signal fiable : en mode exploration, les lecteurs d'écran
-   * consomment les flèches pour leur curseur virtuel, mais laissent passer la
-   * tabulation. Les flèches sont écoutées quand même, pour le clavier nu.
-   *
-   * Ignoré dans un champ de saisie : y écrire ou y déplacer le curseur, c'est
-   * éditer, pas naviguer — et le lanceur de conversation vit dans ce carrousel.
-   */
-  useEffect(() => {
-    if (!slideshowAuto) {
-      setLecture(false);
-      return;
-    }
-    const NAVIGATION = new Set([
-      "Tab",
-      "ArrowUp",
-      "ArrowDown",
-      "ArrowLeft",
-      "ArrowRight",
-      "Home",
-      "End",
-      "PageUp",
-      "PageDown",
-    ]);
-    function onKeyDown(e: KeyboardEvent) {
-      if (!NAVIGATION.has(e.key)) return;
-      const cible = e.target as HTMLElement | null;
-      if (cible?.closest("input, textarea, select, [contenteditable]")) return;
-      setLecture(false);
-      document.documentElement.setAttribute("data-slideshow-auto", "off");
-      persistSetting({ slideshowAuto: false }, "slideshow");
-    }
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [slideshowAuto]);
+  }, [auto, visible, paused, survol, index, allerA]);
 
   // Onglet en arrière-plan : rien ne doit continuer de tourner.
   useEffect(() => {
@@ -304,17 +287,21 @@ export default function PersonaSlideshow({
         <button
           type="button"
           className="ama-button-icon ama-button-icon--secondary ama-button-icon--sm slideshow__play"
-          aria-pressed={lecture}
-          aria-label={t(lang, lecture ? "pauseSlideshow" : "playSlideshow")}
+          // `auto` et non `lecture` : le bouton doit dire ce qui se passe. En
+          // navigation au clavier, le carrousel est figé même si la bascule
+          // n'a jamais été touchée — l'annoncer « en lecture » serait faux.
+          aria-pressed={auto}
+          aria-label={t(lang, auto ? "pauseSlideshow" : "playSlideshow")}
           onClick={() => {
             // Le bouton garde le focus après le clic, et le focus suspend le
             // défilement : sans cette levée, « lecture » n'aurait relancé
             // qu'une fois le focus parti ailleurs.
             setSurvol(false);
-            setLecture((v) => !v);
+            setExplicite(true);
+            setLecture(!auto);
           }}
         >
-          {lecture ? <PauseIcon /> : <PlayIcon />}
+          {auto ? <PauseIcon /> : <PlayIcon />}
         </button>
 
         <div className="slideshow__steps">

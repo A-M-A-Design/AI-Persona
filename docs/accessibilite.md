@@ -164,17 +164,30 @@ premiers arrêts un nom accessible et un anneau de focus visible.
   `prefers-reduced-motion` la neutralise entièrement. Elle se suspend aussi au
   survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
   panneau s'ouvre.
-- **La première navigation au clavier l'arrête définitivement**, et le choix est
-  mémorisé (`slideshowAuto`). La demande était « mettre en pause quand un
-  lecteur d'écran est actif » : **c'est impossible**. Aucune API n'expose la
-  présence d'une technologie d'assistance, et les heuristiques qui circulent
-  — chaîne d'agent utilisateur, `forced-colors` — sont autant du pistage que de
-  l'approximation. Le signal observable le plus proche est la navigation au
-  clavier, que tout utilisateur de lecteur d'écran pratique ; `Tab` en
-  particulier, que le mode exploration laisse passer là où il consomme les
-  flèches. La réciproque est fausse et assumée : un visiteur voyant au clavier
-  perd l'animation lui aussi. Saisir dans le champ ne compte pas — y déplacer
-  le curseur, c'est éditer, et le lanceur vit dans ce carrousel.
+- **La navigation au clavier le fige**, et la souris le relance. La demande
+  était « mettre en pause quand un lecteur d'écran est actif » : **c'est
+  impossible**. Aucune API n'expose la présence d'une technologie d'assistance,
+  et les heuristiques qui circulent — chaîne d'agent utilisateur,
+  `forced-colors` — sont autant du pistage que de l'approximation.
+
+  Ce qu'on observe, c'est la **façon de naviguer** (`components/NavMode.tsx`,
+  attribut `data-nav-mode` sur `<html>`, mémorisé). Un utilisateur de lecteur
+  d'écran navigue au clavier et ne produit **aucun** événement pointeur : il
+  reste en mode clavier toute sa visite, et le contenu ne change jamais sous sa
+  lecture. `Tab` est la touche fiable — le mode exploration la laisse passer là
+  où il consomme les flèches.
+
+  **Le mode est réversible**, et c'est ce qui le distingue du verrou qu'il
+  remplace : le visiteur voyant qui appuie une fois sur `Tab` retrouve
+  l'animation dès qu'il reprend la souris. Trois réglages en découlent :
+
+  - **le tactile ne bascule rien** — un lecteur d'écran mobile balaye l'écran et
+    produit les mêmes `pointerdown` qu'un doigt ordinaire, impossible à
+    distinguer ; seule la souris fait foi (`pointerType`) ;
+  - **les touches de saisie ne comptent pas** — écrire dans un champ, c'est
+    éditer, et le lanceur de conversation vit dans ce carrousel ;
+  - **le bouton lecture prime sur le mode** — sans quoi il serait un contrôle
+    sans effet pour qui navigue au clavier.
 
 ### Les raccourcis clavier du carrousel
 

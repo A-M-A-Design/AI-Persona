@@ -72,22 +72,35 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
-- **La première navigation au clavier arrête la lecture du carousel**, pour de
-  bon, et le choix est mémorisé (`slideshowAuto`).
+- **Le carousel suit le mode de navigation** : figé au clavier, relancé à la
+  souris. `components/NavMode.tsx` pose `data-nav-mode` sur `<html>` et le
+  mémorise.
 
   La demande était « mettre en pause quand un lecteur d'écran est actif ».
   **C'est impossible** : aucune API n'expose la présence d'une technologie
   d'assistance, et les heuristiques qui circulent — chaîne d'agent utilisateur,
-  `forced-colors` — sont autant du pistage que de l'approximation. Le signal
-  observable le plus proche est la navigation au clavier, que tout utilisateur
-  de lecteur d'écran pratique ; `Tab` en particulier, que le mode exploration
-  laisse passer là où il consomme les flèches.
+  `forced-colors` — sont autant du pistage que de l'approximation. Un mode de
+  navigation n'y change rien : c'est **le même signal**, des événements clavier,
+  et non une détection de lecteur d'écran.
 
-  La réciproque est fausse et assumée : **un visiteur voyant au clavier perd
-  l'animation lui aussi**. Arbitrage retenu contre les deux autres options —
-  carousel en pause par défaut pour tout le monde, ou statu quo sur
-  `prefers-reduced-motion` seul. Saisir dans le champ ne compte pas : y déplacer
-  le curseur, c'est éditer, et le lanceur de conversation vit dans ce carousel.
+  Ce qu'il change, c'est la **forme** du signal. La première version posait un
+  verrou à sens unique — une touche, et l'animation était perdue pour de bon,
+  mémorisée. Un mode est un état **réversible** : l'utilisateur de lecteur
+  d'écran, qui ne produit aucun événement pointeur, reste en mode clavier toute
+  sa visite ; le visiteur voyant qui appuie une fois sur `Tab` retrouve
+  l'animation dès qu'il reprend la souris. Le coût assumé de la première
+  version disparaît.
+
+  Trois réglages en découlent, chacun pour une raison :
+
+  - **le tactile ne bascule rien** — un lecteur d'écran mobile balaye l'écran et
+    produit les mêmes `pointerdown` qu'un doigt ordinaire ; les distinguer est
+    impossible, donc seule la souris fait foi (`pointerType`) ;
+  - **les touches de saisie ne comptent pas** — écrire dans un champ, c'est
+    éditer, et le lanceur de conversation vit dans ce carousel ;
+  - **le bouton lecture prime sur le mode** — sans quoi il serait un contrôle
+    sans effet pour qui navigue au clavier, et `aria-pressed` annoncerait « en
+    lecture » un carousel immobile.
 
 - **Les composants sont écrits ici, sur le préfixe `ama`.** `styles/components/`
   remplace le CSS extrait du WDS Accor : `.ama-button` (et `.ama-button-icon`),
