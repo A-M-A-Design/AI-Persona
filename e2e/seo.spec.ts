@@ -97,4 +97,26 @@ test.describe("Partage et indexation", () => {
     // entre elles au lieu d'en faire des textes indépendants.
     expect(donnees.author["@id"]).toContain("#arthur");
   });
+
+  test("aucune requête vers un tiers pendant les tests", async ({ page }) => {
+    /*
+      Les composants de mesure d'audience chargent un script de débogage en
+      développement — deux requêtes vers `va.vercel-scripts.com` à chaque
+      page, y compris pendant toute la suite. Ils sont donc montés en
+      production seulement.
+
+      Ce test garde la porte : une suite qui dépend du réseau devient lente et
+      capricieuse, et celle-ci tourne derrière une interception TLS
+      d'entreprise. C'est aussi ce qui justifie que les réponses du chat soient
+      simulées (`e2e/helpers.ts`) — même principe, autre endroit.
+    */
+    const tiers = new Set<string>();
+    page.on("request", (r) => {
+      const hote = new URL(r.url()).hostname;
+      if (!/^(localhost|127.0.0.1|[::1])$/.test(hote)) tiers.add(hote);
+    });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    expect([...tiers]).toEqual([]);
+  });
 });

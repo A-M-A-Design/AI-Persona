@@ -9,6 +9,8 @@ import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AUTEUR, SITE_NAME, SITE_URL } from "../lib/site";
 import NavMode from "../components/NavMode";
 import Shortcuts from "../components/Shortcuts";
@@ -149,6 +151,30 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             une lecture au clavier. */}
         <NavMode />
         <Shortcuts />
+        {/*
+          Mesure d'audience et de performance.
+
+          Vercel Analytics **ne pose aucun cookie** et n'identifie personne :
+          il compte des pages vues et des référents, pas des individus. C'est
+          ce qui dispense d'un bandeau de consentement — un portfolio dont la
+          première interaction serait un refus de traceurs commencerait mal.
+
+          **Montés en production seulement, et c'est délibéré.** Laissés
+          inconditionnels, les deux composants chargent en développement un
+          script de débogage depuis `va.vercel-scripts.com` : deux requêtes
+          vers un tiers à chaque page, y compris pendant toute la suite de
+          tests — qui n'a aucune raison de dépendre du réseau, et qui tourne
+          ici derrière une interception TLS d'entreprise. Mesuré le
+          2026-08-13, après l'avoir cru l'inverse.
+
+          Retirer ces deux lignes suffit à tout désactiver.
+        */}
+        {process.env.NODE_ENV === "production" && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

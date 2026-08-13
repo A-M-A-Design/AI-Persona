@@ -10,6 +10,26 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Mesure d'audience et de performance**, et le guide de déploiement qui va
+  avec. Vercel Analytics et Speed Insights **ne posent aucun cookie** et
+  n'identifient personne : ils comptent des pages vues et des référents. C'est
+  ce qui dispense d'un bandeau de consentement — un portfolio dont la première
+  interaction serait un refus de traceurs commencerait mal.
+
+  **Montés en production seulement, après mesure.** Je les avais d'abord posés
+  sans condition, en écrivant qu'ils « ne chargent rien en local ». C'était
+  faux : ils demandaient un script de débogage à `va.vercel-scripts.com`, soit
+  deux requêtes vers un tiers à chaque page — y compris pendant toute la suite
+  de tests, qui n'a aucune raison de dépendre du réseau et qui tourne ici
+  derrière une interception TLS d'entreprise. Un test garde désormais la
+  porte : aucune requête sortante pendant les tests.
+
+  Le README porte la liste des variables à poser sur Vercel, ce qui casse sans
+  chacune, et les trois vérifications à faire après le premier déploiement.
+
+
+### Added
+
 - **Métadonnées de partage, plan du site et données structurées.** Un lien vers
   le portfolio s'affichait **nu** : ni titre, ni image, ni description. Pour un
   site dont le canal principal est LinkedIn, c'était le poste SEO qui coûtait

@@ -288,6 +288,49 @@ n'était donc dans aucune paire.
 Le détail, les tolérances et leurs raisons sont dans
 [`docs/accessibilite.md`](docs/accessibilite.md).
 
+## Déploiement
+
+Le dépôt se construit seul : aucun asset extrait, aucune dépendance à l'IP
+Accor. `npm run build` suffit.
+
+### Variables à poser sur Vercel
+
+| Variable | Obligatoire | Sans elle |
+| --- | --- | --- |
+| `MISTRAL_API_KEY` | **oui** | le chat renvoie une erreur |
+| `UPSTASH_REDIS_REST_URL` | **oui** | la limite de débit ne protège pas (cf. plus haut) |
+| `UPSTASH_REDIS_REST_TOKEN` | **oui** | idem |
+| `NEXT_PUBLIC_SITE_URL` | non | Vercel fournit son URL ; à poser le jour où un domaine existe |
+| `CHAT_PROVIDER` | non | `mistral` par défaut |
+| `RATE_LIMIT_PAR_JOUR` / `_PAR_MINUTE` | non | 30 et 5 |
+
+Les cocher pour **Production** *et* **Preview** : une préversion sans clé Upstash
+est une route de chat ouverte, sur la même clé de modèle.
+
+### Mesure d'audience
+
+Vercel Analytics et Speed Insights sont montés **en production seulement**.
+Laissés inconditionnels, ils chargent en développement un script de débogage
+depuis `va.vercel-scripts.com` — deux requêtes vers un tiers à chaque page, y
+compris pendant toute la suite de tests, qui n'a aucune raison de dépendre du
+réseau. Un test le vérifie (`e2e/seo.spec.ts`).
+
+Ni l'un ni l'autre **ne pose de cookie** ni n'identifie personne : ils comptent
+des pages vues et des référents. C'est ce qui dispense d'un bandeau de
+consentement. Retirer les deux composants de `app/layout.tsx` suffit à tout
+désactiver.
+
+### Après le premier déploiement
+
+1. **Vérifier l'aperçu de partage** en collant l'URL dans un message LinkedIn en
+   brouillon : titre, description et image doivent apparaître.
+2. **Vérifier la limite de débit** : les journaux Vercel doivent afficher
+   `[rate-limit] compteur partagé Upstash` au premier appel. S'ils affichent
+   `repli EN MÉMOIRE`, les variables ne sont pas arrivées.
+3. **Refaire une passe au lecteur d'écran sur l'URL de production** : en
+   développement, Next.js injecte sa surcouche d'outils — un arrêt de tabulation
+   de plus et un logo « N » qui n'existent pas en production.
+
 ## Règle d'or (workflow git)
 
 1. **Jamais de commit direct sur `main`** — une branche par changement :
