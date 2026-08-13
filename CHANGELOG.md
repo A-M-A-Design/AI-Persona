@@ -8,6 +8,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Documentation
+
+- `sessions-summary/2026-08-13-session-12.md` : trois retouches d'interface, et
+  ce que leur vérification a mis au jour — deux contrôles qui ne contrôlaient
+  rien et une règle qui ne visait personne. Y figurent aussi les deux détours
+  qui m'appartiennent : neuf processus MCP orphelins qui ont saturé la plage de
+  ports du pont Figma, et une mise en commun sur-conçue qu'Arthur a ramenée à
+  une ligne de sélecteur.
+
 ### Removed
 
 - **Le bouton « nouvelle conversation »** du panneau de chat. Il posait une
