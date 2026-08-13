@@ -142,7 +142,23 @@ export default function Chat({ personas }: Props) {
           exchanges={exchanges}
           questions={questions}
           busy={busy}
-          error={Boolean(error)}
+          /*
+            La limite de débit n'est pas une panne : le visiteur n'a rien
+            cassé, il doit patienter. Le lui dire évite qu'il réessaie
+            aussitôt — et le message générique lui ferait croire à un bug.
+
+            La route répond `{ error: "rate_limited" }` en 429 ; le SDK
+            remonte le corps dans le message de l'erreur.
+          */
+          error={
+            error
+              ? /rate_limited/.test(error.message)
+                ? /"fenetre":"jour"/.test(error.message)
+                  ? "jour"
+                  : "rafale"
+                : "panne"
+              : null
+          }
           onSend={send}
           onClose={() => setOpen(false)}
           onReset={reset}

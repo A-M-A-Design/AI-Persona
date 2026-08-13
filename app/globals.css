@@ -721,6 +721,29 @@ img {
   text-decoration-thickness: 2px;
 }
 
+/* Limite du jour atteinte : l'invitation du persona et les deux façons de
+   poursuivre. Ce n'est pas un message d'erreur de plus, c'est la sortie — d'où
+   le retrait qui la détache du constat. */
+.chat-modal__limite {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ama-sem-spacing-static-stack-xs);
+  margin-top: var(--ama-sem-spacing-static-stack-md);
+}
+
+.chat-modal__limite-invite {
+  margin: 0;
+  font-family: var(--ama-sem-font-families-subtitle), system-ui, sans-serif;
+  font-size: var(--ama-sem-font-sizes-subtitle-md);
+  line-height: var(--ama-sem-line-heights-subtitle-md);
+}
+
+.chat-modal__limite-liens {
+  display: flex;
+  gap: var(--ama-sem-spacing-static-inline-lg);
+  margin: 0;
+}
+
 .chat-modal__article-link:focus-visible,
 .chat-modal__persona-link:focus-visible {
   outline: var(--ama-sem-sizing-focus-outline-width) var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);

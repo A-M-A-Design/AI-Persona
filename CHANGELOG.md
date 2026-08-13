@@ -8,6 +8,43 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **`/api/chat` a enfin une limite de débit par adresse IP.** La route appelait
+  un modèle payant avec **notre** clé, sans aucun garde : un script consommait
+  le quota — ou la facture — en quelques minutes. C'était le premier poste du
+  MVP, et le seul qui protège de l'extérieur.
+
+  Deux fenêtres, qui répondent à deux abus différents. **30 questions par jour**
+  — la limite d'usage. Et **5 par minute**, garde-fou et non plafond : sans lui,
+  une seule adresse tire ses 30 questions en trois secondes et épuise le quota
+  Mistral du compte, qui plafonne à ~2 réponses par minute, **pour tous les
+  autres visiteurs en même temps**. Les deux sont réglables par variable
+  d'environnement, sans redéploiement.
+
+  La vérification passe **avant tout le reste** — avant de lire le corps, avant
+  de résoudre le provider : une requête refusée ne doit rien coûter.
+
+  **Trois messages là où il n'y avait qu'une erreur générique**, parce qu'une
+  limite n'est pas une panne et qu'un visiteur qui croit à un bug réessaie ou
+  s'en va :
+
+  - *la minute* — « Patientez une minute, puis réessayez — votre conversation
+    reste affichée. » Ce qu'il faut faire, et ce qui n'est pas perdu ;
+  - *le jour* — le remerciement, puis l'invitation **du persona lui-même** :
+    « On boit un café ? », « Croisons nos chemins », « RDV IRL ? », avec LinkedIn
+    et l'e-mail. L'invitation vient de `footerHeading`, déjà écrit et déjà dans
+    la bonne voix : un second texte aurait divergé du pied de page ;
+  - *une panne* garde son message générique, sans quoi on ferait croire à une
+    limite atteinte.
+
+  **Le repli en mémoire ne protège pas en production, et le dit.** Sans les
+  variables Upstash, un compteur local prend le relais — suffisant en
+  développement, inopérant sur une plateforme sans serveur où chaque instance a
+  sa propre mémoire et où elles sont éphémères. Le compteur partagé est la
+  raison d'être d'Upstash, pas un luxe.
+
+
 ### Fixed
 
 - **L'échelle du champ de saisie monte d'un cran, indice compris.** Le texte

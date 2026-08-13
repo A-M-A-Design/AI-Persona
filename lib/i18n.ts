@@ -16,6 +16,19 @@ const STRINGS = {
     newChat: "Démarrer une nouvelle conversation",
     mail: "E-mail",
     error: "Oups, quelque chose a coincé. Réessayez dans un instant.",
+    // Trois messages là où il n'y avait qu'une erreur générique. Un visiteur
+    // limité n'a rien cassé : le lui dire évite qu'il réessaie aussitôt, et
+    // qu'il croie le site en panne.
+    // Explicite sur la marche à suivre, et rassurant sur ce qui est conservé :
+    // un visiteur qui croit avoir tout perdu s'en va au lieu d'attendre.
+    errorRateBurst:
+      "Vous allez un peu vite pour moi ! Patientez une minute, puis réessayez — votre conversation reste affichée.",
+    // La limite du jour n'est pas un incident, c'est une fin de conversation.
+    // L'invitation qui suit vient du persona lui-même (`footerHeading`).
+    errorRateDaily:
+      "Merci pour votre intérêt ! Vous avez atteint votre limite de questions pour aujourd'hui.",
+    errorRateDailyInvite: "Continuons ailleurs :",
+    linkedin: "LinkedIn",
     thinking: "Réponse en cours…",
     suggestions: "Questions suggérées",
     moreQuestions: "Voir plus de questions",
@@ -74,6 +87,12 @@ const STRINGS = {
     newChat: "Start a new conversation",
     mail: "Mail",
     error: "Oops, something went wrong. Please try again.",
+    errorRateBurst:
+      "You are going a little fast for me! Please wait a minute and try again — your conversation stays on screen.",
+    errorRateDaily:
+      "Thanks for your interest! You have reached your question limit for today.",
+    errorRateDailyInvite: "Let's continue elsewhere:",
+    linkedin: "LinkedIn",
     thinking: "Thinking…",
     suggestions: "Suggested questions",
     moreQuestions: "See more questions",
