@@ -143,12 +143,28 @@ test.describe("Audit — pointeur et cibles", () => {
         if (e.closest("[inert]")) return;
         // Un contrôle inactif ne reçoit volontairement pas le pointeur.
         if (e.getAttribute("aria-disabled") === "true" || (e as HTMLInputElement).disabled) return;
-        const r = e.getBoundingClientRect();
+        // La partie **visible** seule : dans un défileur, une chip large déborde
+        // largement sa fenêtre, et ce qui est rogné n'est ni vu ni cliquable.
+        // Mesurer sa boîte entière signalerait une zone morte imaginaire.
+        let r = e.getBoundingClientRect();
+        let p: HTMLElement | null = e.parentElement;
+        while (p && p !== document.body) {
+          const c = getComputedStyle(p);
+          if (/(auto|scroll|hidden)/.test(c.overflowX + c.overflowY)) {
+            const pr = p.getBoundingClientRect();
+            const left = Math.max(r.left, pr.left);
+            const right = Math.min(r.right, pr.right);
+            const top = Math.max(r.top, pr.top);
+            const bottom = Math.min(r.bottom, pr.bottom);
+            // Entièrement rogné : ni vu ni cliquable, rien à mesurer. Sans
+            // cette sortie, une largeur négative donnerait un DOMRect
+            // normalisé ailleurs à l'écran, et des zones mortes imaginaires.
+            if (right <= left || bottom <= top) return;
+            r = new DOMRect(left, top, right - left, bottom - top);
+          }
+          p = p.parentElement;
+        }
         if (r.width < 8 || r.height < 8) return;
-        // Le rang de questions suggérées défile sous un bouton de défilement
-        // qui en recouvre la fin : c'est la maquette mobile, et le masque qui
-        // l'accompagne le dit à l'œil. Écarté sciemment.
-        if (e.closest(".launcher__suggestions")) return;
         for (let f = 0.1; f <= 0.9; f += 0.1) {
           const hit = document.elementFromPoint(r.left + r.width * f, r.top + r.height / 2);
           if (hit && hit !== e && !e.contains(hit) && !hit.contains(e)) {
@@ -241,5 +257,57 @@ test.describe("Audit — structure", () => {
       return out;
     });
     expect(sansMarge).toEqual([]);
+  });
+});
+
+test.describe("Audit — contraste forcé", () => {
+  /*
+    Windows en contraste élevé (`forced-colors: active`) remplace d'autorité les
+    couleurs par sa propre palette : nos tokens ne s'appliquent plus, et tout ce
+    qui ne reposait **que** sur une couleur disparaît. Le site n'en tenait aucun
+    compte jusqu'au 2026-08-13.
+  */
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ forcedColors: "active" });
+  });
+
+  test("les chips gardent un contour", async ({ page }) => {
+    await visit(page);
+    // Sans bordure au repos, une chip devient un mot posé sur la page : plus
+    // rien ne dit que c'est un bouton.
+    const bord = await page.evaluate(() => {
+      const c = document.querySelector(".launcher__suggestions .ama-chip");
+      if (!c) return null;
+      const s = getComputedStyle(c);
+      return { style: s.borderTopStyle, largeur: Number.parseFloat(s.borderTopWidth) };
+    });
+    expect(bord?.style).not.toBe("none");
+    expect(bord?.largeur ?? 0).toBeGreaterThan(0);
+  });
+
+  test("l'anneau de focus quitte la couleur du thème pour celle du système", async ({
+    page,
+  }) => {
+    await visit(page);
+    await page.keyboard.press("Tab");
+    const couleur = await page.evaluate(() => {
+      const el = document.querySelector(".skip-link:focus");
+      return el ? getComputedStyle(el).outlineColor : null;
+    });
+    // La teinte du persona `ours` : elle ne doit plus être servie ici.
+    expect(couleur).not.toBe("rgb(180, 91, 35)");
+    expect(couleur).not.toBe("");
+  });
+
+  test("les conteneurs dessinés par un aplat gardent un contour", async ({ page }) => {
+    await visit(page);
+    const carte = await page.evaluate(() => {
+      const c = document.querySelector(".article-card");
+      if (!c) return null;
+      const s = getComputedStyle(c);
+      return { style: s.borderTopStyle, largeur: Number.parseFloat(s.borderTopWidth) };
+    });
+    expect(carte?.style).not.toBe("none");
+    expect(carte?.largeur ?? 0).toBeGreaterThan(0);
   });
 });

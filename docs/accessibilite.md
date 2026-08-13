@@ -277,6 +277,46 @@ La réponse est donc structurelle : les destinations qui comptent existent
 « Accueil, à l'ouverture »). Les raccourcis restent un confort pour le clavier
 nu ; ils ne sont plus le seul chemin vers quoi que ce soit.
 
+### `aria-keyshortcuts` : conservé, et pourquoi
+
+Les deux flèches du carrousel portent `aria-keyshortcuts="ArrowLeft"` /
+`"ArrowRight"`. L'attribut est **fait pour être annoncé** : le lecteur d'écran
+dit « Persona suivant, raccourci flèche droite » — pour une touche que lui-même
+intercepte en mode exploration.
+
+**Arbitrage du 2026-08-13 : on le garde.** L'attribut est exact, le site
+implémente bien ce raccourci, et l'annonce redevient vraie dès que le mode de
+balayage est coupé (`Verr. Maj + Espace` au Narrateur). Retirer une métadonnée
+correcte parce qu'un mode d'un lecteur d'écran l'intercepte appauvrirait
+l'information pour tout le monde, à commencer par l'utilisateur clavier sans
+technologie d'assistance, pour qui c'est le seul moyen de découvrir le
+raccourci.
+
+Ce que cela suppose est écrit ici plutôt que corrigé ailleurs : **l'annonce vaut
+mode de balayage désactivé.**
+
+### Contraste forcé
+
+Windows en contraste élevé (`forced-colors: active`) remplace d'autorité les
+couleurs par sa palette : les tokens ne s'appliquent plus, et **tout ce qui ne
+reposait que sur une couleur disparaît**. Le site n'en tenait aucun compte
+jusqu'au 2026-08-13.
+
+Trois endroits en dépendaient :
+
+- **l'anneau de focus**, qui devenait celui du système, de géométrie
+  imprévisible → `outline-color: Highlight` ;
+- **les chips**, sans bordure au repos : leur fond translucide disparaissant,
+  il ne restait qu'un mot posé sur la page → bordure `ButtonText`, `Highlight`
+  à la sélection ;
+- **les conteneurs dessinés par un aplat** — bulles du chat, cards d'article,
+  panneaux — qui fusionnaient avec la page → contour `CanvasText`.
+
+L'état inactif reposait sur une opacité, que le mode ignore : il passe en
+`GrayText`. Les visuels d'articles et le héro restent des images, que le mode
+n'altère pas — c'est le comportement attendu, et le voile qui porte leur texte
+est déjà opaque.
+
 ### Les liens dans les réponses
 
 Le nom d'un persona cité devient un **bouton** de bascule, le titre d'un article

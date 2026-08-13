@@ -8,6 +8,55 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Le contraste forcé de Windows est enfin géré.** `forced-colors: active`
+  remplace d'autorité les couleurs par la palette du système : les tokens ne
+  s'appliquent plus, et **tout ce qui ne reposait que sur une couleur
+  disparaît**. Le site n'en tenait aucun compte — vérifié, zéro occurrence.
+
+  Trois endroits en dépendaient. L'**anneau de focus**, qui redevenait celui du
+  navigateur, de géométrie imprévisible. Les **chips**, sans bordure au repos :
+  leur fond translucide disparaissant, il ne restait qu'un mot posé sur la page,
+  et plus rien ne disait que c'était un bouton. Les **conteneurs dessinés par un
+  aplat** — bulles du chat, cards, panneaux — qui fusionnaient avec la page.
+
+  L'état inactif reposait sur une opacité, que le mode ignore : il passe en
+  `GrayText`. Les visuels restent des images, que le mode n'altère pas — c'est
+  le comportement attendu. Trois tests couvrent le mode, émulé par Playwright.
+
+### Fixed
+
+- **En mobile, la fin d'une question suggérée passait sous le bouton de
+  défilement** : y taper faisait défiler au lieu de poser la question. La
+  fenêtre de défilement se retire désormais de 44 px — la largeur du bouton plus
+  la gouttière —, si bien que le bouton surplombe du vide et non des chips.
+
+  Un rembourrage **interne** n'aurait pas suffi : il ne déplace que la fin du
+  contenu, et une chip longue serait toujours passée sous le bouton aux
+  positions intermédiaires. C'est la fenêtre qu'il fallait rétrécir.
+
+  La tolérance qui écartait cette rangée de l'audit est **retirée** : le
+  contrôle de zone morte la couvre maintenant comme les autres. Il a fallu
+  d'abord le corriger — il mesurait la boîte entière d'un élément, alors qu'une
+  chip large déborde de son défileur et que ce qui est rogné n'est ni vu ni
+  cliquable. Un élément entièrement rogné en sort désormais, faute de quoi une
+  largeur négative donnait un `DOMRect` normalisé ailleurs à l'écran, et des
+  zones mortes imaginaires.
+
+### Changed
+
+- **`aria-keyshortcuts` est conservé sur les flèches du carousel**, arbitrage
+  écrit dans `docs/accessibilite.md`. L'attribut est annoncé par le lecteur
+  d'écran — « Persona suivant, raccourci flèche droite » — pour une touche que
+  lui-même intercepte en mode exploration. Il reste néanmoins **exact** : le
+  site implémente bien ce raccourci, et l'annonce redevient vraie dès que le
+  mode de balayage est coupé. Retirer une métadonnée correcte parce qu'un mode
+  d'un lecteur d'écran l'intercepte appauvrirait l'information pour tout le
+  monde — à commencer par l'utilisateur clavier sans technologie d'assistance,
+  pour qui c'est le seul moyen de découvrir le raccourci.
+
+
 ### Fixed
 
 - **Le bouton de fermeture du panneau mesurait 22 px en mobile.** Sous le

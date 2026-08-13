@@ -136,6 +136,90 @@ img {
   outline: none;
 }
 
+/* --- Contraste forcé ----------------------------------------------------- */
+
+/*
+  Windows en contraste élevé — `forced-colors: active`. Le système remplace
+  d'autorité les couleurs par une palette de son choix : nos tokens ne
+  s'appliquent plus, et ce qui reposait **seulement** sur une couleur disparaît.
+
+  Le site en dépendait à trois endroits. Ni le nombre ni les valeurs ne sont de
+  nous ici : on ne fait que redire en couleurs système ce que les tokens
+  portaient. Les mots-clés (`Highlight`, `CanvasText`, `ButtonText`, `GrayText`)
+  sont les seuls que le mode laisse passer.
+
+  Non traité volontairement : les visuels d'articles et le héro restent des
+  images, que le mode n'altère pas. C'est le comportement attendu, et le voile
+  qui porte leur texte est déjà opaque.
+*/
+@media (forced-colors: active) {
+  /* 1. L'anneau de focus. Sans lui, le système dessine le sien — géométrie
+        imprévisible, et l'anneau de la page devient invisible. */
+  .skip-link:focus,
+  .shortcuts__hint:focus,
+  .ama-button:focus-visible,
+  .ama-button-icon:focus-visible,
+  .ama-chip:focus-visible,
+  .ama-input-text__input:focus,
+  .ama-select__control-wrapper:focus-within,
+  .site-nav__toggle:focus-visible,
+  .site-nav__chip:has(.site-nav__select:focus-visible),
+  .slideshow__track:focus-visible,
+  .article-card:focus-visible,
+  .carousel__step:focus-visible,
+  .chat-modal__close:focus-visible,
+  .chat-modal__article-link:focus-visible,
+  .chat-modal__persona-link:focus-visible {
+    outline-color: Highlight;
+  }
+
+  /*
+    2. Les chips n'ont pas de bordure au repos : leur fond translucide et leur
+       texte teinté suffisent à les détacher en couleurs normales. En contraste
+       forcé, le fond disparaît et il ne reste qu'un mot posé sur la page —
+       plus rien ne dit que c'est un bouton.
+  */
+  .ama-chip {
+    border: 1px solid ButtonText;
+  }
+
+  .ama-chip--selected,
+  .ama-chip[aria-pressed="true"] {
+    border-color: Highlight;
+  }
+
+  /*
+    3. Les conteneurs dessinés par un aplat seul : bulles du chat, cards
+       d'article, panneau de conversation. Sans contour, ils fusionnent avec la
+       page et la structure visuelle s'efface.
+  */
+  .ama-message,
+  .article-card,
+  .chat-modal__panel,
+  .shortcuts__panel {
+    border: 1px solid CanvasText;
+  }
+
+  /* L'état inactif reposait sur une opacité, que le mode ignore. */
+  .ama-button:disabled,
+  .ama-button[aria-disabled="true"],
+  .ama-button-icon:disabled,
+  .ama-button-icon[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+
+  /*
+    Les chevrons sont des masques teintés par `currentColor` : le mode force
+    cette couleur, ils survivent donc — mais seulement si rien ne les rend
+    transparents. On le redit explicitement.
+  */
+  .ama-chip--dropdown::after,
+  .ama-select__control-wrapper::after {
+    background-color: CanvasText;
+  }
+}
+
 /* --- Ossature de page --------------------------------------------------- */
 
 .page {
@@ -775,6 +859,20 @@ img {
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
+    /*
+      La place du bouton de défilement, réservée. Il est posé en absolu sur la
+      rangée : sans ce retrait, une chip vient s'arrêter dessous et y taper fait
+      défiler au lieu de poser la question — relevé le 2026-08-13, sur la
+      première question, dont la fin passait sous le bouton.
+
+      Un rembourrage **interne** n'y suffirait pas : il ne déplace que la fin du
+      contenu, et une chip longue passerait toujours sous le bouton aux
+      positions intermédiaires. C'est la fenêtre de défilement qu'il faut
+      rétrécir, pour que le bouton surplombe une gouttière et non des chips.
+
+      36 px de bouton + 8 px de gouttière, la valeur du `gap` de la rangée.
+    */
+    margin-inline-end: 44px;
   }
 
   .launcher__suggestions::-webkit-scrollbar {
@@ -1366,9 +1464,12 @@ img {
    défilement : sans ce masque, elles passent derrière lui en restant nettes et
    le bord de la rangée paraît coupé net. Le masque disparaît en fin de course,
    avec le bouton. */
+/* Le fondu se resserre depuis que la rangée s'arrête avant le bouton : il ne
+   couvre plus la largeur de celui-ci, seulement le bord de la fenêtre de
+   défilement, qu'il suffit d'estomper pour dire « ça continue ». */
 .suggestions--more .launcher__suggestions {
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 76px), transparent);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 }
 .suggestions__next {
   position: absolute;
