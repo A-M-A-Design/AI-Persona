@@ -120,6 +120,17 @@ export async function verifieLaLimite(ip: string): Promise<Verdict> {
   }
 
   const minute = await limiteurs.minute.limit(ip);
+  /*
+    `pending` porte le travail que le limiteur fait **après** avoir répondu :
+    réplication multi-régions, analytiques. Sur une plateforme sans serveur, le
+    runtime peut être coupé dès la réponse envoyée — ce travail serait alors
+    abandonné en silence, et le compteur ne compterait pas.
+
+    La documentation d'Upstash recommande `context.waitUntil()` ; l'attendre
+    franchement revient au même ici et ne coûte rien : les analytiques sont
+    coupées et la base est mono-région, donc la promesse est déjà résolue.
+  */
+  await minute.pending;
   if (!minute.success) {
     return {
       autorise: false,
@@ -128,6 +139,7 @@ export async function verifieLaLimite(ip: string): Promise<Verdict> {
     };
   }
   const jour = await limiteurs.jour.limit(ip);
+  await jour.pending;
   if (!jour.success) {
     return {
       autorise: false,
@@ -138,6 +150,22 @@ export async function verifieLaLimite(ip: string): Promise<Verdict> {
   return AUTORISE;
 }
 
-/** Pour le journal de démarrage et les tests : dit ce qui protège réellement. */
+/** Pour les tests : dit ce qui protège réellement. */
 export const protectionPartagee = upstashConfigure;
 export const limites = { parMinute: PAR_MINUTE, parJour: PAR_JOUR };
+
+/*
+  Dit à voix haute lequel des deux compteurs est en service.
+
+  Sans cette ligne, rien ne distingue Upstash du repli : la route se comporte
+  pareil, les 429 arrivent pareil, et l'on croit protégé un déploiement qui ne
+  l'est pas. C'est exactement le genre de panne silencieuse que ce projet
+  traque ailleurs — une variable absente ne casse rien de visible.
+*/
+console.info(
+  upstashConfigure
+    ? `[rate-limit] compteur partagé Upstash — ${PAR_JOUR}/jour, ${PAR_MINUTE}/min par IP`
+    : `[rate-limit] ⚠ repli EN MÉMOIRE — ${PAR_JOUR}/jour, ${PAR_MINUTE}/min par IP. ` +
+        "Suffisant en développement, sans effet en production : poser " +
+        "UPSTASH_REDIS_REST_URL et UPSTASH_REDIS_REST_TOKEN.",
+);
