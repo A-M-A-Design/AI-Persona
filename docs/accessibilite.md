@@ -15,6 +15,7 @@ La page `/dev/kit` est hors périmètre : elle n'est pas publiée.
 | --- | --- |
 | `npm run a11y:contrast` | Toutes les paires texte/fond du thème, 3 personas × 2 modes |
 | `npx playwright test e2e/a11y.spec.ts` | Balayage axe-core + tests nominatifs, 4 largeurs |
+| `npx playwright test e2e/audit-a11y.spec.ts` | Audit systématique : annonces en double, zones mortes, taille de cible, structure |
 
 **Le balayage automatique ne suffit pas, et il faut le dire.** Lancé sur le code
 d'avant correction avec les seules règles WCAG, axe-core ne signalait **aucune**
@@ -27,6 +28,17 @@ l'inspection de l'arbre d'accessibilité.
 C'est la raison d'être de la section « Ce que le lecteur d'écran annonce »
 ci-dessous : ce qui compte n'est pas l'absence de violation mécanique, mais ce
 qui est réellement dit, et dans quel ordre.
+
+**La passe du 2026-08-13 l'a confirmé de la pire façon.** Sept défauts ont été
+trouvés **à l'usage**, au lecteur d'écran ou à la main, alors qu'axe-core passait
+au vert sur tous : un libellé annoncé deux fois, un titre de page identique à son
+`h1`, un `lang` redondant sur 4 000 caractères, un focus qui ne revenait pas
+après la modale, un chevron qui volait le clic sur 20 % d'un contrôle, une ancre
+qui posait sa cible sous la barre collante, un bouton à 22 px.
+
+Aucun n'était visible dans le code sans l'entendre ou l'essayer. `audit-a11y.spec.ts`
+en tire les classes et les vérifie désormais à chaque run — c'est la seule façon
+de ne pas les redécouvrir une deuxième fois.
 
 ## Constats et corrections
 

@@ -10,6 +10,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Fixed
 
+- **Le bouton de fermeture du panneau mesurait 22 px en mobile.** Sous le
+  plancher de 24 × 24 de **WCAG 2.5.8**, critère AA depuis la 2.2. Sa largeur
+  était pourtant déclarée à 24 px : le conteneur flex du bandeau la comprimait.
+  Une largeur déclarée n'est pas une largeur tenue — `flex: none` la tient.
+
 - **Le titre d'un article était lu deux fois, et le corps mal cadré.** Relevé
   sur VoiceOver.
 
@@ -116,6 +121,29 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   aucun, et qu'aucune valeur n'est réécrite en dur dans la feuille servie.
 
 ### Added
+
+- **`e2e/audit-a11y.spec.ts` — un audit systématique des défauts qui échappent
+  aux outils.** Neuf contrôles, quatre largeurs, trois écrans. Chacun vient d'un
+  défaut **réel** relevé à l'usage pendant la session, et qu'axe-core n'avait pas
+  signalé : il passait au vert sur tous.
+
+  Trois familles, tirées de ce que la passe au lecteur d'écran a montré :
+
+  - **Annonces en double** — un `<title>` qui reprend le `h1`, un nom de
+    contrôle répété en texte à côté de lui, une région live qui mêle forme
+    visuelle et forme parlée, un `lang` qui répète celui du document. Le point
+    commun : le même texte existe deux fois dans l'arbre, à deux titres.
+  - **Pointeur et cibles** — aucune zone morte sur un contrôle (un pseudo-élément
+    masqué passe au-dessus et vole le clic), et le plancher de 24 × 24 px.
+  - **Structure** — un seul `h1` exposé, aucun focalisable sous `aria-hidden`,
+    et toute cible d'ancre qui dégage la barre collante.
+
+  Les tolérances sont écrites et motivées dans le fichier : les slides inactives
+  du carrousel sont `inert`, un contrôle inactif ne reçoit volontairement pas le
+  pointeur, et le rang de questions suggérées passe sous son bouton de
+  défilement en mobile. **Une tolérance sans raison écrite est une régression
+  déguisée.**
+
 
 - **Un accès rapide ouvre le document**, tiré d'une passe au lecteur d'écran.
   Trois constats, trois réponses.

@@ -918,6 +918,10 @@ img {
   justify-content: center;
   width: 24px;
   height: 24px;
+  /* `flex: none` : sans lui, le conteneur du bandeau le comprimait à 22 px en
+     mobile, sous le plancher de 24 × 24 de WCAG 2.5.8 (AA depuis la 2.2). Une
+     largeur déclarée n'est pas une largeur tenue dans un conteneur flex. */
+  flex: none;
   padding: 0;
   border: none;
   background: none;
