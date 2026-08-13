@@ -143,6 +143,25 @@ test.describe("Audit — pointeur et cibles", () => {
         if (e.closest("[inert]")) return;
         // Un contrôle inactif ne reçoit volontairement pas le pointeur.
         if (e.getAttribute("aria-disabled") === "true" || (e as HTMLInputElement).disabled) return;
+        /*
+          Amener l'élément au centre du viewport **avant** de le mesurer.
+
+          `elementFromPoint` ne répond que pour la fenêtre visible. Sans ce
+          recentrage, un contrôle sous la ligne de flottaison renvoyait `null`
+          et **sortait silencieusement du contrôle** — il n'était pas déclaré
+          sain, il n'était pas testé du tout. À l'inverse, un contrôle tombant
+          dans la bande du pied de page collant était signalé zone morte, alors
+          qu'un pied collant recouvre par construction ce qui passe dessous et
+          que l'utilisateur fait défiler pour l'atteindre.
+
+          Centrer reproduit le geste réel : on amène la cible à l'écran, loin de
+          la barre et du pied, puis on clique. Ce qui intercepte encore là est
+          une vraie zone morte. Le recentrage précède le calcul de rognage
+          ci-dessous, faute de quoi celui-ci porterait sur des positions
+          périmées.
+        */
+        e.scrollIntoView({ block: "center", inline: "center", behavior: "instant" });
+
         // La partie **visible** seule : dans un défileur, une chip large déborde
         // largement sa fenêtre, et ce qui est rogné n'est ni vu ni cliquable.
         // Mesurer sa boîte entière signalerait une zone morte imaginaire.

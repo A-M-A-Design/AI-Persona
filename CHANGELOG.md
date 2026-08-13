@@ -21,6 +21,30 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Le héro mobile suit la maquette** (frame `web.slideshow`, 375 × 550) : la
+  hauteur passe de 600 à 550 px et le retrait haut du contenu de 150 à 100 px,
+  ce qui remonte le titre d'autant. Vérifié sur les trois avatars à 320, 375 et
+  414 px : aucun chevauchement avec le panneau de conversation, marge minimale
+  48 px.
+
+  Deux points où la maquette et le code divergeaient ont été **soumis plutôt que
+  tranchés seul**, et Arthur a confirmé l'existant dans les deux cas : le champ
+  reste en pilule (la composition mobile le donne en `r=100`, contre `r=6` sur
+  la planche du composant), et le titre du panneau reste à 16/20 px — la valeur
+  du token en mobile, la maquette gardant 18/24.
+
+- **Le contrôle des zones mortes couvre enfin ce qui est sous la ligne de
+  flottaison.** `elementFromPoint` ne répond que pour la fenêtre visible : tout
+  contrôle situé plus bas renvoyait `null` et **sortait silencieusement du
+  test** — il n'était pas déclaré sain, il n'était pas testé. À l'inverse, un
+  contrôle tombant dans la bande du pied de page collant était signalé à tort,
+  alors qu'un pied collant recouvre par construction ce qui passe dessous.
+
+  Chaque cible est désormais recentrée dans le viewport avant d'être sondée,
+  ce qui reproduit le geste réel. Mesuré : un voleur de clic posé sur une card à
+  y = 2489, hors d'un viewport de 900 px, passait inaperçu et est maintenant
+  détecté.
+
 - **Le héro de libellule respire sur mobile.** Press Start 2P occupe environ
   deux fois la largeur d'une grotesque à taille égale : à 38 px le titre passait
   à 3 lignes contre 2 pour les autres avatars, et son accroche à 4 lignes à
