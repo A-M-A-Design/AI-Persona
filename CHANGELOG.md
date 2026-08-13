@@ -8,6 +8,28 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **L'échelle du champ de saisie monte d'un cran, indice compris.** Le texte
+  saisi prend `on-surface-hi` — c'est le contenu de l'utilisateur, il n'a aucune
+  raison d'être en retrait — et l'indice `on-surface-mid`. Sur le panneau du
+  lanceur, qui force le mode sombre : **16,92:1 / Lc −103** pour la saisie,
+  **10,46:1 / Lc −71** pour l'indice, contre Lc −53 auparavant.
+
+  La hiérarchie entre les deux est conservée, et elle compte : un indice qui
+  ressemble à une saisie fait croire le champ déjà rempli, c'est le défaut
+  classique du placeholder. Mais elle se joue désormais **entre deux valeurs
+  lisibles**, et non entre une lisible et une qui ne l'est pas. Le select suit
+  la même échelle.
+
+- **`/dev/kit` avait un lien d'évitement qui ne menait nulle part**, puis plus
+  de lien du tout. La page a bien un `<main>` — contrairement à ce que j'avais
+  écrit — mais pas d'`id="contenu"` : l'ancre que le layout visait n'existait
+  pas. Puis l'accès rapide est passé aux pages, et celle-ci n'en a plus eu.
+  Les deux sont réglés, et un test le vérifie : page interne, hors périmètre
+  d'audit, raison de plus pour que rien ne l'y ramène.
+
+
 ### Changed
 
 - **Le README est à jour de la session, à commencer par un conseil devenu

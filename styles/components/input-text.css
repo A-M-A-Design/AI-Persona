@@ -39,13 +39,18 @@
   border-radius: var(--ama-sem-border-radius-input);
   background: var(--ama-sem-color-surface-container-low);
   /*
-    Le texte saisi, en `mid` et non `low`. Mesuré sur le panneau du lanceur —
-    qui force le mode sombre, donc **quel que soit le réglage du site** :
-    `low` donnait 7,26:1 pour **Lc −53**, quand le seuil APCA d'un texte courant
-    de 16 px est Lc 75. Le ratio flatte ici parce qu'il est symétrique et ignore
-    la polarité ; la perception, non. `mid` porte la mesure à 10,46:1 / Lc −71.
+    Le texte saisi prend `hi`, le plus lisible : c'est le contenu de
+    l'utilisateur, il n'a aucune raison d'être en retrait.
+
+    Toute l'échelle a monté d'un cran, indice compris. Mesuré sur le panneau du
+    lanceur — qui force le mode sombre, donc **quel que soit le réglage du
+    site** : `low` donnait 7,26:1 pour **Lc −53**, quand le seuil APCA d'un
+    texte courant de 16 px est Lc 75. Le ratio flatte ici parce qu'il est
+    symétrique et ignore la polarité ; la perception, non.
+
+    `hi` porte la mesure à **16,92:1 / Lc −103**.
   */
-  color: var(--ama-sem-color-on-surface-mid);
+  color: var(--ama-sem-color-on-surface-hi);
   padding: var(--ama-sem-spacing-static-inset-squish-md-v)
     var(--ama-sem-spacing-static-inset-squish-md-h);
   font-family: var(--ama-sem-font-families-input);
@@ -66,11 +71,14 @@
   paires de tokens, et cette couleur n'en était pas une — personne ne l'avait
   déclarée. Relevé le 2026-08-13 en mesurant les couleurs réellement rendues.
 
-  `low` le place à 7,26:1, sous le texte saisi qui est en `mid` : la hiérarchie
-  visuelle demeure, les deux passent.
+  `mid` le place à **10,46:1 / Lc −71**, un cran sous le texte saisi qui est en
+  `hi`. La hiérarchie compte : un indice qui ressemble à une saisie fait croire
+  le champ déjà rempli — c'est le défaut classique du placeholder. Mais elle se
+  joue désormais **entre deux valeurs lisibles**, et non entre une lisible et
+  une qui ne l'est pas.
 */
 .ama-input-text__input::placeholder {
-  color: var(--ama-sem-color-on-surface-low);
+  color: var(--ama-sem-color-on-surface-mid);
   /* Firefox applique une opacité de 0,54 par défaut, qui écraserait la mesure. */
   opacity: 1;
 }

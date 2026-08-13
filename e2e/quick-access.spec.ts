@@ -116,4 +116,23 @@ test.describe("Accès rapide", () => {
     expect(r.champDansLaFenetre).toBe(true);
     expect(r.panneauEntier).toBe(true);
   });
+
+  test("la page kit aussi, et son lien mène quelque part", async ({ page }) => {
+    /*
+      Elle avait un `<main>` mais pas d'`id="contenu"` : le lien d'évitement que
+      le layout y posait visait une ancre inexistante. Puis, l'accès rapide
+      passant aux pages, elle n'en a plus eu du tout. Page interne, hors
+      périmètre d'audit — raison de plus pour que rien ne l'y ramène.
+    */
+    await page.goto("/dev/kit");
+    await page.waitForLoadState("networkidle");
+    const ordre = await page
+      .locator(".quick-access .skip-link")
+      .evaluateAll((els) => els.map((e) => e.getAttribute("href")));
+    expect(ordre).toEqual(["#contenu"]);
+
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+    await expect(page.locator("main#contenu")).toBeFocused();
+  });
 });
