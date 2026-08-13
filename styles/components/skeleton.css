@@ -5,9 +5,12 @@
  * lisible sans être ressentie comme un clignotement.
  */
 
+/* 4 px littéraux, comme avant la réécriture. Le token `container-low` vaut
+   6 px : le passage à un token aurait été plus propre en théorie, mais aurait
+   changé le rendu sans que personne ne l'ait demandé. */
 .ama-skeleton {
   display: inline-block;
-  border-radius: var(--ama-sem-border-radius-container-low);
+  border-radius: 4px;
   background: var(--ama-sem-color-surface-container-mid);
   animation: ama-skeleton-pulse 1.5s ease-in-out infinite;
   vertical-align: middle;

@@ -38,6 +38,9 @@ function Select({
       <label className="ama-select__label" htmlFor={id}>
         <span className="ama-select__label-text">{label}</span>
       </label>
+      {/* Aucun glyphe de chevron ici : le composant le dessine en `::after`,
+          hors du flux et sans capter le pointeur. Un frère du `<select>`
+          rendait au contraire le coin droit inerte. */}
       <span className="ama-select__control-wrapper">
         <select
           id={id}
@@ -51,9 +54,6 @@ function Select({
             </option>
           ))}
         </select>
-        <span className="ama-select__icon" aria-hidden="true">
-          ▾
-        </span>
       </span>
     </div>
   );

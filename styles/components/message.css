@@ -51,7 +51,8 @@
   gap: var(--ama-sem-spacing-static-inline-xs);
 }
 
+/* Pas de `margin: 0` : le `<p>` garde les marges du navigateur, comme avant la
+   réécriture. Les annuler resserrait le bandeau d'erreur du chat. */
 .ama-message__text {
   flex: 1;
-  margin: 0;
 }

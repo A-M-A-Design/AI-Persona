@@ -30,11 +30,35 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   pas. Restaient 6 composants réellement servis — 5 en production, le
   `skeleton` n'existant que sur la page kit interne.
 
+  **Correctif de la même série.** La première version de cette réécriture
+  dessinait les chevrons (chip déroulant, select) avec deux bords d'un carré
+  tourné à 45°, au lieu du masque SVG d'origine : un « V » plus épais et à
+  angles vifs, visiblement différent. Signalé par Arthur, revenu à un masque
+  SVG — tracé écrit ici, un polyligne à bouts arrondis.
+
+  **La barre de réglages avait une bande morte à droite.** Son balisage posait
+  un glyphe `▾` *frère* du `<select>` : il recevait le clic sans rien en faire,
+  et doublait le chevron du composant. Le glyphe est retiré, le composant
+  dessine seul, en `::after` hors flux et en `pointer-events: none`. Le
+  `<select>` occupe désormais toute l'enveloppe. `e2e/selects.spec.ts` vérifie
+  sur les deux sélecteurs du site — chip du header et champ de la page kit —
+  que le clic atteint le `<select>` à 8 %, 50 % et 94 % de la largeur.
+
   Le rendu est inchangé, y compris là où la fidélité coûtait quelque chose :
   `.ama-chip` n'a **pas** de bordure au repos, parce que le persona libellule
   pose son liseré rétro en ne réglant que `border-width`/`border-style` et
   compte donc sur `currentColor` — lui donner une `border-color` la lui aurait
-  volée. Deux écarts assumés, tous deux invisibles : l'état pressé du bouton
+  volée.
+
+  Trois écarts avaient en revanche été introduits **sans être signalés**, et
+  sont revenus aux valeurs d'avant : le rayon du skeleton (4 px littéraux, et
+  non le token `container-low` qui vaut 6 px), `margin: 0` sur
+  `.ama-message__text` — qui resserrait le bandeau d'erreur du chat — et
+  l'alignement vertical dans l'enveloppe du select. Le seul reste est le
+  rembourrage droit du contrôle, élargi pour dégager le chevron : sans lui une
+  option longue passe dessous.
+
+  Deux écarts assumés, tous deux invisibles : l'état pressé du bouton
   primaire lit `--ama-comp-btn-primary-pressed-fg-color` au lieu de
   `--ama-sem-color-on-accent` (le WDS n'utilisait le token dédié que pour les
   niveaux secondaire et tertiaire), et `.ama-skeleton` cesse de battre sous

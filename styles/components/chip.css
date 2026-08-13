@@ -80,16 +80,17 @@
   display: none;
 }
 
+/* Chevron en masque SVG, teinté par `currentColor` : un coin de carré tourné
+   donnait un « V » épais et à angles vifs, visiblement différent du chevron
+   fin d'origine. Le tracé est un simple polyligne à bouts arrondis. */
 .ama-chip--dropdown::after {
   width: var(--ama-sem-sizing-icon-xs);
   height: var(--ama-sem-sizing-icon-xs);
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
   content: "";
-  /* Le carré tourné pointe vers le bas ; le décalage vertical le recentre sur
-     la ligne de base du libellé, que la rotation lui fait quitter. */
-  transform: translateY(-25%) rotate(45deg);
-  transform-origin: center;
-  box-sizing: border-box;
   flex: 0 0 auto;
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9.5l6 6 6-6'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
 }

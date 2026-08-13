@@ -30,11 +30,12 @@
   text-transform: var(--ama-sem-text-case-label);
 }
 
+/* `align-items` reste à sa valeur initiale (`stretch`) : le `<select>` occupe
+   ainsi toute la hauteur de l'enveloppe, et donc toute la zone cliquable. */
 .ama-select__control-wrapper {
   position: relative;
   display: flex;
   overflow: hidden;
-  align-items: center;
   box-sizing: border-box;
   border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
   border-radius: var(--ama-sem-border-radius-input);
@@ -48,29 +49,33 @@
   outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
 }
 
-/* Chevron dessiné en CSS — deux bords d'un carré tourné — plutôt qu'importé :
-   ni requête réseau ni fichier binaire à versionner. `pointer-events: none`
-   pour qu'un clic dessus atteigne quand même le `<select>` en dessous. */
+/* Chevron en masque SVG teinté par `currentColor`, seul chevron du composant :
+   c'est lui que le balisage doit laisser dessiner, sans poser de glyphe à lui.
+   `pointer-events: none` est ce qui garde toute l'enveloppe cliquable — sans
+   quoi le coin droit avale le clic au lieu de le passer au `<select>`. */
 .ama-select__control-wrapper::after {
   position: absolute;
   z-index: 1;
   top: 50%;
-  right: var(--ama-sem-spacing-static-inset-squish-md-v);
-  width: var(--ama-sem-sizing-icon-xs);
-  height: var(--ama-sem-sizing-icon-xs);
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  box-sizing: border-box;
+  right: var(--ama-sem-spacing-static-inset-squish-md-h);
+  width: var(--ama-sem-sizing-icon-sm);
+  height: var(--ama-sem-sizing-icon-sm);
   color: var(--ama-sem-color-on-surface-hi);
   content: "";
   pointer-events: none;
-  transform: translateY(-65%) rotate(45deg);
+  transform: translateY(-50%);
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9.5l6 6 6-6'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
 }
 
+/* `width: 100%` et pas de frère dans l'enveloppe : le contrôle en occupe toute
+   la surface, donc cliquer n'importe où l'ouvre. */
 .ama-select__control {
   position: relative;
   width: 100%;
-  height: 100%;
   box-sizing: border-box;
   /* Le rembourrage de droite laisse la place au chevron, sinon une option
      longue passe dessous. */
@@ -100,13 +105,8 @@
   outline: none;
 }
 
-/* Une icône dans l'enveloppe pousse le contrôle : sans cela, le libellé de
-   l'option se poserait par-dessus. */
-.ama-select__icon {
-  align-self: center;
-  padding-inline-start: var(--ama-sem-spacing-static-inset-squish-md-v);
-}
-
-.ama-select__control-wrapper:has(.ama-select__icon) .ama-select__control {
-  padding-inline-start: var(--ama-sem-spacing-static-inline-xs);
-}
+/* Pas de créneau d'icône : le WDS en avait un, prévu pour une icône *avant* le
+   contrôle, que la barre de réglages détournait pour y poser un glyphe `▾`
+   après lui. Il en résultait deux chevrons superposés, et surtout une bande
+   morte à droite — ce frère du `<select>` recevait le clic sans rien en faire.
+   Le composant dessine son chevron lui-même, le balisage n'en pose plus. */
