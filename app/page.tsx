@@ -1,4 +1,5 @@
 import ArticlesSection from "../components/ArticlesSection";
+import { DonneesAccueil } from "../components/DonneesStructurees";
 import QuickAccess from "../components/QuickAccess";
 import Chat, { type PersonaPublic } from "../components/chat/Chat";
 import SiteHeader from "../components/header/SiteHeader";
@@ -16,6 +17,7 @@ export default function Home() {
     <>
       {/* Tout premier contenu du document : le nom du site, puis les deux
           destinations qui comptent. Voir components/QuickAccess.tsx. */}
+      <DonneesAccueil />
       <QuickAccess accueil />
       <SiteHeader />
       {/* Le slideshow est pleine largeur, comme la barre et le pied de page :
