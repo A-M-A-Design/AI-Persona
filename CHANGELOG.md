@@ -21,6 +21,17 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Changed
 
+- **Le panneau de conversation reprend le champ du héro en mobile** : la flèche
+  passe **dans** le champ, à droite, au lieu d'un bouton posé à côté. Celui-ci
+  prenait 133 px sur un écran de 375, et il n'en restait que 174 pour écrire.
+  Le traitement n'est pas recopié : la déclaration du lanceur vaut désormais
+  pour les deux.
+
+  Corrigé au passage, une règle qui ne s'appliquait à personne : l'estompage de
+  la flèche inactive visait `:disabled`, quand le bouton porte `aria-disabled`
+  — et jamais `disabled`, qui le sortirait de la tabulation. Mesuré : la flèche
+  gardait exactement la même couleur, champ vide ou rempli.
+
 - **Le héro mobile suit la maquette** (frame `web.slideshow`, 375 × 550) : la
   hauteur passe de 600 à 550 px et le retrait haut du contenu de 150 à 100 px,
   ce qui remonte le titre d'autant. Vérifié sur les trois avatars à 320, 375 et

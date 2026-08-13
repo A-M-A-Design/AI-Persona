@@ -313,27 +313,57 @@ test.describe("Lanceur", () => {
     await expect(chips).toHaveCSS("mask-image", "none");
   });
 
-  test("mobile : champ en pilule, flèche à l'intérieur", async ({ page }, testInfo) => {
+  test("mobile : flèche à l'intérieur du champ, sur les deux écrans", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile", "spécifique au breakpoint mobile");
     await visit(page);
 
     // Le panneau fait 343 sur une base de 375, et son retrait de 28 laisse
     // 287 au champ — les valeurs de la maquette v2.
-    const field = await page.locator(".launcher__row .ama-input-text__wrapper").boundingBox();
+    const champ = await page.locator(".launcher__row input").boundingBox();
     const panneau = await page.locator(".launcher--hero").boundingBox();
     expect(Math.round(panneau?.width ?? 0)).toBe(343);
-    expect(Math.round(field?.width ?? 0)).toBe(287);
+    expect(Math.round(champ?.width ?? 0)).toBe(287);
 
-    // Le champ est une pilule, et l'action est posée dedans — pas à côté.
-    await expect(page.locator(".launcher__row .ama-input-text__wrapper")).toHaveCSS(
-      "border-radius",
-      "100px",
+    /*
+      Le rayon se lit sur le **champ**, pas sur son enveloppe.
+
+      Ce test affirmait auparavant `border-radius: 100px` sur
+      `.ama-input-text__wrapper`, et en concluait « champ en pilule ». La
+      déclaration existait bien ; elle ne peignait rien. L'enveloppe n'a ni fond
+      ni bordure et ne rogne pas son contenu — c'est le champ qui porte la peau,
+      au rayon que lui donne `--ama-sem-border-radius-input`. Le test passait au
+      vert sur une propriété sans effet, et son intitulé décrivait un rendu qui
+      n'a jamais existé.
+    */
+    const rayonChamp = await page
+      .locator(".launcher__row input")
+      .evaluate((el) => getComputedStyle(el).borderRadius);
+    const rayonToken = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--ama-sem-border-radius-input").trim(),
     );
-    const button = await page.locator(".launcher__row button[type=submit]").boundingBox();
-    const fieldRight = (field?.x ?? 0) + (field?.width ?? 0);
-    const buttonRight = (button?.x ?? 0) + (button?.width ?? 0);
-    expect(buttonRight).toBeLessThanOrEqual(fieldRight);
-    expect(button?.x ?? 0).toBeGreaterThan(field?.x ?? 0);
+    expect(rayonChamp).not.toBe("0px");
+    // 0.375rem → 6px : on compare en pixels, l'unité déclarée n'étant pas celle
+    // que le navigateur calcule.
+    expect(parseFloat(rayonChamp)).toBeCloseTo(parseFloat(rayonToken) * 16, 1);
+
+    // L'action est posée dans le champ — pas à côté.
+    const bouton = await page.locator(".launcher__row button[type=submit]").boundingBox();
+    expect((bouton?.x ?? 0) + (bouton?.width ?? 0)).toBeLessThanOrEqual(
+      (champ?.x ?? 0) + (champ?.width ?? 0),
+    );
+    expect(bouton?.x ?? 0).toBeGreaterThan(champ?.x ?? 0);
+
+    // Le panneau de conversation reçoit désormais le même traitement, porté par
+    // le composant et non plus recopié pour chaque écran.
+    await page.fill(".launcher__row input", "bonjour");
+    await page.locator(".launcher__row button[type=submit]").click();
+    await page.waitForSelector(".chat-modal__panel");
+    const champModal = await page.locator(".chat-modal__composer input").boundingBox();
+    const boutonModal = await page.locator(".chat-modal__composer button[type=submit]").boundingBox();
+    expect((boutonModal?.x ?? 0) + (boutonModal?.width ?? 0)).toBeLessThanOrEqual(
+      (champModal?.x ?? 0) + (champModal?.width ?? 0),
+    );
+    expect(boutonModal?.x ?? 0).toBeGreaterThan(champModal?.x ?? 0);
   });
 
   test("le panneau garde son aplat à toutes les largeurs", async ({ page }) => {
