@@ -10,6 +10,19 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Security
 
+- **Les fichiers de secrets hors `.env` sont ignorés, des deux côtés.** Un
+  fichier de codes de récupération Vercel a été déposé à la racine du projet le
+  2026-08-13 : ni `.gitignore` ni `.vercelignore` ne le couvraient, et il a
+  suivi le déploiement suivant. Il n'était pas servi publiquement — vérifié,
+  404 sur les trois chemins plausibles — mais il a bien atterri dans le
+  stockage de source du déploiement.
+
+  Le motif retenu est large (`*recovery-codes*`, `*backup-codes*`, `/secrets/`,
+  `*.key`, `*.p12`, `*.pfx`) plutôt qu'un nom exact : la prochaine fois le
+  fichier s'appellera autrement. Leçon générale — la protection ne tenait qu'à
+  `.env*`, ce qui suppose que tout secret arrive nommé comme une variable
+  d'environnement. C'est faux dès qu'un service livre un bloc de codes à coller.
+
 - **`.vercelignore` : la règle « l'IP Accor ne sort jamais » ne dépend plus du
   CLI.** Un déploiement depuis GitHub ne voit que le dépôt, où rien de sensible
   n'est versionné. Mais un `vercel deploy` lancé depuis un poste téléverse le
