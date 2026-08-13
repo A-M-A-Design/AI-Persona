@@ -25,6 +25,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   axe, et l'audit systématique — au lieu de documenter un audit qu'il ne lançait
   pas.
 
+- **Le résumé de la session 10 suit** : il listait ce correctif du README comme
+  « reste à faire », ce qu'il n'est plus. Une section sur la documentation s'y
+  ajoute — un document qui a pris du retard n'est pas neutre, il **coûte** plus
+  que son absence, parce qu'on le suit.
+
 - L'introduction dit que **les composants sont écrits dans ce dépôt**, donc que
   le site se construit depuis le seul dépôt ; la règle d'or précise que
   `styles/welds-src/` ne porte plus que l'oracle de `tokens:check` et que rien
