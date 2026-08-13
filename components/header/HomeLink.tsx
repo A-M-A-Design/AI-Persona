@@ -13,7 +13,7 @@ export default function HomeLink() {
   return (
     <Link
       href="/"
-      className="wel-button-icon wel-button-icon--primary wel-button-icon--sm site-nav__home"
+      className="ama-button-icon ama-button-icon--primary ama-button-icon--sm site-nav__home"
       aria-label={t(lang, "backToHome")}
     >
       <HomeIcon />

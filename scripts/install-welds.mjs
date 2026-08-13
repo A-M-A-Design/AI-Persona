@@ -1,13 +1,24 @@
 /**
- * Extrait les assets WDS (design system Accor) nécessaires au POC depuis le zip
- * welds-mcp-v3 vers styles/welds-src/ — dossier GITIGNORÉ : l'IP Accor n'entre
- * jamais dans l'historique git (règle d'or du projet).
+ * Extrait le thème WDS (design system Accor) depuis le zip welds-mcp-v3 vers
+ * styles/welds-src/ — dossier GITIGNORÉ : l'IP Accor n'entre jamais dans
+ * l'historique git (règle d'or du projet).
+ *
+ * **Le site ne sert plus rien de ce dossier.** Depuis la réécriture des
+ * composants (`styles/components/*.css`), `template.theme.css` n'a plus qu'un
+ * usage : servir d'oracle à `npm run tokens:check`, qui compare les thèmes
+ * générés depuis `tokens/` à une référence obtenue par un tout autre chemin.
+ * C'est un outil de vérification, pas une dépendance de build — un `npm run
+ * build` réussit sans ce dossier, et c'est ce qui rend le dépôt déployable.
+ *
+ * Les composants ne sont donc plus extraits. Ils l'étaient au POC pour douze
+ * d'entre eux, dont six n'ont jamais servi ; les six autres sont désormais
+ * écrits dans `styles/components/`, sur le même contrat `--ama-*`.
  *
  * Usage : npm run welds:install
  * Le zip est cherché à la racine du projet, ou via la variable d'env WELDS_ZIP.
  */
 import AdmZip from "adm-zip";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,20 +27,6 @@ const zipPath = process.env.WELDS_ZIP ?? join(root, "welds-mcp-v3.zip");
 const outDir = join(root, "styles", "welds-src");
 
 const THEME = "data/assets/themes/brandbook.css";
-const COMPONENTS = [
-  "button",
-  "inputtext",
-  "message",
-  "chip",
-  "avatar",
-  "segmentedcontrol",
-  "select",
-  "skeleton",
-  "separator",
-  "link",
-  "badge",
-  "card",
-];
 
 if (!existsSync(zipPath)) {
   console.error(`✘ Zip introuvable : ${zipPath}`);
@@ -58,8 +55,7 @@ if (!theme) {
  * Ces fichiers sont des artefacts locaux, gitignorés et reconstruits par cette
  * commande : les renommer n'altère rien de durable, exactement comme
  * `build-themes.mjs` dérive les thèmes du template. Rien d'autre n'est touché
- * dans le CSS d'Accor — les noms de classes `.wel-*` restent les siens, puisque
- * c'est lui qui les fournit.
+ * dans le CSS d'Accor.
  */
 const toAmaContract = (css) => css.replace(/--wel-/g, "--ama-");
 
@@ -72,19 +68,14 @@ const align = (css) => {
 writeFileSync(join(outDir, "template.theme.css"), align(zip.readAsText(theme)));
 console.log(`✔ template.theme.css (${THEME})`);
 
-let componentsCss = "";
-for (const name of COMPONENTS) {
-  const entry = zip.getEntry(`private/install/css/${name}.css`);
-  if (!entry) {
-    console.warn(`⚠ composant absent du zip : ${name}`);
-    continue;
-  }
-  // le renommage couvre aussi les définitions : `.wel-modal` déclare une
-  // variable à lui, qu'il consomme dans la foulée.
-  componentsCss += `\n/* === ${name} === */\n` + align(zip.readAsText(entry));
-  console.log(`✔ ${name}.css`);
+// Un `components.css` d'une extraction antérieure serait encore lu par personne,
+// mais il traînerait dans le dossier et laisserait croire qu'il sert. On l'ôte.
+const ancien = join(outDir, "components.css");
+if (existsSync(ancien)) {
+  rmSync(ancien);
+  console.log("✔ components.css retiré (les composants sont écrits dans styles/components/)");
 }
-writeFileSync(join(outDir, "components.css"), componentsCss);
 
-console.log(`\n→ Assets WDS extraits dans ${outDir} (gitignoré).`);
+console.log(`\n→ Thème WDS extrait dans ${outDir} (gitignoré).`);
 console.log(`  ${renamed} références --wel-* alignées sur le contrat --ama-*.`);
+console.log("  Sert d'oracle à npm run tokens:check — le build n'en dépend pas.");

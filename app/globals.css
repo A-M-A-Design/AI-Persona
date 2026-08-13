@@ -533,7 +533,7 @@ img {
   gap: 12px;
 }
 
-.slideshow__controls .wel-button-icon {
+.slideshow__controls .ama-button-icon {
   width: 40px;
   height: 40px;
 }
@@ -683,12 +683,12 @@ img {
     min-width: 0;
   }
 
-  .launcher__row .wel-input-text__wrapper {
+  .launcher__row .ama-input-text__wrapper {
     border-radius: var(--pill-radius);
   }
 
   /* Réserve la place de la flèche pour que la saisie ne passe pas dessous. */
-  .launcher__row .wel-input-text__input {
+  .launcher__row .ama-input-text__input {
     padding-right: 48px;
   }
 
@@ -730,7 +730,7 @@ img {
     display: none;
   }
 
-  .launcher__suggestions .wel-chip {
+  .launcher__suggestions .ama-chip {
     flex-shrink: 0;
   }
 }

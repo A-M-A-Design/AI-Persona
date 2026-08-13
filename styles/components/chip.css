@@ -1,0 +1,103 @@
+/**
+ * Chip — questions suggérées du lanceur et sélecteur de persona de la barre.
+ *
+ * Les couleurs viennent des tokens `comp-chip-*`, qui portent les trois états
+ * (repos, survol, pressé) et la sélection. La variante `--dropdown` ajoute le
+ * chevron, dessiné en CSS plutôt qu'importé : deux bords d'une boîte tournée à
+ * 45°, donc sans requête réseau ni fichier à versionner.
+ */
+
+.ama-chip {
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  /* Pas de bordure au repos, et c'est structurant : le persona libellule pose
+     un liseré rétro en ne réglant que `border-width`/`border-style`
+     (`persona-extras.css`), donc en laissant la couleur sur `currentColor`.
+     Poser ici une `border-color` la lui volerait. */
+  border: none;
+  border-radius: var(--ama-sem-border-radius-element-interactive-low);
+  background: var(--ama-comp-chip-bg-color);
+  color: var(--ama-comp-chip-fg-color);
+  cursor: pointer;
+  gap: var(--ama-sem-spacing-static-inline-3xs);
+  padding: var(--ama-sem-spacing-static-inset-squish-sm-v)
+    var(--ama-sem-spacing-static-inset-squish-sm-h);
+  font-family: var(--ama-sem-font-families-body);
+  font-size: var(--ama-sem-font-sizes-body-sm);
+  font-style: var(--ama-sem-font-styles-body-default);
+  font-weight: var(--ama-sem-font-weights-body-default);
+  line-height: var(--ama-sem-line-heights-body-sm);
+  letter-spacing: var(--ama-sem-letter-spacing-body);
+  text-transform: var(--ama-sem-text-case-body);
+}
+
+@media (any-hover: hover) {
+  .ama-chip:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: var(--ama-comp-chip-hover-border-color);
+    background: var(--ama-comp-chip-hover-bg-color);
+    color: var(--ama-comp-chip-hover-fg-color);
+  }
+}
+
+.ama-chip:active {
+  border-color: var(--ama-comp-chip-pressed-border-color);
+  background: var(--ama-comp-chip-pressed-bg-color);
+  color: var(--ama-comp-chip-pressed-fg-color);
+}
+
+.ama-chip:focus-visible {
+  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
+  outline-offset: 2px;
+}
+
+/* La sélection est le seul état qui matérialise la bordure. `box-sizing` étant
+   à `border-box`, elle rogne le rembourrage au lieu de pousser les voisines :
+   sélectionner une chip ne décale pas la rangée. */
+.ama-chip--selected {
+  border: var(--ama-sem-border-width-default) solid
+    var(--ama-comp-chip-selected-border-color);
+  background-color: var(--ama-comp-chip-selected-bg-color);
+  color: var(--ama-comp-chip-selected-fg-color);
+}
+
+.ama-chip__label {
+  display: flex;
+  align-items: baseline;
+  padding: 0 var(--ama-sem-spacing-static-pinch-horizontal-2xs);
+  gap: var(--ama-sem-spacing-static-inline-xs);
+}
+
+.ama-chip__icon {
+  width: var(--ama-sem-sizing-icon-sm);
+  height: var(--ama-sem-sizing-icon-sm);
+  font-size: var(--ama-sem-sizing-icon-sm);
+}
+
+/* Le chevron du menu déroulant remplace l'icône : les deux ensemble
+   encombreraient la chip pour dire la même chose. */
+.ama-chip--dropdown .ama-chip__icon {
+  display: none;
+}
+
+/* Chevron en masque SVG, teinté par `currentColor` : un coin de carré tourné
+   donnait un « V » épais et à angles vifs, visiblement différent du chevron
+   fin d'origine. Le tracé est un simple polyligne à bouts arrondis. */
+.ama-chip--dropdown::after {
+  width: var(--ama-sem-sizing-icon-xs);
+  height: var(--ama-sem-sizing-icon-xs);
+  content: "";
+  flex: 0 0 auto;
+  /* Indispensable, et pas seulement par principe : `mask-image` crée un
+     contexte d'empilement, exactement comme `transform`. Le chevron est donc
+     peint **au-dessus** du `<select>` que le chip superpose en absolu — il le
+     suit dans l'ordre du document — et il en interceptait le clic. Il en
+     résultait une bande morte au milieu du chip, là où l'on vise justement
+     pour ouvrir la liste. Le chevron est décoratif : il ne doit rien recevoir. */
+  pointer-events: none;
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9.5l6 6 6-6'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+}

@@ -1,0 +1,169 @@
+/**
+ * Bouton — `.ama-button` et sa variante icône seule `.ama-button-icon`.
+ *
+ * Écrit pour ce site, sur le contrat `--ama-*` : aucune primitive, seulement
+ * `sem` et `comp`. Les trois niveaux (primary, secondary, tertiary) tirent leurs
+ * couleurs des tokens `comp-btn-*`, qui portent déjà les états ; la géométrie
+ * vient de `sem`. Seules les tailles employées ici existent : `md` (par défaut)
+ * et `sm`.
+ *
+ * Les états partagent leurs déclarations par variable locale plutôt que par
+ * répétition : chaque variante ne redéfinit que `--_bg`, `--_fg`, `--_bd`.
+ */
+
+.ama-button,
+.ama-button-icon {
+  /* Repli neutre : une variante non posée reste lisible au lieu de disparaître. */
+  --_bg: transparent;
+  --_fg: inherit;
+  --_bd: transparent;
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  border: var(--ama-sem-border-width-default) solid var(--_bd);
+  background: var(--_bg);
+  color: var(--_fg);
+  appearance: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ama-button {
+  border-radius: var(--ama-sem-border-radius-element-interactive-high);
+  gap: var(--ama-sem-spacing-static-inline-sm);
+  padding: var(--ama-sem-spacing-static-inset-squish-md-v)
+    var(--ama-sem-spacing-static-inset-squish-md-h);
+  font-family: var(--ama-comp-btn-label-font-families);
+  font-size: var(--ama-comp-btn-md-label-font-sizes);
+  font-style: var(--ama-comp-btn-label-font-styles);
+  font-weight: var(--ama-comp-btn-label-font-weights);
+  line-height: var(--ama-comp-btn-md-label-line-heights);
+  letter-spacing: var(--ama-comp-btn-label-letter-spacing);
+  text-transform: var(--ama-comp-btn-label-text-case);
+}
+
+/* Le libellé passe avant l'icône, qui ferme donc le bouton. */
+.ama-button--icon-right {
+  flex-direction: row;
+}
+
+.ama-button--sm {
+  padding: var(--ama-sem-spacing-static-inset-squish-sm-v)
+    var(--ama-sem-spacing-static-inset-squish-sm-h);
+  font-size: var(--ama-comp-btn-sm-label-font-sizes);
+  line-height: var(--ama-comp-btn-sm-label-line-heights);
+}
+
+/* Carré, donc rond : le rayon plein tient quelle que soit la taille d'icône. */
+.ama-button-icon {
+  border-radius: var(--ama-sem-border-radius-element-full);
+  padding: var(--ama-sem-spacing-static-inset-sm);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ama-button__icon,
+.ama-button-icon__icon {
+  display: inline-block;
+  font-size: var(--ama-sem-sizing-icon-sm);
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.ama-button-icon--sm .ama-button__icon,
+.ama-button-icon--sm .ama-button-icon__icon {
+  font-size: var(--ama-sem-sizing-icon-2xs);
+}
+
+/* --- Niveaux ------------------------------------------------------------- */
+
+.ama-button--primary,
+.ama-button-icon--primary {
+  --_bg: var(--ama-comp-btn-primary-bg-color);
+  --_fg: var(--ama-comp-btn-primary-fg-color);
+  --_bd: var(--ama-comp-btn-primary-border-color);
+}
+
+.ama-button--primary:active,
+.ama-button-icon--primary:active {
+  --_bg: var(--ama-comp-btn-primary-pressed-bg-color);
+  --_fg: var(--ama-comp-btn-primary-pressed-fg-color);
+  --_bd: var(--ama-comp-btn-primary-pressed-border-color);
+}
+
+.ama-button--secondary,
+.ama-button-icon--secondary {
+  --_bg: var(--ama-comp-btn-secondary-bg-color);
+  --_fg: var(--ama-comp-btn-secondary-fg-color);
+  --_bd: var(--ama-comp-btn-secondary-border-color);
+}
+
+.ama-button--secondary:active,
+.ama-button-icon--secondary:active {
+  --_bg: var(--ama-comp-btn-secondary-pressed-bg-color);
+  --_fg: var(--ama-comp-btn-secondary-pressed-fg-color);
+  --_bd: var(--ama-comp-btn-secondary-pressed-border-color);
+}
+
+.ama-button--tertiary,
+.ama-button-icon--tertiary {
+  --_bg: var(--ama-comp-btn-tertiary-bg-color);
+  --_fg: var(--ama-comp-btn-tertiary-fg-color);
+  --_bd: var(--ama-comp-btn-tertiary-border-color);
+}
+
+.ama-button--tertiary:active,
+.ama-button-icon--tertiary:active {
+  --_bg: var(--ama-comp-btn-tertiary-pressed-bg-color);
+  --_fg: var(--ama-comp-btn-tertiary-pressed-fg-color);
+  --_bd: var(--ama-comp-btn-tertiary-pressed-border-color);
+}
+
+/* --- Survol -------------------------------------------------------------- */
+
+/* `any-hover` et non `hover` : sur un écran tactile le survol se fige après le
+   tap, et le bouton reste allumé sans que rien ne le survole. */
+@media (any-hover: hover) {
+  .ama-button--primary:hover:not(:disabled, [aria-disabled="true"]),
+  .ama-button-icon--primary:hover:not(:disabled, [aria-disabled="true"]) {
+    --_bg: var(--ama-comp-btn-primary-hover-bg-color);
+    --_fg: var(--ama-comp-btn-primary-hover-fg-color);
+    --_bd: var(--ama-comp-btn-primary-hover-border-color);
+  }
+
+  .ama-button--secondary:hover:not(:disabled, [aria-disabled="true"]),
+  .ama-button-icon--secondary:hover:not(:disabled, [aria-disabled="true"]) {
+    --_bg: var(--ama-comp-btn-secondary-hover-bg-color);
+    --_fg: var(--ama-comp-btn-secondary-hover-fg-color);
+    --_bd: var(--ama-comp-btn-secondary-hover-border-color);
+  }
+
+  .ama-button--tertiary:hover:not(:disabled, [aria-disabled="true"]),
+  .ama-button-icon--tertiary:hover:not(:disabled, [aria-disabled="true"]) {
+    --_bg: var(--ama-comp-btn-tertiary-hover-bg-color);
+    --_fg: var(--ama-comp-btn-tertiary-hover-fg-color);
+    --_bd: var(--ama-comp-btn-tertiary-hover-border-color);
+  }
+}
+
+/* --- Focus et inactivité ------------------------------------------------- */
+
+.ama-button:focus-visible,
+.ama-button-icon:focus-visible {
+  outline: var(--ama-sem-border-width-strong) solid var(--ama-sem-color-focus);
+  outline-offset: 2px;
+}
+
+/* `aria-disabled` autant que `disabled` : le composer garde son bouton d'envoi
+   dans l'ordre de tabulation, donc annonçable, tout en refusant l'envoi. */
+.ama-button:disabled,
+.ama-button[aria-disabled="true"],
+.ama-button-icon:disabled,
+.ama-button-icon[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--ama-sem-number-disabled-opacity);
+  pointer-events: none;
+}

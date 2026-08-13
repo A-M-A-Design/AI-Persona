@@ -211,7 +211,7 @@ test.describe("Slideshow", () => {
   test("les questions suggérées suivent le persona", async ({ page }) => {
     // Chaque persona porte un domaine : ses questions le mettent en avant.
     await visit(page);
-    const chips = page.locator(".launcher__suggestions .wel-chip");
+    const chips = page.locator(".launcher__suggestions .ama-chip");
     await expect(chips.first()).toContainText(/design system/i);
 
     await page.selectOption("#setting-avatar", "libellule");

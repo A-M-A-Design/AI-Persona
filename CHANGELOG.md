@@ -8,7 +8,104 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Changed
+
+- **Les composants sont écrits ici, sur le préfixe `ama`.** `styles/components/`
+  remplace le CSS extrait du WDS Accor : `.ama-button` (et `.ama-button-icon`),
+  `.ama-chip`, `.ama-input-text`, `.ama-message`, `.ama-select`,
+  `.ama-skeleton`. Les classes suivent désormais les tokens — le contrat était
+  déjà passé à `--ama-*`, le vocabulaire des classes le rejoint, et il n'y a
+  plus qu'un seul préfixe à connaître dans le projet.
+
+  **`app/layout.tsx` n'importe plus `styles/welds-src/components.css`.** C'est
+  ce qui débloque le déploiement : ce fichier est gitignoré (règle d'or : l'IP
+  Accor n'entre jamais dans l'historique), donc un build depuis le seul dépôt ne
+  pouvait pas aboutir. Il aboutit maintenant, vérifié par `npm run build` sur un
+  `styles/welds-src/` sans `components.css`.
+
+  **175 Ko → 19 Ko**, et versionnés. L'écart ne vient pas d'un travail de
+  compression : le paquet livrait 12 composants dont **6 n'étaient référencés
+  nulle part**, répétait les règles de `button` dans chaque fichier, et
+  transportait des utilitaires (`.hidden`, `.sm\:flex`…) que le site n'emploie
+  pas. Restaient 6 composants réellement servis — 5 en production, le
+  `skeleton` n'existant que sur la page kit interne.
+
+  **Correctif de la même série.** La première version de cette réécriture
+  dessinait les chevrons (chip déroulant, select) avec deux bords d'un carré
+  tourné à 45°, au lieu du masque SVG d'origine : un « V » plus épais et à
+  angles vifs, visiblement différent. Signalé par Arthur, revenu à un masque
+  SVG — tracé écrit ici, un polyligne à bouts arrondis.
+
+  **Les sélecteurs de la barre de navigation avaient une zone morte, et elle
+  est antérieure à cette réécriture.** Cliquer le chevron du chip (avatar,
+  langue) n'ouvrait pas la liste. Mesuré sur `a726420`, avant tout changement :
+  **inerte de 63 % à 83 % de la largeur**, exactement l'emprise du chevron.
+
+  La cause tient en une ligne de spécification : **`mask-image` crée un contexte
+  d'empilement**, comme `transform` ou `opacity`. Le chevron `::after`, qui suit
+  le `<select>` dans l'ordre du document, est donc peint **au-dessus** de ce
+  `<select>` que le chip superpose en absolu — et il en interceptait le clic.
+  Le chevron est décoratif : `pointer-events: none` le rend transparent au
+  pointeur. On vise justement le chevron pour ouvrir une liste, ce qui rend le
+  défaut d'autant plus visible à l'usage.
+
+  Deuxième foyer, celui-là introduit ici puis corrigé : la barre de réglages de
+  la page kit posait un glyphe `▾` *frère* du `<select>`, qui recevait le clic
+  sans rien en faire et doublait le chevron du composant. Glyphe retiré, le
+  composant dessine seul.
+
+  `e2e/selects.spec.ts` **balaye toute la largeur** des deux sélecteurs, tous
+  les 2 px, et n'accepte aucun point qui n'atteigne pas le `<select>`. Une
+  première version échantillonnait 8 %, 50 % et 94 % : elle **encadrait la zone
+  morte sans jamais la toucher**, et passait au vert. Trois points ne décrivent
+  pas une surface.
+
+  Le rendu est inchangé, y compris là où la fidélité coûtait quelque chose :
+  `.ama-chip` n'a **pas** de bordure au repos, parce que le persona libellule
+  pose son liseré rétro en ne réglant que `border-width`/`border-style` et
+  compte donc sur `currentColor` — lui donner une `border-color` la lui aurait
+  volée.
+
+  Trois écarts avaient en revanche été introduits **sans être signalés**, et
+  sont revenus aux valeurs d'avant : le rayon du skeleton (4 px littéraux, et
+  non le token `container-low` qui vaut 6 px), `margin: 0` sur
+  `.ama-message__text` — qui resserrait le bandeau d'erreur du chat — et
+  l'alignement vertical dans l'enveloppe du select. Le seul reste est le
+  rembourrage droit du contrôle, élargi pour dégager le chevron : sans lui une
+  option longue passe dessous.
+
+  Deux écarts assumés, tous deux invisibles : l'état pressé du bouton
+  primaire lit `--ama-comp-btn-primary-pressed-fg-color` au lieu de
+  `--ama-sem-color-on-accent` (le WDS n'utilisait le token dédié que pour les
+  niveaux secondaire et tertiaire), et `.ama-skeleton` cesse de battre sous
+  `prefers-reduced-motion` sans perdre son aplat.
+
+  Les six fichiers sont réunis par `styles/components/index.css`, et le layout
+  n'importe que lui. Ce détail n'en est pas un : importer les six séparément
+  depuis `layout.tsx` faisait **passer la suite de 1,1 à 2,8 minutes et échouer
+  21 tests**, tous en timeout à 30,0 s sur `networkidle` et tous en desktop.
+  Aucune assertion n'était fausse — le serveur de développement recompilait six
+  modules CSS distincts pendant que seize workers tapaient dessus. Joués seuls,
+  ces 21 tests passaient : c'est ce qui rend le symptôme trompeur, et c'est
+  pourquoi la comparaison qui tranche est **la suite complète contre la suite
+  complète**, jamais un spec isolé.
+
+- **`npm run welds:install` n'extrait plus que le thème.** `template.theme.css`
+  ne sert plus qu'à une chose : servir d'oracle à `npm run tokens:check`. C'est
+  un outil de vérification, pas une dépendance de build. Un `components.css`
+  laissé par une extraction antérieure est supprimé, pour qu'il ne subsiste rien
+  qui ait l'air de servir.
+
 ### Added
+
+- **`npm run css:check` refuse les pannes silencieuses du contrat.** Une
+  variable CSS absente ne produit ni erreur ni avertissement : la déclaration
+  est ignorée et le composant perd sa couleur sans que rien ne le dise. Le
+  script vérifie que chaque `var(--ama-*)` du CSS applicatif est définie dans
+  **les trois** thèmes — un token présent chez `ours` mais pas chez `libellule`
+  ne se verrait qu'en naviguant jusqu'à ce persona, dans ce mode, sur cet
+  écran —, qu'aucune primitive ni alias n'est lu (`sem`/`comp` seulement) et
+  qu'aucun `--wel-*` ne revient. 201 références vérifiées.
 
 - **Le corps des articles ne part plus dans le prompt.** Il y pesait 56 ko —
   plus que tout le reste de la base réuni — pour un contenu que la plupart des

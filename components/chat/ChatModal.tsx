@@ -164,7 +164,7 @@ export default function ChatModal({
                 // Tertiaire et non secondaire : la maquette montre une pastille
                 // contournée sur fond transparent, ce que porte le variant
                 // tertiaire (bg transparent, bordure et libellé sombres).
-                className="wel-button wel-button--tertiary chat-modal__new"
+                className="ama-button ama-button--tertiary chat-modal__new"
                 onClick={onReset}
                 disabled={busy}
               >
@@ -216,9 +216,9 @@ export default function ChatModal({
           ))}
 
           {error && (
-            <div className="wel-message wel-message--warning" role="alert">
-              <div className="wel-message__header">
-                <p className="wel-message__text">{t(lang, "error")}</p>
+            <div className="ama-message ama-message--warning" role="alert">
+              <div className="ama-message__header">
+                <p className="ama-message__text">{t(lang, "error")}</p>
               </div>
             </div>
           )}

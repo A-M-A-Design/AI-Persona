@@ -37,13 +37,13 @@ function ChipSelect({
 }) {
   const current = options.find((o) => o.value === value) ?? options[0];
   return (
-    <span className="wel-chip wel-chip--dropdown site-nav__chip">
+    <span className="ama-chip ama-chip--dropdown site-nav__chip">
       {/* Doublon visuel de l'option sélectionnée du <select>, qui l'annonce
           déjà : exposé, il ferait lire « Ours » puis « Type d'avatar, Ours ». */}
-      <span className="wel-chip__label" aria-hidden="true">
+      <span className="ama-chip__label" aria-hidden="true">
         {current.label}
       </span>
-      <span className="wel-chip__icon" aria-hidden="true">
+      <span className="ama-chip__icon" aria-hidden="true">
         ▾
       </span>
       <select

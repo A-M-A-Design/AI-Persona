@@ -1,0 +1,63 @@
+/**
+ * Champ texte — `.ama-input-text`, son libellé, son enveloppe et son champ.
+ *
+ * L'enveloppe `__wrapper` existe pour que le lanceur puisse y poser son bouton
+ * d'envoi *dans* le champ (cf. `app/globals.css`, qui la met en pilule en
+ * mobile) : c'est elle qui porte la mise en page, le champ ne porte que sa
+ * peau. Sans elle, l'action se retrouverait à côté du champ et non dedans.
+ */
+
+.ama-input-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ama-sem-spacing-static-stack-xs);
+}
+
+.ama-input-text__label {
+  color: var(--ama-sem-color-on-surface-mid);
+  font-family: var(--ama-sem-font-families-label);
+  font-size: var(--ama-sem-font-sizes-label-lg);
+  font-style: var(--ama-sem-font-styles-label-default);
+  font-weight: var(--ama-sem-font-weights-label-default);
+  line-height: var(--ama-sem-line-heights-label-lg);
+  letter-spacing: var(--ama-sem-letter-spacing-label);
+  text-transform: var(--ama-sem-text-case-label);
+}
+
+.ama-input-text__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ama-input-text__input {
+  width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
+  border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
+  border-radius: var(--ama-sem-border-radius-input);
+  background: var(--ama-sem-color-surface-container-low);
+  color: var(--ama-sem-color-on-surface-low);
+  padding: var(--ama-sem-spacing-static-inset-squish-md-v)
+    var(--ama-sem-spacing-static-inset-squish-md-h);
+  font-family: var(--ama-sem-font-families-input);
+  font-size: var(--ama-sem-font-sizes-input-md);
+  font-style: var(--ama-sem-font-styles-input);
+  font-weight: var(--ama-sem-font-weights-input);
+  line-height: var(--ama-sem-line-heights-input-md);
+  text-overflow: ellipsis;
+}
+
+/* `:focus` et non `:focus-visible` : un champ de saisie mérite son anneau même
+   quand on l'a atteint à la souris — c'est là qu'ira la frappe. */
+.ama-input-text__input:focus {
+  border-color: var(--ama-sem-color-focus);
+  outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
+}
+
+.ama-input-text__input:disabled {
+  color: var(--ama-sem-color-on-surface-low);
+  opacity: var(--ama-sem-number-disabled-opacity);
+  cursor: not-allowed;
+}

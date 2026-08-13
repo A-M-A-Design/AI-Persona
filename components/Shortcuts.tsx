@@ -112,7 +112,7 @@ export default function Shortcuts() {
 
         <button
           type="button"
-          className="wel-button wel-button--primary"
+          className="ama-button ama-button--primary"
           ref={fermerRef}
           onClick={() => setAide(false)}
         >

@@ -1,0 +1,35 @@
+/**
+ * Skeleton — l'attente de la première réponse du bot.
+ *
+ * Le battement respecte `prefers-reduced-motion` : l'attente doit rester
+ * lisible sans être ressentie comme un clignotement.
+ */
+
+/* 4 px littéraux, comme avant la réécriture. Le token `container-low` vaut
+   6 px : le passage à un token aurait été plus propre en théorie, mais aurait
+   changé le rendu sans que personne ne l'ait demandé. */
+.ama-skeleton {
+  display: inline-block;
+  border-radius: 4px;
+  background: var(--ama-sem-color-surface-container-mid);
+  animation: ama-skeleton-pulse 1.5s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes ama-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* L'aplat reste, le battement s'arrête : l'indication d'attente ne disparaît
+   pas, elle cesse seulement de bouger. */
+@media (prefers-reduced-motion: reduce) {
+  .ama-skeleton {
+    animation: none;
+  }
+}

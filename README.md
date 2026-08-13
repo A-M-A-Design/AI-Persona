@@ -14,7 +14,10 @@ theming multi-marques d'Accor.
 ## Prérequis (Windows)
 
 - Node ≥ 20 (`node --version`)
-- Le zip `welds-mcp-v3.zip` à la racine du projet (assets WDS — **non commité**)
+- Le zip `welds-mcp-v3.zip` à la racine du projet (thème WDS — **non commité**).
+  Facultatif pour faire tourner le site : il ne sert qu'à `npm run tokens:check`,
+  qui compare les thèmes générés à une référence obtenue par un autre chemin.
+  `npm run dev` et `npm run build` n'en dépendent pas.
 - Une clé API : Mistral ([console.mistral.ai](https://console.mistral.ai/api-keys), tier
   gratuit) ou Anthropic ([console.anthropic.com](https://console.anthropic.com)) —
   le provider se choisit avec `CHAT_PROVIDER`
@@ -23,7 +26,7 @@ theming multi-marques d'Accor.
 
 ```powershell
 npm install
-npm run welds:install        # extrait les assets WDS vers styles/welds-src/ (gitignoré)
+npm run welds:install        # facultatif : thème WDS vers styles/welds-src/ (gitignoré)
 Copy-Item .env.example .env.local   # puis renseigner la clé du provider choisi
 npm run dev                  # http://localhost:3000
 ```
@@ -76,7 +79,8 @@ reste utilisable hors du réseau de l'entreprise.
 | `npm run dev` | Serveur de développement |
 | `npm run build` / `start` | Build et serveur de prod |
 | `npm run check` | Vérification TypeScript (`tsc --noEmit`) |
-| `npm run welds:install` | Extraction des assets WDS depuis le zip |
+| `npm run welds:install` | Extraction du thème WDS depuis le zip — oracle de `tokens:check`, pas une dépendance de build |
+| `npm run css:check` | Vérifie que le CSS applicatif ne lit que des tokens `sem`/`comp` définis dans les 3 thèmes |
 | `npm run themes:build` | Génération des 3 thèmes persona depuis `tokens/` |
 | `npm run tokens:build` | Construction de `tokens/` — l'export `1.0.0_AMaDesignTokens` ([doc](docs/tokens.md)) |
 | `npm run tokens:check` | Compare les thèmes servis à une référence dérivée du WDS par un autre chemin |
@@ -202,6 +206,6 @@ Deux leviers quand le compteur monte :
 - `components/` — UI (chat, header, providers)
 - `knowledge/` — base de connaissance markdown (la matière du bot)
 - `personas/` — définition des 3 personas (ton, questions suggérées, mapping de thème)
-- `styles/` — `welds-src/` (extrait localement, gitignoré) · `generated/` (thèmes persona)
+- `styles/` — `components/` (les composants du site, `.ama-*`) · `generated/` (thèmes persona) · `welds-src/` (thème WDS extrait localement, gitignoré)
 - `scripts/` — outillage Node (`.mjs`)
 - `docs/` — plan de test et golden questions

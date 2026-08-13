@@ -59,7 +59,7 @@ export default function ArticleCard({ article, lang, persona }: Props) {
               {article.title[lang]}
             </h3>
           </div>
-          <span className="wel-button wel-button--secondary wel-button--sm" id={ctaId}>
+          <span className="ama-button ama-button--secondary ama-button--sm" id={ctaId}>
             {t(lang, "readArticle")}
           </span>
         </div>

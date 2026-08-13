@@ -1,0 +1,112 @@
+/**
+ * Select — les réglages de la barre (langue, mode, persona).
+ *
+ * Le `<select>` reste natif : c'est lui qui ouvre la liste du système, donc
+ * celle que le lecteur d'écran et le clavier connaissent déjà. On ne redessine
+ * que son enveloppe, et le chevron est posé par l'enveloppe en `::after` —
+ * `appearance: none` retirant celui du navigateur.
+ */
+
+.ama-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ama-sem-spacing-static-stack-xs);
+}
+
+.ama-select__label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ama-select__label-text {
+  color: var(--ama-sem-color-on-surface-mid);
+  font-family: var(--ama-sem-font-families-label);
+  font-size: var(--ama-sem-font-sizes-label-lg);
+  font-style: var(--ama-sem-font-styles-label-default);
+  font-weight: var(--ama-sem-font-weights-label-default);
+  line-height: var(--ama-sem-line-heights-label-lg);
+  letter-spacing: var(--ama-sem-letter-spacing-label);
+  text-transform: var(--ama-sem-text-case-label);
+}
+
+/* `align-items` reste à sa valeur initiale (`stretch`) : le `<select>` occupe
+   ainsi toute la hauteur de l'enveloppe, et donc toute la zone cliquable. */
+.ama-select__control-wrapper {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
+  border-radius: var(--ama-sem-border-radius-input);
+  background: var(--ama-sem-color-surface-container-low);
+}
+
+/* `:focus-within` et non `:focus` : c'est le `<select>` interne qui reçoit le
+   focus, l'enveloppe ne le voit jamais passer. */
+.ama-select__control-wrapper:focus-within {
+  border-color: var(--ama-sem-color-focus);
+  outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
+}
+
+/* Chevron en masque SVG teinté par `currentColor`, seul chevron du composant :
+   c'est lui que le balisage doit laisser dessiner, sans poser de glyphe à lui.
+   `pointer-events: none` est ce qui garde toute l'enveloppe cliquable — sans
+   quoi le coin droit avale le clic au lieu de le passer au `<select>`. */
+.ama-select__control-wrapper::after {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: var(--ama-sem-spacing-static-inset-squish-md-h);
+  width: var(--ama-sem-sizing-icon-sm);
+  height: var(--ama-sem-sizing-icon-sm);
+  color: var(--ama-sem-color-on-surface-hi);
+  content: "";
+  pointer-events: none;
+  transform: translateY(-50%);
+  background-color: currentColor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9.5l6 6 6-6'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+}
+
+/* `width: 100%` et pas de frère dans l'enveloppe : le contrôle en occupe toute
+   la surface, donc cliquer n'importe où l'ouvre. */
+.ama-select__control {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  /* Le rembourrage de droite laisse la place au chevron, sinon une option
+     longue passe dessous. */
+  padding: var(--ama-sem-spacing-static-inset-squish-md-v)
+    calc(
+      var(--ama-sem-spacing-static-inset-squish-md-h) + var(--ama-sem-sizing-icon-sm)
+    )
+    var(--ama-sem-spacing-static-inset-squish-md-v)
+    var(--ama-sem-spacing-static-inset-squish-md-h);
+  border: none;
+  appearance: none;
+  background-color: var(--ama-sem-color-surface-container-low);
+  background-image: none;
+  color: var(--ama-sem-color-on-surface-low);
+  text-overflow: ellipsis;
+  font-family: var(--ama-sem-font-families-input);
+  font-size: var(--ama-sem-font-sizes-input-md);
+  font-style: var(--ama-sem-font-styles-input);
+  font-weight: var(--ama-sem-font-weights-input);
+  line-height: var(--ama-sem-line-heights-input-md);
+  cursor: pointer;
+}
+
+/* L'anneau est porté par l'enveloppe : deux anneaux imbriqués se dessineraient
+   l'un dans l'autre. */
+.ama-select__control:focus-visible {
+  outline: none;
+}
+
+/* Pas de créneau d'icône : le WDS en avait un, prévu pour une icône *avant* le
+   contrôle, que la barre de réglages détournait pour y poser un glyphe `▾`
+   après lui. Il en résultait deux chevrons superposés, et surtout une bande
+   morte à droite — ce frère du `<select>` recevait le clic sans rien en faire.
+   Le composant dessine son chevron lui-même, le balisage n'en pose plus. */

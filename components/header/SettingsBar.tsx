@@ -34,14 +34,17 @@ function Select({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="wel-select settings-bar__select">
-      <label className="wel-select__label" htmlFor={id}>
-        <span className="wel-select__label-text">{label}</span>
+    <div className="ama-select settings-bar__select">
+      <label className="ama-select__label" htmlFor={id}>
+        <span className="ama-select__label-text">{label}</span>
       </label>
-      <span className="wel-select__control-wrapper">
+      {/* Aucun glyphe de chevron ici : le composant le dessine en `::after`,
+          hors du flux et sans capter le pointeur. Un frère du `<select>`
+          rendait au contraire le coin droit inerte. */}
+      <span className="ama-select__control-wrapper">
         <select
           id={id}
-          className="wel-select__control"
+          className="ama-select__control"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
@@ -51,9 +54,6 @@ function Select({
             </option>
           ))}
         </select>
-        <span className="wel-select__icon" aria-hidden="true">
-          ▾
-        </span>
       </span>
     </div>
   );

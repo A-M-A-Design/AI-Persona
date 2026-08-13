@@ -29,7 +29,7 @@ export default function SiteFooter({ personas }: { personas: PersonaPublic[] }) 
         <p className="site-footer__title">{actif.footerHeading[lang]}</p>
         <div className="site-footer__links">
           <a
-            className="wel-button-icon wel-button-icon--tertiary wel-button-icon--sm site-footer__link"
+            className="ama-button-icon ama-button-icon--tertiary ama-button-icon--sm site-footer__link"
             href={LINKS.linkedin}
             target="_blank"
             rel="noreferrer"
@@ -38,7 +38,7 @@ export default function SiteFooter({ personas }: { personas: PersonaPublic[] }) 
             <LinkedInIcon />
           </a>
           <a
-            className="wel-button-icon wel-button-icon--tertiary wel-button-icon--sm site-footer__link"
+            className="ama-button-icon ama-button-icon--tertiary ama-button-icon--sm site-footer__link"
             href={LINKS.email}
             aria-label={t(lang, "mail")}
           >
