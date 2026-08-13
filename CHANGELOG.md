@@ -38,6 +38,15 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Le site est en ligne** — https://ama-ai-persona.vercel.app — et
+  `sessions-summary/2026-08-13-session-11.md` raconte le chemin. La mise en
+  production n'a rien cassé ; elle a révélé trois protections qui ne
+  protégeaient pas : le CLI aveugle au certificat d'entreprise, un
+  `vercel deploy` qui aurait emporté 31 Mo d'IP Accor, et une couverture des
+  secrets réduite à `.env*`. Le résumé porte aussi les preuves plutôt que les
+  affirmations — dont la clé fraîche lue dans Upstash, qui établit que la
+  limite de débit tourne sur le compteur partagé et non sur le repli.
+
 - **Mesure d'audience et de performance**, et le guide de déploiement qui va
   avec. Vercel Analytics et Speed Insights **ne posent aucun cookie** et
   n'identifient personne : ils comptent des pages vues et des référents. C'est
