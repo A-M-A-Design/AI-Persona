@@ -15,6 +15,13 @@ type Props = {
   className?: string;
   /** Focus au montage — utilisé au passage héro → conversation. */
   autoFocus?: boolean;
+  /**
+   * Identifiant fixe du champ, quand quelque chose doit pouvoir le viser de
+   * l'extérieur — le lien « Poser une question » de l'accès rapide. Sans lui,
+   * `useId` produit une valeur opaque et différente à chaque rendu, donc
+   * impossible à cibler par `href`.
+   */
+  inputId?: string;
 };
 
 export default function Composer({
@@ -25,9 +32,11 @@ export default function Composer({
   onSend,
   className = "chat__composer",
   autoFocus = false,
+  inputId,
 }: Props) {
   const [value, setValue] = useState("");
-  const id = useId();
+  const genere = useId();
+  const id = inputId ?? genere;
   const vide = value.trim().length === 0;
 
   function submit(e: FormEvent) {

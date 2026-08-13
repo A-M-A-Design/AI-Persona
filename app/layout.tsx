@@ -10,7 +10,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Shortcuts from "../components/Shortcuts";
-import SkipLink from "../components/SkipLink";
 import {
   Cormorant_Garamond,
   Fraunces,
@@ -61,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 // Applique les préférences (mode, persona, langue) avant le premier paint — anti-flash.
-const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);if(s.shortcuts===false)d.setAttribute("data-shortcuts","off");}catch(e){}})();`;
+const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);if(s.shortcuts===false)d.setAttribute("data-shortcuts","off");if(s.slideshowAuto===false)d.setAttribute("data-slideshow-auto","off");}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -75,10 +74,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: settingsScript }} />
       </head>
+      {/* L'accès rapide n'est plus rendu ici mais par chaque page : ses
+          destinations dépendent de la page, et il doit rester le tout premier
+          contenu annoncé. `Shortcuts` passe donc après — son bouton de
+          découverte est une commodité, pas un point d'entrée. */}
       <body>
-        <SkipLink />
-        <Shortcuts />
         {children}
+        <Shortcuts />
       </body>
     </html>
   );

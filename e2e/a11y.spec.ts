@@ -113,8 +113,12 @@ test.describe("Nom accessible", () => {
 test.describe("Clavier", () => {
   test("le lien d'évitement mène au contenu", async ({ page }) => {
     await visit(page);
+    // Troisième arrêt : l'accès rapide propose d'abord la question et les
+    // articles. Cf. « Accès rapide » plus bas pour l'ordre lui-même.
     await page.keyboard.press("Tab");
-    const lien = page.locator(".skip-link");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    const lien = page.locator('.skip-link[href="#contenu"]');
     await expect(lien).toBeFocused();
     // Visible une fois atteint, et non simplement présent hors écran. Le lien
     // descend par une transition : on attend qu'elle se pose.

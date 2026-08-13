@@ -18,6 +18,19 @@ export type Settings = {
    * n'utilise qu'une touche imprimable sans modificateur.
    */
   shortcuts: boolean;
+  /**
+   * Lecture automatique du carrousel. Passe à `false` — et le reste — dès que
+   * le visiteur navigue au clavier.
+   *
+   * C'est le plus près qu'on puisse aller de « en pause quand un lecteur
+   * d'écran est actif » : **aucune API ne permet de détecter un lecteur
+   * d'écran**, et les heuristiques qui circulent relèvent du pistage autant
+   * que de l'approximation. Ce qu'on peut observer, c'est la navigation au
+   * clavier — que tout utilisateur de lecteur d'écran pratique. L'inverse
+   * n'est pas vrai : un visiteur voyant au clavier perd aussi l'animation.
+   * Arbitrage assumé, du 2026-08-13.
+   */
+  slideshowAuto: boolean;
 };
 
 export function readCurrentSettings(): Settings {
@@ -27,6 +40,7 @@ export function readCurrentSettings(): Settings {
     lang: d.getAttribute("lang") === "en" ? "en" : "fr",
     colorMode: d.getAttribute("data-color-mode") === "dark" ? "dark" : "light",
     shortcuts: d.getAttribute("data-shortcuts") !== "off",
+    slideshowAuto: d.getAttribute("data-slideshow-auto") !== "off",
   };
 }
 
@@ -60,6 +74,7 @@ export function useSettings(): Settings {
     lang: "fr",
     colorMode: "light",
     shortcuts: true,
+    slideshowAuto: true,
   });
 
   useEffect(() => {

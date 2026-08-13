@@ -68,7 +68,11 @@ Relevé sur l'arbre d'accessibilité réel du navigateur, après correction.
 ### Accueil, à l'ouverture
 
 ```
-lien « Aller au contenu »
+navigation « Accès rapide »
+  « Arthur Mathon — portfolio conversationnel »
+  lien « Poser une question à Arthur »
+  lien « Voir les articles »
+  lien « Aller au contenu »
 bannière
   liste déroulante « Type d'avatar » — Ours sélectionné
   liste déroulante « Langue » — FR sélectionné
@@ -160,6 +164,17 @@ premiers arrêts un nom accessible et un anneau de focus visible.
   `prefers-reduced-motion` la neutralise entièrement. Elle se suspend aussi au
   survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
   panneau s'ouvre.
+- **La première navigation au clavier l'arrête définitivement**, et le choix est
+  mémorisé (`slideshowAuto`). La demande était « mettre en pause quand un
+  lecteur d'écran est actif » : **c'est impossible**. Aucune API n'expose la
+  présence d'une technologie d'assistance, et les heuristiques qui circulent
+  — chaîne d'agent utilisateur, `forced-colors` — sont autant du pistage que de
+  l'approximation. Le signal observable le plus proche est la navigation au
+  clavier, que tout utilisateur de lecteur d'écran pratique ; `Tab` en
+  particulier, que le mode exploration laisse passer là où il consomme les
+  flèches. La réciproque est fausse et assumée : un visiteur voyant au clavier
+  perd l'animation lui aussi. Saisir dans le champ ne compte pas — y déplacer
+  le curseur, c'est éditer, et le lanceur vit dans ce carrousel.
 
 ### Les raccourcis clavier du carrousel
 
@@ -210,6 +225,16 @@ raccourci que personne ne connaît ne sert personne.
 réservent les lettres à leur propre navigation. M, N et F ne leur parviendront
 probablement pas. Les flèches du carrousel, portées au focus, échappent à cette
 limite — c'est la raison de leur périmètre plus étroit.
+
+**Confirmé par la passe du 2026-08-13** : aucun des raccourcis à touche unique,
+`?` compris, n'atteint la page lecteur d'écran actif. Ce n'est pas contournable
+côté page — la touche est consommée avant que le document ne la voie, et aucune
+API ne permet ni de le savoir ni de s'y opposer.
+
+La réponse est donc structurelle : les destinations qui comptent existent
+**aussi en contrôles réels**, dans l'accès rapide en tête de document (voir
+« Accueil, à l'ouverture »). Les raccourcis restent un confort pour le clavier
+nu ; ils ne sont plus le seul chemin vers quoi que ce soit.
 
 ### Les liens dans les réponses
 

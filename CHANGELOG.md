@@ -8,7 +8,52 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Un accès rapide ouvre le document**, tiré d'une passe au lecteur d'écran.
+  Trois constats, trois réponses.
+
+  **Rien ne disait ce qu'est ce site.** Le premier élément annoncé était « lien,
+  Aller au contenu », puis la barre de réglages. Le nom du site n'existait que
+  dans le `<title>` — annoncé à un moment que l'utilisateur ne contrôle pas, et
+  jamais retrouvable en exploration. Il est désormais du contenu, en tête :
+  « Arthur Mathon — portfolio conversationnel », suivi de **« Poser une question
+  à Arthur »** puis **« Voir les articles »**, et enfin le lien d'évitement
+  d'origine. Les deux premiers posent le focus sur une commande, le troisième
+  mène au contenu pour le lire : deux besoins distincts, trois liens.
+
+  **Les raccourcis à touche unique n'atteignent pas un lecteur d'écran.**
+  `docs/accessibilite.md` l'annonçait comme une limite probable ; la passe l'a
+  confirmé, `?` compris. En mode exploration, NVDA et JAWS réservent les lettres
+  à leur propre navigation — `f` va au champ de formulaire suivant. **Ce n'est
+  pas contournable côté page** : la touche est consommée avant que le document
+  ne la voie. D'où la réponse structurelle plutôt qu'un correctif : les mêmes
+  destinations existent en contrôles réels, atteignables à la tabulation comme
+  à l'exploration. Les raccourcis restent un confort pour le clavier nu, ils ne
+  sont plus le seul chemin vers quoi que ce soit.
+
+  L'accès rapide est rendu **par chaque page** et non par le layout : ses
+  destinations en dépendent — une page article n'a ni lanceur ni grille, elle
+  n'offre donc que le contenu. Un raccourci vers une cible absente ne vaut rien.
+
 ### Changed
+
+- **La première navigation au clavier arrête la lecture du carousel**, pour de
+  bon, et le choix est mémorisé (`slideshowAuto`).
+
+  La demande était « mettre en pause quand un lecteur d'écran est actif ».
+  **C'est impossible** : aucune API n'expose la présence d'une technologie
+  d'assistance, et les heuristiques qui circulent — chaîne d'agent utilisateur,
+  `forced-colors` — sont autant du pistage que de l'approximation. Le signal
+  observable le plus proche est la navigation au clavier, que tout utilisateur
+  de lecteur d'écran pratique ; `Tab` en particulier, que le mode exploration
+  laisse passer là où il consomme les flèches.
+
+  La réciproque est fausse et assumée : **un visiteur voyant au clavier perd
+  l'animation lui aussi**. Arbitrage retenu contre les deux autres options —
+  carousel en pause par défaut pour tout le monde, ou statu quo sur
+  `prefers-reduced-motion` seul. Saisir dans le champ ne compte pas : y déplacer
+  le curseur, c'est éditer, et le lanceur de conversation vit dans ce carousel.
 
 - **Les composants sont écrits ici, sur le préfixe `ama`.** `styles/components/`
   remplace le CSS extrait du WDS Accor : `.ama-button` (et `.ama-button-icon`),

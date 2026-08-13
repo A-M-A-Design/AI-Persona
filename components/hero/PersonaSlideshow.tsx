@@ -45,7 +45,7 @@ export default function PersonaSlideshow({
   onSend,
   paused,
 }: Props) {
-  const { persona, lang } = useSettings();
+  const { persona, lang, slideshowAuto } = useSettings();
   const pisteRef = useRef<HTMLDivElement>(null);
   const [lecture, setLecture] = useState(true);
   const [visible, setVisible] = useState(false);
@@ -161,6 +161,51 @@ export default function PersonaSlideshow({
     const minuteur = setInterval(() => allerA(index + 1), DELAI);
     return () => clearInterval(minuteur);
   }, [lecture, visible, paused, survol, index, allerA]);
+
+  /**
+   * Première navigation au clavier : la lecture automatique s'arrête, et ne
+   * repart pas — le choix est mémorisé.
+   *
+   * Ce que ça sert : un utilisateur de lecteur d'écran ne verra jamais le
+   * carrousel tourner sous sa lecture. **Aucune API ne permet de détecter un
+   * lecteur d'écran** ; la navigation au clavier est le signal observable le
+   * plus proche. La réciproque est fausse — un visiteur voyant au clavier perd
+   * l'animation lui aussi. Arbitrage d'Arthur du 2026-08-13.
+   *
+   * `Tab` est le signal fiable : en mode exploration, les lecteurs d'écran
+   * consomment les flèches pour leur curseur virtuel, mais laissent passer la
+   * tabulation. Les flèches sont écoutées quand même, pour le clavier nu.
+   *
+   * Ignoré dans un champ de saisie : y écrire ou y déplacer le curseur, c'est
+   * éditer, pas naviguer — et le lanceur de conversation vit dans ce carrousel.
+   */
+  useEffect(() => {
+    if (!slideshowAuto) {
+      setLecture(false);
+      return;
+    }
+    const NAVIGATION = new Set([
+      "Tab",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "Home",
+      "End",
+      "PageUp",
+      "PageDown",
+    ]);
+    function onKeyDown(e: KeyboardEvent) {
+      if (!NAVIGATION.has(e.key)) return;
+      const cible = e.target as HTMLElement | null;
+      if (cible?.closest("input, textarea, select, [contenteditable]")) return;
+      setLecture(false);
+      document.documentElement.setAttribute("data-slideshow-auto", "off");
+      persistSetting({ slideshowAuto: false }, "slideshow");
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [slideshowAuto]);
 
   // Onglet en arrière-plan : rien ne doit continuer de tourner.
   useEffect(() => {
@@ -307,6 +352,8 @@ export default function PersonaSlideshow({
           <p className="launcher__heading">{actif.chatHeading[lang]}</p>
           <Composer
             className="launcher__row"
+            // Cible du lien « Poser une question » de l'accès rapide.
+            inputId="question"
             disabled={disabled}
             placeholder={t(lang, "askAnything")}
             label={t(lang, "questionLabel")}

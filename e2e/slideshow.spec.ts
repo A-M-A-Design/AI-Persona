@@ -231,3 +231,74 @@ test.describe("Slideshow — mouvement réduit", () => {
     expect(await persona(page)).toBe(avant);
   });
 });
+
+/**
+ * Lecture automatique et navigation au clavier.
+ *
+ * Demandé après une passe au lecteur d'écran : « mettre en pause le carrousel
+ * quand un lecteur d'écran est actif ». **Aucune API ne le permet** — rien
+ * n'expose la présence d'une technologie d'assistance, et les heuristiques qui
+ * circulent relèvent autant du pistage que de l'approximation.
+ *
+ * Le signal retenu est donc la navigation au clavier, que tout utilisateur de
+ * lecteur d'écran pratique. `Tab` en particulier : en mode exploration, les
+ * lecteurs d'écran consomment les flèches pour leur curseur virtuel, mais
+ * laissent passer la tabulation.
+ */
+test.describe("Slideshow — navigation au clavier", () => {
+  test("la première tabulation arrête la lecture, définitivement", async ({ page }) => {
+    await visit(page);
+    expect(await enLecture(page)).toBe("true");
+
+    await page.keyboard.press("Tab");
+    expect(await enLecture(page)).toBe("false");
+
+    // Et elle ne repart pas : un tour complet passe sans changer de persona.
+    const avant = await persona(page);
+    await page.waitForTimeout(TOUR);
+    expect(await persona(page)).toBe(avant);
+  });
+
+  test("la tabulation écrit le choix dans les réglages", async ({ page }) => {
+    await visit(page);
+    await page.keyboard.press("Tab");
+    const stocke = await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem("ai-persona:settings") ?? "{}");
+      return s.slideshowAuto;
+    });
+    expect(stocke).toBe(false);
+  });
+
+  test("un réglage déjà mémorisé ouvre la page en pause", async ({ page }) => {
+    // Sans `visit` : son script d'initialisation réécrit l'objet de réglages
+    // entier à chaque navigation, et effacerait justement ce qu'on vérifie.
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "ai-persona:settings",
+        JSON.stringify({
+          persona: "ours",
+          colorMode: "light",
+          lang: "fr",
+          slideshowAuto: false,
+        }),
+      );
+    });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    expect(await enLecture(page)).toBe("false");
+    const avant = await persona(page);
+    await page.waitForTimeout(TOUR);
+    expect(await persona(page)).toBe(avant);
+  });
+
+  test("écrire dans le champ ne l'arrête pas", async ({ page }) => {
+    await visit(page);
+    // Déplacer le curseur dans un champ, c'est éditer, pas naviguer — et le
+    // lanceur de conversation vit dans ce carrousel.
+    await page.locator("#question").focus();
+    await page.keyboard.press("ArrowLeft");
+    await page.keyboard.press("End");
+    expect(await enLecture(page)).toBe("true");
+  });
+});
