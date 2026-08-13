@@ -10,6 +10,11 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ### Added
 
+- **Résumé de la session 10** dans `sessions-summary/2026-08-13-session-10.md` :
+  la réécriture des composants, la passe au lecteur d'écran et ses huit
+  correctifs, les trois impossibilités assumées, et les deux erreurs de méthode
+  de la session.
+
 - **Le contraste est mesuré sur le rendu, plus seulement sur les tokens.** La
   limite de l'outillage était structurelle : `a11y:contrast` compare des paires
   **déclarées**, donc ne voit rien de ce que personne n'a déclaré. C'est par là
