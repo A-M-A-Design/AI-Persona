@@ -36,13 +36,29 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
   angles vifs, visiblement différent. Signalé par Arthur, revenu à un masque
   SVG — tracé écrit ici, un polyligne à bouts arrondis.
 
-  **La barre de réglages avait une bande morte à droite.** Son balisage posait
-  un glyphe `▾` *frère* du `<select>` : il recevait le clic sans rien en faire,
-  et doublait le chevron du composant. Le glyphe est retiré, le composant
-  dessine seul, en `::after` hors flux et en `pointer-events: none`. Le
-  `<select>` occupe désormais toute l'enveloppe. `e2e/selects.spec.ts` vérifie
-  sur les deux sélecteurs du site — chip du header et champ de la page kit —
-  que le clic atteint le `<select>` à 8 %, 50 % et 94 % de la largeur.
+  **Les sélecteurs de la barre de navigation avaient une zone morte, et elle
+  est antérieure à cette réécriture.** Cliquer le chevron du chip (avatar,
+  langue) n'ouvrait pas la liste. Mesuré sur `a726420`, avant tout changement :
+  **inerte de 63 % à 83 % de la largeur**, exactement l'emprise du chevron.
+
+  La cause tient en une ligne de spécification : **`mask-image` crée un contexte
+  d'empilement**, comme `transform` ou `opacity`. Le chevron `::after`, qui suit
+  le `<select>` dans l'ordre du document, est donc peint **au-dessus** de ce
+  `<select>` que le chip superpose en absolu — et il en interceptait le clic.
+  Le chevron est décoratif : `pointer-events: none` le rend transparent au
+  pointeur. On vise justement le chevron pour ouvrir une liste, ce qui rend le
+  défaut d'autant plus visible à l'usage.
+
+  Deuxième foyer, celui-là introduit ici puis corrigé : la barre de réglages de
+  la page kit posait un glyphe `▾` *frère* du `<select>`, qui recevait le clic
+  sans rien en faire et doublait le chevron du composant. Glyphe retiré, le
+  composant dessine seul.
+
+  `e2e/selects.spec.ts` **balaye toute la largeur** des deux sélecteurs, tous
+  les 2 px, et n'accepte aucun point qui n'atteigne pas le `<select>`. Une
+  première version échantillonnait 8 %, 50 % et 94 % : elle **encadrait la zone
+  morte sans jamais la toucher**, et passait au vert. Trois points ne décrivent
+  pas une surface.
 
   Le rendu est inchangé, y compris là où la fidélité coûtait quelque chose :
   `.ama-chip` n'a **pas** de bordure au repos, parce que le persona libellule

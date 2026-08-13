@@ -13,30 +13,33 @@ import { visit } from "./helpers";
  * fonctionnait partout ailleurs.
  */
 
-/** Quel élément reçoit le clic en un point de la boîte, en fraction de largeur ? */
-async function cibleAu(page: import("@playwright/test").Page, sel: string, fraction: number) {
-  return page.evaluate(
-    ([s, f]) => {
-      const el = document.querySelector(s as string);
-      if (!el) return "introuvable";
-      const r = el.getBoundingClientRect();
-      const hit = document.elementFromPoint(
-        r.left + r.width * (f as number),
-        r.top + r.height / 2,
-      );
-      return hit?.tagName.toLowerCase() ?? "rien";
-    },
-    [sel, fraction] as const,
-  );
+/**
+ * Balaye toute la largeur et renvoie les points qui n'atteignent pas le
+ * `<select>`. Le balayage n'est pas du zèle : une première version de ce test
+ * échantillonnait 8 %, 50 % et 94 %, et **encadrait la zone morte sans jamais
+ * la toucher** — elle s'étendait de 64 % à 83 %, la largeur du chevron. Trois
+ * points ne décrivent pas une surface.
+ */
+async function pointsMorts(page: import("@playwright/test").Page, sel: string) {
+  return page.evaluate((s) => {
+    const el = document.querySelector(s);
+    if (!el) return ["sélecteur introuvable"];
+    const r = el.getBoundingClientRect();
+    const morts: string[] = [];
+    for (let px = 2; px < r.width - 1; px += 2) {
+      const hit = document.elementFromPoint(r.left + px, r.top + r.height / 2);
+      if (hit?.tagName.toLowerCase() !== "select") {
+        morts.push(`${Math.round((px / r.width) * 100)}% → ${hit?.tagName.toLowerCase()}`);
+      }
+    }
+    return morts;
+  }, sel);
 }
 
 test.describe("Sélecteurs", () => {
   test("le chip du header ouvre sa liste sur toute sa surface", async ({ page }) => {
     await visit(page);
-    // 8 % / 50 % / 94 % : le libellé, le milieu, puis le chevron.
-    for (const fraction of [0.08, 0.5, 0.94]) {
-      expect(await cibleAu(page, ".ama-chip--dropdown", fraction)).toBe("select");
-    }
+    expect(await pointsMorts(page, ".ama-chip--dropdown")).toEqual([]);
   });
 
   test("le champ de la barre de réglages ouvre sa liste sur toute sa surface", async ({
@@ -44,9 +47,7 @@ test.describe("Sélecteurs", () => {
   }) => {
     await page.goto("/dev/kit");
     await page.waitForLoadState("networkidle");
-    for (const fraction of [0.08, 0.5, 0.94]) {
-      expect(await cibleAu(page, ".ama-select__control-wrapper", fraction)).toBe("select");
-    }
+    expect(await pointsMorts(page, ".ama-select__control-wrapper")).toEqual([]);
   });
 
   test("un seul chevron par sélecteur", async ({ page }) => {
