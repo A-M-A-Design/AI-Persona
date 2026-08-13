@@ -32,3 +32,15 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 /e2e/__screenshots__/
+
+# --- Codes de secours et secrets hors .env
+# Un fichier de codes de recuperation a atterri ici le 2026-08-13 et a suivi
+# un deploiement : ni .gitignore ni .vercelignore ne le couvraient. Le motif
+# est volontairement large - ces fichiers n'ont rien a faire dans un depot,
+# leur place est un gestionnaire de mots de passe.
+*recovery-codes*
+*backup-codes*
+/secrets/
+*.key
+*.p12
+*.pfx
