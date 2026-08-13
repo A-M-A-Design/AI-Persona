@@ -8,6 +8,133 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Added
+
+- **Le contraste est mesuré sur le rendu, plus seulement sur les tokens.** La
+  limite de l'outillage était structurelle : `a11y:contrast` compare des paires
+  **déclarées**, donc ne voit rien de ce que personne n'a déclaré. C'est par là
+  qu'un indice de saisie à 3,86:1 est passé, sur le champ le plus visible du
+  site. Corriger l'instance ne corrigeait pas la classe.
+
+  `audit-a11y.spec.ts` part maintenant de l'autre bout : **chaque texte visible**,
+  sa couleur calculée, et le fond effectif obtenu en remontant les ancêtres et en
+  composant les transparences. Peu importe l'origine des couleurs — token, valeur
+  par défaut du navigateur, héritage. Les indices de saisie sont mesurés aussi,
+  par `::placeholder`. Trois personas × deux modes sur l'accueil, plus l'article
+  et le panneau : 17 textes mesurés sur l'accueil, 45 sur un article.
+
+  Deux exclusions écrites et motivées : le texte posé sur une image — couvert
+  autrement, sur le pire fond possible — et le texte masqué.
+
+  **Détecter le premier cas a demandé deux essais, et les deux ratés sont
+  instructifs.** Chercher un `background-image` ne suffit pas : les images du
+  site sont des balises `<img>`, si bien que le titre du héro ressortait à
+  1,00:1 — sa couleur comparée à celle du fond de page, qu'il ne touche jamais.
+  `elementsFromPoint` ne convient pas davantage : c'est un test de **pointeur**,
+  qui ignore ce qui est en `pointer-events: none` — précisément le calque de
+  texte du héro, absent de la pile retournée. Ce qui marche : une image qui
+  recouvre l'élément **et se trouve dans celui qui fournit l'aplat opaque**.
+  Sans cette seconde condition, le panneau du lanceur était exclu à tort.
+
+  `docs/accessibilite.md` porte désormais un tableau des angles morts de chaque
+  outil — mieux vaut les écrire que les redécouvrir.
+
+
+- **`npm run a11y:contrast` calcule APCA en parallèle du ratio WCAG.** C'est la
+  posture que recommande l'article de Kortic du 2026-04-18 tant que WCAG 3 n'est
+  pas ratifié : mesurer les deux pour voir où ils divergent. Seul le ratio fait
+  échouer la commande — on ne casse pas une CI sur un brouillon.
+
+  **L'invariant du projet résiste au changement d'algorithme.** Les thèmes sont
+  obtenus par rotation de teinte à luminance relative *WCAG 2* constante ; rien
+  ne garantissait que la promesse tienne pour APCA, qui n'a ni la même fonction
+  de transfert ni le même modèle. Mesuré : **0,8 d'écart de Lc au pire** entre
+  les trois personas. La garantie du README vaut donc au-delà de l'algorithme
+  pour lequel elle avait été conçue — vérifié plutôt que supposé.
+
+  **Une divergence réelle, et asymétrique.** En mode sombre, le texte saisi dans
+  le champ de question donne **Lc −53** pour un ratio de 7,3:1 — le seuil APCA
+  usuel d'un texte courant de 16 px est Lc 75. En mode clair, la même paire
+  donne **Lc 82**. C'est la polarité que le ratio ignore : il est symétrique,
+  la perception ne l'est pas, et le mode sombre est là où il flatte le plus.
+
+  La paire du champ de saisie **n'était pas mesurée du tout** : le script testait
+  `on-surface-low` sur `surface`, alors que le champ a son propre fond
+  (`surface-container-low`). Ajoutée.
+
+
+- **Le contraste forcé de Windows est enfin géré.** `forced-colors: active`
+  remplace d'autorité les couleurs par la palette du système : les tokens ne
+  s'appliquent plus, et **tout ce qui ne reposait que sur une couleur
+  disparaît**. Le site n'en tenait aucun compte — vérifié, zéro occurrence.
+
+  Trois endroits en dépendaient. L'**anneau de focus**, qui redevenait celui du
+  navigateur, de géométrie imprévisible. Les **chips**, sans bordure au repos :
+  leur fond translucide disparaissant, il ne restait qu'un mot posé sur la page,
+  et plus rien ne disait que c'était un bouton. Les **conteneurs dessinés par un
+  aplat** — bulles du chat, cards, panneaux — qui fusionnaient avec la page.
+
+  L'état inactif reposait sur une opacité, que le mode ignore : il passe en
+  `GrayText`. Les visuels restent des images, que le mode n'altère pas — c'est
+  le comportement attendu. Trois tests couvrent le mode, émulé par Playwright.
+
+### Fixed
+
+- **L'indice de saisie du champ de question échouait au seuil AA.** Il gardait
+  la couleur par défaut du navigateur — `rgb(117, 117, 117)` — soit **3,86:1**
+  sur le panneau du lanceur, en 16 px : **sous 4,5:1**. Sur le champ le plus
+  visible du site, celui que chaque visiteur lit en arrivant.
+
+  Ni le script de contraste ni axe ne le voyaient. Le premier ne compare que des
+  **paires de tokens**, et cette couleur n'en était pas une — personne ne l'avait
+  déclarée : le trou était dans la liste, pas dans le calcul. Il a fallu mesurer
+  ce que le navigateur **rend**, et non ce que la feuille déclare.
+
+  L'indice est désormais déclaré à `on-surface-low` (7,26:1) et le texte saisi
+  passe de `low` à **`on-surface-mid`** (10,46:1) : la hiérarchie visuelle
+  demeure, les deux passent. Le select suit la même règle — c'est une valeur
+  qu'on lit.
+
+  **Le champ du héro est concerné en permanence**, pas seulement en mode
+  sombre : son panneau force `data-color-mode="dark"` puisqu'il est posé sur
+  l'image. Vérifié sur les **trois personas × deux modes**, dans le navigateur —
+  12 combinaisons, toutes au-dessus de 4,5:1, et l'écart entre personas reste
+  infime (7,26 / 7,34 / 7,30), l'invariant de rotation de teinte à l'œuvre.
+
+  `e2e/audit-a11y.spec.ts` mesure désormais le **rendu** et non la déclaration,
+  sur les six combinaisons.
+
+
+- **En mobile, la fin d'une question suggérée passait sous le bouton de
+  défilement** : y taper faisait défiler au lieu de poser la question. La
+  fenêtre de défilement se retire désormais de 44 px — la largeur du bouton plus
+  la gouttière —, si bien que le bouton surplombe du vide et non des chips.
+
+  Un rembourrage **interne** n'aurait pas suffi : il ne déplace que la fin du
+  contenu, et une chip longue serait toujours passée sous le bouton aux
+  positions intermédiaires. C'est la fenêtre qu'il fallait rétrécir.
+
+  La tolérance qui écartait cette rangée de l'audit est **retirée** : le
+  contrôle de zone morte la couvre maintenant comme les autres. Il a fallu
+  d'abord le corriger — il mesurait la boîte entière d'un élément, alors qu'une
+  chip large déborde de son défileur et que ce qui est rogné n'est ni vu ni
+  cliquable. Un élément entièrement rogné en sort désormais, faute de quoi une
+  largeur négative donnait un `DOMRect` normalisé ailleurs à l'écran, et des
+  zones mortes imaginaires.
+
+### Changed
+
+- **`aria-keyshortcuts` est conservé sur les flèches du carousel**, arbitrage
+  écrit dans `docs/accessibilite.md`. L'attribut est annoncé par le lecteur
+  d'écran — « Persona suivant, raccourci flèche droite » — pour une touche que
+  lui-même intercepte en mode exploration. Il reste néanmoins **exact** : le
+  site implémente bien ce raccourci, et l'annonce redevient vraie dès que le
+  mode de balayage est coupé. Retirer une métadonnée correcte parce qu'un mode
+  d'un lecteur d'écran l'intercepte appauvrirait l'information pour tout le
+  monde — à commencer par l'utilisateur clavier sans technologie d'assistance,
+  pour qui c'est le seul moyen de découvrir le raccourci.
+
+
 ### Fixed
 
 - **Le bouton de fermeture du panneau mesurait 22 px en mobile.** Sous le

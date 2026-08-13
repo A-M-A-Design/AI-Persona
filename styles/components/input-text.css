@@ -38,7 +38,14 @@
   border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
   border-radius: var(--ama-sem-border-radius-input);
   background: var(--ama-sem-color-surface-container-low);
-  color: var(--ama-sem-color-on-surface-low);
+  /*
+    Le texte saisi, en `mid` et non `low`. Mesuré sur le panneau du lanceur —
+    qui force le mode sombre, donc **quel que soit le réglage du site** :
+    `low` donnait 7,26:1 pour **Lc −53**, quand le seuil APCA d'un texte courant
+    de 16 px est Lc 75. Le ratio flatte ici parce qu'il est symétrique et ignore
+    la polarité ; la perception, non. `mid` porte la mesure à 10,46:1 / Lc −71.
+  */
+  color: var(--ama-sem-color-on-surface-mid);
   padding: var(--ama-sem-spacing-static-inset-squish-md-v)
     var(--ama-sem-spacing-static-inset-squish-md-h);
   font-family: var(--ama-sem-font-families-input);
@@ -47,6 +54,25 @@
   font-weight: var(--ama-sem-font-weights-input);
   line-height: var(--ama-sem-line-heights-input-md);
   text-overflow: ellipsis;
+}
+
+/*
+  L'indice de saisie, déclaré. Sans cette règle il gardait la valeur par défaut
+  du navigateur — `rgb(117, 117, 117)` — qui donne **3,86:1** sur le panneau du
+  lanceur : **sous le seuil AA de 4,5:1**, sur du 16 px, et sur le champ le plus
+  visible du site.
+
+  Ni l'audit de contraste ni axe ne le voyaient : le premier ne compare que des
+  paires de tokens, et cette couleur n'en était pas une — personne ne l'avait
+  déclarée. Relevé le 2026-08-13 en mesurant les couleurs réellement rendues.
+
+  `low` le place à 7,26:1, sous le texte saisi qui est en `mid` : la hiérarchie
+  visuelle demeure, les deux passent.
+*/
+.ama-input-text__input::placeholder {
+  color: var(--ama-sem-color-on-surface-low);
+  /* Firefox applique une opacité de 0,54 par défaut, qui écraserait la mesure. */
+  opacity: 1;
 }
 
 /* `:focus` et non `:focus-visible` : un champ de saisie mérite son anneau même
