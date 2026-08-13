@@ -40,7 +40,7 @@ export default function Composer({
 
   return (
     <form className={className} onSubmit={submit}>
-      <div className="wel-input-text composer__field">
+      <div className="ama-input-text composer__field">
         {/*
           Un vrai <label> plutôt qu'un aria-label recopiant le placeholder :
           l'indice s'efface à la première frappe, le nom accessible doit tenir.
@@ -48,10 +48,10 @@ export default function Composer({
         <label className="a11y-hidden" htmlFor={id}>
           {label}
         </label>
-        <div className="wel-input-text__wrapper">
+        <div className="ama-input-text__wrapper">
           <input
             id={id}
-            className="wel-input-text__input"
+            className="ama-input-text__input"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={placeholder}
@@ -74,7 +74,7 @@ export default function Composer({
       */}
       <button
         type="submit"
-        className="wel-button wel-button--primary wel-button--icon-right"
+        className="ama-button ama-button--primary ama-button--icon-right"
         aria-disabled={disabled || vide}
         // En mobile la maquette réduit l'action à une icône posée dans le
         // champ : le libellé est masqué visuellement, jamais retiré du nom

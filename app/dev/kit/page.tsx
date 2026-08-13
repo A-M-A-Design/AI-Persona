@@ -12,27 +12,27 @@ export default function DevKit() {
 
       <section>
         <h2>Boutons</h2>
-        <button type="button" className="wel-button wel-button--primary">
+        <button type="button" className="ama-button ama-button--primary">
           Primaire
         </button>
-        <button type="button" className="wel-button wel-button--secondary">
+        <button type="button" className="ama-button ama-button--secondary">
           Secondaire
         </button>
-        <button type="button" className="wel-button wel-button--tertiary">
+        <button type="button" className="ama-button ama-button--tertiary">
           Tertiaire
         </button>
       </section>
 
       <section>
         <h2>Champ de saisie</h2>
-        <div className="wel-input-text" style={{ width: "100%" }}>
-          <label className="wel-input-text__label" htmlFor="demo-input">
+        <div className="ama-input-text" style={{ width: "100%" }}>
+          <label className="ama-input-text__label" htmlFor="demo-input">
             Votre question
           </label>
-          <div className="wel-input-text__wrapper">
+          <div className="ama-input-text__wrapper">
             <input
               id="demo-input"
-              className="wel-input-text__input"
+              className="ama-input-text__input"
               placeholder="Ex. : parle-moi de ton expérience chez Accor"
             />
           </div>
@@ -41,35 +41,35 @@ export default function DevKit() {
 
       <section>
         <h2>Messages</h2>
-        <div className="wel-message wel-message--neutral" style={{ width: "100%" }}>
-          <div className="wel-message__header">
-            <p className="wel-message__text">Message neutre (bulle du bot)</p>
+        <div className="ama-message ama-message--neutral" style={{ width: "100%" }}>
+          <div className="ama-message__header">
+            <p className="ama-message__text">Message neutre (bulle du bot)</p>
           </div>
         </div>
-        <div className="wel-message wel-message--accent" style={{ width: "100%" }}>
-          <div className="wel-message__header">
-            <p className="wel-message__text">Message accent (bulle utilisateur)</p>
+        <div className="ama-message ama-message--accent" style={{ width: "100%" }}>
+          <div className="ama-message__header">
+            <p className="ama-message__text">Message accent (bulle utilisateur)</p>
           </div>
         </div>
-        <div className="wel-message wel-message--warning" style={{ width: "100%" }}>
-          <div className="wel-message__header">
-            <p className="wel-message__text">Message d&apos;erreur</p>
+        <div className="ama-message ama-message--warning" style={{ width: "100%" }}>
+          <div className="ama-message__header">
+            <p className="ama-message__text">Message d&apos;erreur</p>
           </div>
         </div>
       </section>
 
       <section>
         <h2>Chips</h2>
-        <button type="button" className="wel-chip">Ton parcours</button>
-        <button type="button" className="wel-chip">Tes projets</button>
-        <button type="button" className="wel-chip wel-chip--selected">
+        <button type="button" className="ama-chip">Ton parcours</button>
+        <button type="button" className="ama-chip">Tes projets</button>
+        <button type="button" className="ama-chip ama-chip--selected">
           Ta façon de travailler
         </button>
       </section>
 
       <section>
         <h2>Skeleton</h2>
-        <div className="wel-skeleton chat__skeleton" />
+        <div className="ama-skeleton chat__skeleton" />
       </section>
     </main>
   );

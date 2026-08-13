@@ -258,7 +258,7 @@ export default function PersonaSlideshow({
       <div className="slideshow__controls">
         <button
           type="button"
-          className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm slideshow__play"
+          className="ama-button-icon ama-button-icon--secondary ama-button-icon--sm slideshow__play"
           aria-pressed={lecture}
           aria-label={t(lang, lecture ? "pauseSlideshow" : "playSlideshow")}
           onClick={() => {
@@ -275,7 +275,7 @@ export default function PersonaSlideshow({
         <div className="slideshow__steps">
           <button
             type="button"
-            className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm"
+            className="ama-button-icon ama-button-icon--secondary ama-button-icon--sm"
             aria-label={t(lang, "previousPersona")}
             aria-keyshortcuts="ArrowLeft"
             onClick={() => allerA(index - 1)}
@@ -284,7 +284,7 @@ export default function PersonaSlideshow({
           </button>
           <button
             type="button"
-            className="wel-button-icon wel-button-icon--secondary wel-button-icon--sm"
+            className="ama-button-icon ama-button-icon--secondary ama-button-icon--sm"
             aria-label={t(lang, "nextPersona")}
             aria-keyshortcuts="ArrowRight"
             onClick={() => allerA(index + 1)}

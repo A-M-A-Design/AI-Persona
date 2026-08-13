@@ -1,0 +1,18 @@
+/**
+ * Point d'entrée des composants du site.
+ *
+ * Un seul import côté `app/layout.tsx`, six fichiers côté rédaction : les
+ * `@import` sont résolus à la construction, donc le navigateur ne reçoit qu'une
+ * feuille. Importer les six séparément depuis le layout revenait à six modules
+ * CSS distincts, et le serveur de développement passait son temps à les
+ * recompiler — la suite de tests doublait de durée.
+ *
+ * L'ordre est alphabétique et sans conséquence : aucun de ces fichiers ne
+ * dépend d'un autre, chacun ne stylant que ses propres classes.
+ */
+@import "./button.css";
+@import "./chip.css";
+@import "./input-text.css";
+@import "./message.css";
+@import "./select.css";
+@import "./skeleton.css";

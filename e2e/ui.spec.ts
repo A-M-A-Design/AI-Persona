@@ -50,7 +50,7 @@ test.describe("Panneau de conversation", () => {
 
   test("le bouton « nouvelle conversation » vide le fil et rend les questions", async ({ page }) => {
     await visit(page);
-    const chipsBefore = await page.locator(".launcher__suggestions .wel-chip").count();
+    const chipsBefore = await page.locator(".launcher__suggestions .ama-chip").count();
 
     await openChat(page, "Raconte-moi ton parcours");
     const reset = page.locator(".chat-modal__new");
@@ -59,7 +59,7 @@ test.describe("Panneau de conversation", () => {
     await reset.click();
     await expect(page.locator(".chat-modal__question")).toHaveCount(0);
     await expect(reset).toHaveCount(0); // rien à effacer : le bouton disparaît
-    await expect(page.locator(".chat-modal__chips .wel-chip")).toHaveCount(chipsBefore);
+    await expect(page.locator(".chat-modal__chips .ama-chip")).toHaveCount(chipsBefore);
   });
 
   test("le fil défile quand il dépasse la hauteur du panneau", async ({ page }) => {
@@ -312,13 +312,13 @@ test.describe("Lanceur", () => {
 
     // Le panneau fait 343 sur une base de 375, et son retrait de 28 laisse
     // 287 au champ — les valeurs de la maquette v2.
-    const field = await page.locator(".launcher__row .wel-input-text__wrapper").boundingBox();
+    const field = await page.locator(".launcher__row .ama-input-text__wrapper").boundingBox();
     const panneau = await page.locator(".launcher--hero").boundingBox();
     expect(Math.round(panneau?.width ?? 0)).toBe(343);
     expect(Math.round(field?.width ?? 0)).toBe(287);
 
     // Le champ est une pilule, et l'action est posée dedans — pas à côté.
-    await expect(page.locator(".launcher__row .wel-input-text__wrapper")).toHaveCSS(
+    await expect(page.locator(".launcher__row .ama-input-text__wrapper")).toHaveCSS(
       "border-radius",
       "100px",
     );

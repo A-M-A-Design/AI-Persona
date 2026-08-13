@@ -1,0 +1,57 @@
+/**
+ * Message — bulle du chat et bandeau d'erreur.
+ *
+ * Trois tons seulement, ceux que le site pose : `neutral` (réponse du bot),
+ * `accent` (message du visiteur) et `warning` (l'erreur de l'API). Le ton se
+ * joue sur le couple conteneur / texte-sur-conteneur, jamais sur une couleur
+ * choisie à la main.
+ */
+
+.ama-message {
+  display: flex;
+  width: auto;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: var(--ama-sem-spacing-static-inset-squish-md-v)
+    var(--ama-sem-spacing-static-inset-squish-md-h);
+  border-radius: var(--ama-sem-border-radius-container-high);
+  background: var(--ama-sem-color-surface-container-mid);
+  color: var(--ama-sem-color-on-surface-mid);
+  font-family: var(--ama-sem-font-families-body);
+  font-size: var(--ama-sem-font-sizes-body-md);
+  font-style: var(--ama-sem-font-styles-body-default);
+  font-weight: var(--ama-sem-font-weights-body-default);
+  line-height: var(--ama-sem-line-heights-body-md);
+  letter-spacing: var(--ama-sem-letter-spacing-body);
+  text-transform: var(--ama-sem-text-case-body);
+}
+
+.ama-message--neutral {
+  background-color: var(--ama-sem-color-surface-container-mid);
+  color: var(--ama-sem-color-on-surface-mid);
+}
+
+.ama-message--accent {
+  background-color: var(--ama-sem-color-accent-container-low);
+  color: var(--ama-sem-color-on-accent-container);
+}
+
+.ama-message--warning {
+  background-color: var(--ama-sem-color-warning-container-low);
+  color: var(--ama-sem-color-on-warning-container);
+}
+
+/* L'en-tête est une rangée : il accueille au besoin une icône à gauche du
+   texte. Le texte prend le reste, et c'est lui qui pousse la bulle en largeur. */
+.ama-message__header {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: var(--ama-sem-spacing-static-inline-xs);
+}
+
+.ama-message__text {
+  flex: 1;
+  margin: 0;
+}

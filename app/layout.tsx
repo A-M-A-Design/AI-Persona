@@ -1,7 +1,10 @@
 import "../styles/generated/ours.css";
 import "../styles/generated/corneille.css";
 import "../styles/generated/libellule.css";
-import "../styles/welds-src/components.css";
+// Composants du site, écrits ici et versionnés : ils ne dépendent plus de
+// l'extraction locale du WDS Accor, seulement du contrat `--ama-*` que les
+// thèmes ci-dessus définissent. C'est ce qui rend le dépôt déployable seul.
+import "../styles/components/index.css";
 import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";

@@ -1,0 +1,112 @@
+/**
+ * Select — les réglages de la barre (langue, mode, persona).
+ *
+ * Le `<select>` reste natif : c'est lui qui ouvre la liste du système, donc
+ * celle que le lecteur d'écran et le clavier connaissent déjà. On ne redessine
+ * que son enveloppe, et le chevron est posé par l'enveloppe en `::after` —
+ * `appearance: none` retirant celui du navigateur.
+ */
+
+.ama-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ama-sem-spacing-static-stack-xs);
+}
+
+.ama-select__label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ama-select__label-text {
+  color: var(--ama-sem-color-on-surface-mid);
+  font-family: var(--ama-sem-font-families-label);
+  font-size: var(--ama-sem-font-sizes-label-lg);
+  font-style: var(--ama-sem-font-styles-label-default);
+  font-weight: var(--ama-sem-font-weights-label-default);
+  line-height: var(--ama-sem-line-heights-label-lg);
+  letter-spacing: var(--ama-sem-letter-spacing-label);
+  text-transform: var(--ama-sem-text-case-label);
+}
+
+.ama-select__control-wrapper {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  box-sizing: border-box;
+  border: var(--ama-sem-border-width-default) solid var(--ama-sem-color-outline-hi);
+  border-radius: var(--ama-sem-border-radius-input);
+  background: var(--ama-sem-color-surface-container-low);
+}
+
+/* `:focus-within` et non `:focus` : c'est le `<select>` interne qui reçoit le
+   focus, l'enveloppe ne le voit jamais passer. */
+.ama-select__control-wrapper:focus-within {
+  border-color: var(--ama-sem-color-focus);
+  outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
+}
+
+/* Chevron dessiné en CSS — deux bords d'un carré tourné — plutôt qu'importé :
+   ni requête réseau ni fichier binaire à versionner. `pointer-events: none`
+   pour qu'un clic dessus atteigne quand même le `<select>` en dessous. */
+.ama-select__control-wrapper::after {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: var(--ama-sem-spacing-static-inset-squish-md-v);
+  width: var(--ama-sem-sizing-icon-xs);
+  height: var(--ama-sem-sizing-icon-xs);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  box-sizing: border-box;
+  color: var(--ama-sem-color-on-surface-hi);
+  content: "";
+  pointer-events: none;
+  transform: translateY(-65%) rotate(45deg);
+}
+
+.ama-select__control {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  /* Le rembourrage de droite laisse la place au chevron, sinon une option
+     longue passe dessous. */
+  padding: var(--ama-sem-spacing-static-inset-squish-md-v)
+    calc(
+      var(--ama-sem-spacing-static-inset-squish-md-h) + var(--ama-sem-sizing-icon-sm)
+    )
+    var(--ama-sem-spacing-static-inset-squish-md-v)
+    var(--ama-sem-spacing-static-inset-squish-md-h);
+  border: none;
+  appearance: none;
+  background-color: var(--ama-sem-color-surface-container-low);
+  background-image: none;
+  color: var(--ama-sem-color-on-surface-low);
+  text-overflow: ellipsis;
+  font-family: var(--ama-sem-font-families-input);
+  font-size: var(--ama-sem-font-sizes-input-md);
+  font-style: var(--ama-sem-font-styles-input);
+  font-weight: var(--ama-sem-font-weights-input);
+  line-height: var(--ama-sem-line-heights-input-md);
+  cursor: pointer;
+}
+
+/* L'anneau est porté par l'enveloppe : deux anneaux imbriqués se dessineraient
+   l'un dans l'autre. */
+.ama-select__control:focus-visible {
+  outline: none;
+}
+
+/* Une icône dans l'enveloppe pousse le contrôle : sans cela, le libellé de
+   l'option se poserait par-dessus. */
+.ama-select__icon {
+  align-self: center;
+  padding-inline-start: var(--ama-sem-spacing-static-inset-squish-md-v);
+}
+
+.ama-select__control-wrapper:has(.ama-select__icon) .ama-select__control {
+  padding-inline-start: var(--ama-sem-spacing-static-inline-xs);
+}

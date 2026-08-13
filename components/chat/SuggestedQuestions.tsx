@@ -57,7 +57,7 @@ export default function SuggestedQuestions({
   const row = (
     <div className={className} role="group" aria-label={label} ref={rowRef}>
       {questions.map((q) => (
-        <button key={q} type="button" className="wel-chip" onClick={() => onPick(q)}>
+        <button key={q} type="button" className="ama-chip" onClick={() => onPick(q)}>
           {q}
         </button>
       ))}

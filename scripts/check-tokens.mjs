@@ -12,13 +12,16 @@
  *
  * Vérifie aussi qu'aucun `--wel-*` ne subsiste dans le contrat.
  *
- * La référence disparaîtra avec `styles/welds-src/`, à la réécriture des
- * composants WDS — ce jour-là, `tokens/` sera seul et il faudra un autre oracle.
+ * Depuis la réécriture des composants, `welds-src/components.css` n'est plus
+ * servi et sort donc du contrat vérifié ici : ce sont `styles/components/*.css`
+ * qui le remplacent. Seul `template.theme.css` reste extrait, et pour ce seul
+ * usage — servir d'oracle. Le jour où le site cessera de l'extraire, `tokens/`
+ * sera seul et il faudra une autre référence.
  *
  * Usage : npm run tokens:check
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -201,16 +204,19 @@ for (const persona of PERSONAS) {
  * le définirait : les composants perdraient leurs couleurs **en silence**, un
  * test de contraste ne mesurant que ce qui est peint, pas ce qui a disparu.
  */
+const componentsDir = join(root, "styles", "components");
 const FICHIERS_CONTRAT = [
   ...PERSONAS.map((p) => join(generatedDir, `${p}.css`)),
-  join(root, "styles", "welds-src", "components.css"),
+  ...readdirSync(componentsDir)
+    .filter((f) => f.endsWith(".css"))
+    .map((f) => join(componentsDir, f)),
   join(root, "styles", "persona-extras.css"),
   join(root, "app", "globals.css"),
 ];
 
 let fichiersVerifies = 0;
 for (const fichier of FICHIERS_CONTRAT) {
-  if (!existsSync(fichier)) continue; // components.css est gitignoré
+  if (!existsSync(fichier)) continue;
   fichiersVerifies++;
   const restes = readFileSync(fichier, "utf8").match(/--wel-[a-z0-9-]+/g);
   if (!restes) continue;

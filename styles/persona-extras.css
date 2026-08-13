@@ -30,12 +30,12 @@
    inactif ne doit produire aucune interaction au survol. Les sélecteurs
    :hover sont listés pour que l'apparence inactive l'emporte quel que soit
    l'ordre des feuilles. */
-.wel-button:disabled,
-.wel-button[aria-disabled="true"],
-.wel-button:disabled:hover,
-.wel-button[aria-disabled="true"]:hover,
-.wel-button-icon:disabled,
-.wel-button-icon[aria-disabled="true"] {
+.ama-button:disabled,
+.ama-button[aria-disabled="true"],
+.ama-button:disabled:hover,
+.ama-button[aria-disabled="true"]:hover,
+.ama-button-icon:disabled,
+.ama-button-icon[aria-disabled="true"] {
   opacity: 1;
   background: color-mix(in srgb, var(--ama-sem-color-primary) 24%, transparent);
   color: var(--ama-sem-color-on-surface-hi);
@@ -52,10 +52,10 @@
   image-rendering: pixelated;
 }
 
-[data-persona="libellule"] .wel-button,
-[data-persona="libellule"] .wel-chip,
-[data-persona="libellule"] .wel-input-text__input,
-[data-persona="libellule"] .wel-message {
+[data-persona="libellule"] .ama-button,
+[data-persona="libellule"] .ama-chip,
+[data-persona="libellule"] .ama-input-text__input,
+[data-persona="libellule"] .ama-message {
   border-width: 2px;
   border-style: solid;
 }

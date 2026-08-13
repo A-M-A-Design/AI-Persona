@@ -34,14 +34,14 @@ function Select({
   onChange: (value: string) => void;
 }) {
   return (
-    <div className="wel-select settings-bar__select">
-      <label className="wel-select__label" htmlFor={id}>
-        <span className="wel-select__label-text">{label}</span>
+    <div className="ama-select settings-bar__select">
+      <label className="ama-select__label" htmlFor={id}>
+        <span className="ama-select__label-text">{label}</span>
       </label>
-      <span className="wel-select__control-wrapper">
+      <span className="ama-select__control-wrapper">
         <select
           id={id}
-          className="wel-select__control"
+          className="ama-select__control"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
@@ -51,7 +51,7 @@ function Select({
             </option>
           ))}
         </select>
-        <span className="wel-select__icon" aria-hidden="true">
+        <span className="ama-select__icon" aria-hidden="true">
           ▾
         </span>
       </span>
