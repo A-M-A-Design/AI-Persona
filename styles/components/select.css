@@ -46,7 +46,9 @@
    focus, l'enveloppe ne le voit jamais passer. */
 .ama-select__control-wrapper:focus-within {
   border-color: var(--ama-sem-color-focus);
-  outline: var(--ama-sem-border-width-default) solid var(--ama-sem-color-focus);
+  outline: var(--ama-sem-sizing-focus-outline-width)
+    var(--ama-sem-text-focus-outline-style) var(--ama-sem-color-focus);
+  outline-offset: var(--ama-sem-sizing-focus-outline-offset);
 }
 
 /* Chevron en masque SVG teinté par `currentColor`, seul chevron du composant :

@@ -15,6 +15,13 @@ type Props = {
   className?: string;
   /** Focus au montage — utilisé au passage héro → conversation. */
   autoFocus?: boolean;
+  /**
+   * Identifiant fixe du champ, quand quelque chose doit pouvoir le viser de
+   * l'extérieur — le lien « Poser une question » de l'accès rapide. Sans lui,
+   * `useId` produit une valeur opaque et différente à chaque rendu, donc
+   * impossible à cibler par `href`.
+   */
+  inputId?: string;
 };
 
 export default function Composer({
@@ -25,9 +32,11 @@ export default function Composer({
   onSend,
   className = "chat__composer",
   autoFocus = false,
+  inputId,
 }: Props) {
   const [value, setValue] = useState("");
-  const id = useId();
+  const genere = useId();
+  const id = inputId ?? genere;
   const vide = value.trim().length === 0;
 
   function submit(e: FormEvent) {
@@ -42,16 +51,24 @@ export default function Composer({
     <form className={className} onSubmit={submit}>
       <div className="ama-input-text composer__field">
         {/*
-          Un vrai <label> plutôt qu'un aria-label recopiant le placeholder :
-          l'indice s'efface à la première frappe, le nom accessible doit tenir.
+          `aria-label` et non un <label> masqué visuellement. Les deux donnent
+          le même nom accessible, mais un <label> masqué reste un **nœud de
+          texte** dans l'arbre : en mode exploration, le lecteur d'écran lisait
+          « Votre question », puis « Votre question, zone d'édition, Posez-moi
+          n'importe quelle question ! ». Le libellé était annoncé deux fois,
+          suivi de l'indice — signalé à l'écoute le 2026-08-13.
+
+          Ce que l'audit d'août avait corrigé reste acquis : le nom accessible
+          est **distinct de l'indice de saisie**, qui s'efface à la première
+          frappe. C'était cela le défaut, pas la nature de l'attribut.
+
+          Un <label> visible serait meilleur encore ; la maquette n'en pose pas.
         */}
-        <label className="a11y-hidden" htmlFor={id}>
-          {label}
-        </label>
         <div className="ama-input-text__wrapper">
           <input
             id={id}
             className="ama-input-text__input"
+            aria-label={label}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={placeholder}

@@ -113,7 +113,14 @@ test.describe("Page article", () => {
   test("l'anglais rend le corps traduit, sans avertissement", async ({ page }) => {
     await visitArticle(page, "en");
     await expect(page.locator(".article__kicker")).toHaveText("Ops and Design System");
-    await expect(page.locator(".article__body")).toHaveAttribute("lang", "en");
+    /*
+      Plus d'attribut `lang` sur le corps : il ne se pose que sur un
+      **changement** de langue, et le document est déjà en anglais. Répété, il
+      posait une frontière de langue sur 4 000 caractères que rien ne
+      justifiait. C'est la langue de `<html>` qui fait foi ici.
+    */
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator(".article__body")).not.toHaveAttribute("lang", /./);
     // L'avertissement ne sert qu'aux articles sans traduction.
     await expect(page.locator(".article__notice")).toHaveCount(0);
 

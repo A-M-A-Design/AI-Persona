@@ -23,9 +23,14 @@ const MODES = ["light", "dark"];
 // tolère 3:1, mais aucune des paires ci-dessous n'est exclusivement large.
 const AA = 4.5;
 
+// Seuil des éléments non textuels — WCAG 1.4.11. L'anneau de focus en relève :
+// c'est un indicateur graphique, pas du texte.
+const AA_NON_TEXTE = 3;
+
 // `exempt` : WCAG 1.4.3 exclut les composants inactifs du critère de contraste.
 // On les mesure quand même — un état désactivé illisible reste un problème
 // d'usage — mais sans faire échouer l'audit.
+// `seuil` : abaisse le seuil pour les paires non textuelles.
 const PAIRS = [
   ["Bouton primaire", "--ama-comp-btn-primary-fg-color", "--ama-comp-btn-primary-bg-color"],
   ["Bouton primaire · survol", "--ama-comp-btn-primary-hover-fg-color", "--ama-comp-btn-primary-hover-bg-color"],
@@ -44,6 +49,20 @@ const PAIRS = [
   ["Texte secondaire", "--ama-sem-color-on-surface-mid", "--ama-sem-color-surface"],
   ["Texte tertiaire", "--ama-sem-color-on-surface-low", "--ama-sem-color-surface"],
   ["Lien", "--ama-sem-color-link", "--ama-sem-color-surface"],
+
+  // L'anneau de focus, sur les trois fonds où il se pose. Mesuré le
+  // 2026-08-13 en basculant le CSS sur les tokens `focus.outline-*` : le token
+  // `focus` tient partout, au pire 3,99:1.
+  //
+  // **`focus-fallback` n'est donc pas employé**, et il ne doit pas l'être par
+  // principe : la mesure le donne à **2,88:1 sur `surface-alternative` en mode
+  // sombre**, sous le seuil que le token `focus` franchit. Il existe pour des
+  // fonds colorés où le token principal échoue ; la palette de ce site n'en
+  // présente aucun. Les deux lignes ci-dessous le vérifient plutôt que de le
+  // supposer — le jour où la palette bouge, c'est ici qu'on le verra.
+  ["Anneau de focus · page", "--ama-sem-color-focus", "--ama-sem-color-surface", { seuil: AA_NON_TEXTE }],
+  ["Anneau de focus · barre", "--ama-sem-color-focus", "--ama-sem-color-surface-alternative", { seuil: AA_NON_TEXTE }],
+  ["Anneau de focus · primaire", "--ama-sem-color-focus", "--ama-sem-color-primary", { seuil: AA_NON_TEXTE }],
 ];
 
 // Le contenu des cards article repose sur un voile posé au-dessus d'une image.
@@ -133,7 +152,7 @@ for (const persona of PERSONAS) {
           return ratio(over(fg, solid), solid);
         }),
       );
-      const ok = worst >= AA;
+      const ok = worst >= (opts.seuil ?? AA);
       const mark = ok ? "✔" : opts.exempt ? "·" : "✘";
       lines.push(
         `  ${mark} ${label.padEnd(26)} ${worst.toFixed(2)}:1${opts.exempt && !ok ? "  (inactif — hors critère AA)" : ""}`,

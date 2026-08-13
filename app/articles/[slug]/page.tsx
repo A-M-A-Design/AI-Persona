@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import ArticleCarousel from "../../../components/article/ArticleCarousel";
 import ArticleView from "../../../components/article/ArticleView";
+import QuickAccess from "../../../components/QuickAccess";
 import SiteHeader from "../../../components/header/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import { hasTranslation, readArticleBodies } from "../../../lib/article-body";
@@ -37,6 +38,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   // La barre de navigation des articles porte le bouton d'accueil, à gauche.
   return (
     <>
+      {/* Sans `accueil` : ni lanceur de conversation ni grille d'articles sur
+          cette page, un raccourci vers une cible absente ne vaut rien. */}
+      <QuickAccess />
       <SiteHeader withHomeLink />
       <main className="page page--article" id="contenu" tabIndex={-1}>
         <ArticleView article={article} blocks={blocks} translated={translated} others={others} />

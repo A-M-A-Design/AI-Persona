@@ -4,6 +4,7 @@
 // anti-flash) et se resynchronise à chaque événement de settings.
 import { useEffect, useState } from "react";
 import type { Lang } from "../lib/i18n";
+import type { NavMode } from "./NavMode";
 
 export const SETTINGS_EVENT = "ai-persona:settings";
 export const STORAGE_KEY = "ai-persona:settings";
@@ -18,6 +19,16 @@ export type Settings = {
    * n'utilise qu'une touche imprimable sans modificateur.
    */
   shortcuts: boolean;
+  /**
+   * Comment le visiteur navigue : au clavier ou au pointeur. Posé par
+   * `components/NavMode.tsx`, qui porte le raisonnement complet.
+   *
+   * Ce n'est **pas** une détection de lecteur d'écran — rien n'expose une
+   * technologie d'assistance. C'est une observation de la façon de naviguer,
+   * dont le carrousel se sert pour ne pas tourner sous une lecture au clavier.
+   * `null` tant que rien n'a tranché : on suppose alors le pointeur.
+   */
+  navMode: NavMode | null;
 };
 
 export function readCurrentSettings(): Settings {
@@ -27,6 +38,7 @@ export function readCurrentSettings(): Settings {
     lang: d.getAttribute("lang") === "en" ? "en" : "fr",
     colorMode: d.getAttribute("data-color-mode") === "dark" ? "dark" : "light",
     shortcuts: d.getAttribute("data-shortcuts") !== "off",
+    navMode: d.getAttribute("data-nav-mode") === "keyboard" ? "keyboard" : d.getAttribute("data-nav-mode") === "pointer" ? "pointer" : null,
   };
 }
 
@@ -39,7 +51,7 @@ export function readCurrentSettings(): Settings {
  * en développement React rejoue les effets au montage, et toute inférence de
  * ce genre se déclenche à faux.
  */
-export type SettingsSource = "slideshow" | "nav";
+export type SettingsSource = "slideshow" | "nav" | "nav-mode";
 
 export function persistSetting(patch: Partial<Settings>, source: SettingsSource = "nav") {
   let stored: Record<string, unknown> = {};
@@ -60,6 +72,7 @@ export function useSettings(): Settings {
     lang: "fr",
     colorMode: "light",
     shortcuts: true,
+    navMode: null,
   });
 
   useEffect(() => {

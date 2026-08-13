@@ -8,7 +8,200 @@ versionnage suit [SemVer](https://semver.org/lang/fr/) :
 
 ## [Unreleased]
 
+### Fixed
+
+- **Le bouton de fermeture du panneau mesurait 22 px en mobile.** Sous le
+  plancher de 24 × 24 de **WCAG 2.5.8**, critère AA depuis la 2.2. Sa largeur
+  était pourtant déclarée à 24 px : le conteneur flex du bandeau la comprimait.
+  Une largeur déclarée n'est pas une largeur tenue — `flex: none` la tient.
+
+- **Le titre d'un article était lu deux fois, et le corps mal cadré.** Relevé
+  sur VoiceOver.
+
+  Le `<title>` d'une page article reprenait **mot pour mot son `h1`**. Le
+  lecteur d'écran annonce le nom de la page à l'ouverture, puis le titre de
+  niveau 1 dès qu'on lit : la même phrase, deux fois de suite. Un gabarit de
+  métadonnées ajoute désormais « — Arthur Mathon » — ce qui dit aussi de qui est
+  le site dans un onglet, un favori ou un partage.
+
+  Le corps portait par ailleurs `lang` **en toutes circonstances**, y compris
+  quand il répétait celui de `<html>` : une frontière de langue posée sur
+  4 000 caractères, que rien ne justifiait, et que les technologies d'assistance
+  traitent comme un changement de voix. L'attribut ne marque plus qu'un vrai
+  changement — interface en anglais, article sans traduction. Ce qui le motivait
+  reste vrai : la synthèse vocale ne doit pas lire du français avec une voix
+  anglaise. C'est ce cas-là, et lui seul, qui est marqué.
+
+- **Le focus ne revenait pas après la fermeture du panneau de conversation.**
+  Il retombait sur `<body>` : au lecteur d'écran, l'exploration repartait du
+  haut de la page. Le document d'accessibilité affirmait pourtant le contraire —
+  le mécanisme existait, il capturait simplement le mauvais élément.
+
+  Deux pièges, tous deux logés dans le panneau. `autoFocus` sur son champ
+  s'applique à **l'insertion du nœud dans le DOM**, donc avant que le moindre
+  effet ne tourne : un effet lisant `document.activeElement` capturait ce champ,
+  et la fermeture y « revenait » — sur un élément qu'elle était en train de
+  démonter. Et en **mode strict**, React joue montage → purge → montage, si bien
+  qu'une restauration posée dans une purge se déclenchait panneau encore ouvert,
+  faisant sortir le focus puis le perdre quand la page redevenait `inert`.
+
+  La restauration passe donc dans `Chat`, qui capture l'ouvrant **dans le
+  gestionnaire d'envoi** — un événement, à l'abri du double montage — et le
+  rétablit sur la transition de fermeture, après que le panneau a levé l'`inert`.
+
+  Repli assumé : poser une question suggérée la retire des chips, donc l'ouvrant
+  a **disparu** à la fermeture. C'est le cas courant, pas l'exception. On revient
+  alors au champ du lanceur, là où la conversation a commencé, plutôt qu'en haut
+  de page. Trois tests : l'ouvrant quand il survit, le champ quand il a disparu,
+  et jamais `<body>`.
+
+- **Le lien « Poser une question » cachait le champ sous la barre.** La barre de
+  navigation est collante ; une ancre pose la cible à `top: 0`, donc **dessous**,
+  invisible — pendant que le reste de l'écran montrait les articles. On croyait
+  avoir été envoyé au mauvais endroit. `scroll-margin-top` corrige les trois
+  cibles, et le champ de question remonte d'un panneau entier (72 px séparent le
+  haut du lanceur de son champ) pour que l'intitulé « Parlez à l'Ours en moi »
+  arrive avec lui : y atterrir seul, au milieu d'un aplat sombre, ne dit pas où
+  l'on est.
+
+- **Les commandes flottantes n'étaient pas centrées sur la barre.** Les trois
+  liens d'accès rapide et le bouton de raccourcis se collaient au bord haut
+  (`top: 8px`), soit **10 px trop haut** en desktop et 2 px en mobile, alors que
+  les chips de la barre, eux, sont centrés. Ils partagent désormais la hauteur de
+  la barre par une variable `--nav-hauteur`, et se centrent dessus quelle que
+  soit leur propre taille. Défaut antérieur à cette PR — un seul lien
+  d'évitement le rendait discret, trois le rendent voyants.
+
+- **Le champ de question était annoncé deux fois.** Son nom accessible venait
+  d'un `<label>` masqué visuellement : même nom accessible qu'un
+  `aria-label`, mais **un nœud de texte de plus dans l'arbre**. En mode
+  exploration, le lecteur d'écran lisait « Votre question », puis « Votre
+  question, zone d'édition, Posez-moi n'importe quelle question ! ». Le libellé
+  passe en `aria-label`, et l'arbre ne le porte plus qu'une fois.
+
+  Ce que l'audit d'août avait corrigé reste acquis : le nom accessible est
+  **distinct de l'indice de saisie**, qui s'efface à la première frappe. C'était
+  cela le défaut d'alors, pas la nature de l'attribut — le `<label>` masqué
+  était la bonne réponse à la mauvaise question.
+
+  Défaut inaudible autrement : ni axe, ni la lecture du code, ni un test de nom
+  accessible ne le voient. Il fallait écouter. Le test compte désormais les
+  occurrences du nom dans l'arbre du lanceur et en exige **une seule**.
+
+- **L'anneau de focus ne suivait pas la bordure des éléments visés.** Deux
+  causes distinctes derrière le même symptôme.
+
+  **Les cibles de saut dessinaient l'anneau du navigateur.** `main` et la grille
+  d'articles portent `tabindex="-1"` pour que le focus s'y pose vraiment ; le
+  navigateur y traçait alors *son* indicateur — un rectangle de 1 px encadrant
+  tout le bloc, qui ne suit aucune bordure et ne ressemble à rien d'autre sur le
+  site. Il est retiré plutôt que stylé : ces conteneurs ne sont pas des
+  commandes, ils ne sont pas dans l'ordre de tabulation, et WCAG 2.4.7 ne vise
+  que les composants opérables au clavier. Le retour au clavier, c'est le
+  défilement ; au lecteur d'écran, c'est l'annonce du repère atteint.
+
+  **Les anneaux étaient écrits en dur** — `border-width-strong` et `2px`
+  d'offset — alors que l'export porte trois tokens faits pour ça :
+  `focus.outline-width`, `-offset` et `-style`. Douze déclarations basculées.
+  Conséquence visible : l'offset passe de 2 à **3 px**, valeur du token. Le
+  champ de saisie s'en écartait plus encore, avec un anneau de **1 px collé à sa
+  bordure**, seul de son espèce — il rejoint les autres.
+
+  **`focus-fallback` n'est pas employé, et c'est délibéré.** Le token existe
+  pour les fonds colorés où le token principal manque de contraste ; mesure
+  faite, la palette de ce site n'en présente aucun — `focus` tient partout, au
+  pire **3,99:1**, quand le repli tomberait à **2,88:1** sur
+  `surface-alternative` en mode sombre. L'employer aurait dégradé l'indicateur.
+  Trois paires sont ajoutées à `npm run a11y:contrast`, au seuil 3:1 de WCAG
+  1.4.11 : le jour où la palette bouge, c'est là qu'on le verra, au lieu de le
+  supposer.
+
+  `e2e/focus.spec.ts` vérifie que **toutes** les commandes portent le même
+  anneau (2 px, solid, offset 3 px), que les deux cibles de saut n'en portent
+  aucun, et qu'aucune valeur n'est réécrite en dur dans la feuille servie.
+
+### Added
+
+- **`e2e/audit-a11y.spec.ts` — un audit systématique des défauts qui échappent
+  aux outils.** Neuf contrôles, quatre largeurs, trois écrans. Chacun vient d'un
+  défaut **réel** relevé à l'usage pendant la session, et qu'axe-core n'avait pas
+  signalé : il passait au vert sur tous.
+
+  Trois familles, tirées de ce que la passe au lecteur d'écran a montré :
+
+  - **Annonces en double** — un `<title>` qui reprend le `h1`, un nom de
+    contrôle répété en texte à côté de lui, une région live qui mêle forme
+    visuelle et forme parlée, un `lang` qui répète celui du document. Le point
+    commun : le même texte existe deux fois dans l'arbre, à deux titres.
+  - **Pointeur et cibles** — aucune zone morte sur un contrôle (un pseudo-élément
+    masqué passe au-dessus et vole le clic), et le plancher de 24 × 24 px.
+  - **Structure** — un seul `h1` exposé, aucun focalisable sous `aria-hidden`,
+    et toute cible d'ancre qui dégage la barre collante.
+
+  Les tolérances sont écrites et motivées dans le fichier : les slides inactives
+  du carrousel sont `inert`, un contrôle inactif ne reçoit volontairement pas le
+  pointeur, et le rang de questions suggérées passe sous son bouton de
+  défilement en mobile. **Une tolérance sans raison écrite est une régression
+  déguisée.**
+
+
+- **Un accès rapide ouvre le document**, tiré d'une passe au lecteur d'écran.
+  Trois constats, trois réponses.
+
+  **Rien ne disait ce qu'est ce site.** Le premier élément annoncé était « lien,
+  Aller au contenu », puis la barre de réglages. Le nom du site n'existait que
+  dans le `<title>` — annoncé à un moment que l'utilisateur ne contrôle pas, et
+  jamais retrouvable en exploration. Il est désormais du contenu, en tête :
+  « Arthur Mathon — portfolio conversationnel », suivi de **« Poser une question
+  à Arthur »** puis **« Voir les articles »**, et enfin le lien d'évitement
+  d'origine. Les deux premiers posent le focus sur une commande, le troisième
+  mène au contenu pour le lire : deux besoins distincts, trois liens.
+
+  **Les raccourcis à touche unique n'atteignent pas un lecteur d'écran.**
+  `docs/accessibilite.md` l'annonçait comme une limite probable ; la passe l'a
+  confirmé, `?` compris. En mode exploration, NVDA et JAWS réservent les lettres
+  à leur propre navigation — `f` va au champ de formulaire suivant. **Ce n'est
+  pas contournable côté page** : la touche est consommée avant que le document
+  ne la voie. D'où la réponse structurelle plutôt qu'un correctif : les mêmes
+  destinations existent en contrôles réels, atteignables à la tabulation comme
+  à l'exploration. Les raccourcis restent un confort pour le clavier nu, ils ne
+  sont plus le seul chemin vers quoi que ce soit.
+
+  L'accès rapide est rendu **par chaque page** et non par le layout : ses
+  destinations en dépendent — une page article n'a ni lanceur ni grille, elle
+  n'offre donc que le contenu. Un raccourci vers une cible absente ne vaut rien.
+
 ### Changed
+
+- **Le carousel suit le mode de navigation** : figé au clavier, relancé à la
+  souris. `components/NavMode.tsx` pose `data-nav-mode` sur `<html>` et le
+  mémorise.
+
+  La demande était « mettre en pause quand un lecteur d'écran est actif ».
+  **C'est impossible** : aucune API n'expose la présence d'une technologie
+  d'assistance, et les heuristiques qui circulent — chaîne d'agent utilisateur,
+  `forced-colors` — sont autant du pistage que de l'approximation. Un mode de
+  navigation n'y change rien : c'est **le même signal**, des événements clavier,
+  et non une détection de lecteur d'écran.
+
+  Ce qu'il change, c'est la **forme** du signal. La première version posait un
+  verrou à sens unique — une touche, et l'animation était perdue pour de bon,
+  mémorisée. Un mode est un état **réversible** : l'utilisateur de lecteur
+  d'écran, qui ne produit aucun événement pointeur, reste en mode clavier toute
+  sa visite ; le visiteur voyant qui appuie une fois sur `Tab` retrouve
+  l'animation dès qu'il reprend la souris. Le coût assumé de la première
+  version disparaît.
+
+  Trois réglages en découlent, chacun pour une raison :
+
+  - **le tactile ne bascule rien** — un lecteur d'écran mobile balaye l'écran et
+    produit les mêmes `pointerdown` qu'un doigt ordinaire ; les distinguer est
+    impossible, donc seule la souris fait foi (`pointerType`) ;
+  - **les touches de saisie ne comptent pas** — écrire dans un champ, c'est
+    éditer, et le lanceur de conversation vit dans ce carousel ;
+  - **le bouton lecture prime sur le mode** — sans quoi il serait un contrôle
+    sans effet pour qui navigue au clavier, et `aria-pressed` annoncerait « en
+    lecture » un carousel immobile.
 
 - **Les composants sont écrits ici, sur le préfixe `ama`.** `styles/components/`
   remplace le CSS extrait du WDS Accor : `.ama-button` (et `.ama-button-icon`),

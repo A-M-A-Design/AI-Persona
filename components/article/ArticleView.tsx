@@ -75,7 +75,19 @@ export default function ArticleView({
           <p className="article__notice">{t(lang, "articleFrenchOnly")}</p>
         )}
 
-        <div className="article__body" lang={inFrench ? "fr" : "en"}>
+        {/*
+          `lang` **uniquement quand le corps parle une autre langue que le
+          document**, c'est-à-dire quand l'interface est en anglais et que
+          l'article n'a pas de traduction. Sinon l'attribut ne fait que répéter
+          le `lang` de `<html>` : une frontière de langue posée sur 4 000
+          caractères, que rien ne justifie et que les lecteurs d'écran traitent
+          comme un changement de voix.
+
+          Ce qui motivait l'attribut reste vrai : la synthèse vocale ne doit pas
+          lire du français avec une voix anglaise. C'est ce cas-là, et lui seul,
+          qui est marqué.
+        */}
+        <div className="article__body" lang={inFrench && lang === "en" ? "fr" : undefined}>
           {body.map((block, i) => {
             if (block.type === "heading") {
               return (

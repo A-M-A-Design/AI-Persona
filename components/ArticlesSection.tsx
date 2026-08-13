@@ -19,7 +19,15 @@ export default function ArticlesSection() {
   // deux grilles, qui n'étaient jusque-là que des blocs anonymes.
   return (
     <>
-      <section className="articles" aria-labelledby="articles-une">
+      {/* `tabIndex={-1}` pour la même raison que `main` : sans lui, certains
+          navigateurs déplacent la vue sans déplacer le focus, et la tabulation
+          suivante repart du début de la page. */}
+      <section
+        className="articles"
+        id="articles"
+        tabIndex={-1}
+        aria-labelledby="articles-une"
+      >
         <h2 className="a11y-hidden" id="articles-une">
           {t(lang, "featuredArticles")}
         </h2>

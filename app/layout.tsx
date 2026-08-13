@@ -9,8 +9,8 @@ import "../styles/persona-extras.css";
 import "./globals.css";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import NavMode from "../components/NavMode";
 import Shortcuts from "../components/Shortcuts";
-import SkipLink from "../components/SkipLink";
 import {
   Cormorant_Garamond,
   Fraunces,
@@ -55,13 +55,25 @@ const fontVariables = [
   .join(" ");
 
 export const metadata: Metadata = {
-  title: "Arthur Mathon — AI Persona",
+  /*
+    Gabarit plutôt qu'un titre par page. Une page article portait pour titre de
+    document le **texte exact de son `h1`** : le lecteur d'écran annonce le nom
+    de la page à l'ouverture, puis le titre de niveau 1 dès qu'on lit — soit la
+    même phrase deux fois de suite. Signalé sur VoiceOver le 2026-08-13.
+
+    Le suffixe dit aussi de qui est le site, ce qu'un titre nu ne disait pas :
+    utile dans un onglet, un favori ou un partage.
+  */
+  title: {
+    default: "Arthur Mathon — AI Persona",
+    template: "%s — Arthur Mathon",
+  },
   description:
     "Discutez avec la version IA d'Arthur Mathon, Design System Lead/Product/Ops.",
 };
 
 // Applique les préférences (mode, persona, langue) avant le premier paint — anti-flash.
-const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);if(s.shortcuts===false)d.setAttribute("data-shortcuts","off");}catch(e){}})();`;
+const settingsScript = `(function(){try{var s=JSON.parse(localStorage.getItem("ai-persona:settings")||"{}");var d=document.documentElement;if(s.colorMode)d.setAttribute("data-color-mode",s.colorMode);if(s.persona)d.setAttribute("data-persona",s.persona);if(s.lang)d.setAttribute("lang",s.lang);if(s.shortcuts===false)d.setAttribute("data-shortcuts","off");if(s.navMode)d.setAttribute("data-nav-mode",s.navMode);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -75,10 +87,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: settingsScript }} />
       </head>
+      {/* L'accès rapide n'est plus rendu ici mais par chaque page : ses
+          destinations dépendent de la page, et il doit rester le tout premier
+          contenu annoncé. `Shortcuts` passe donc après — son bouton de
+          découverte est une commodité, pas un point d'entrée. */}
       <body>
-        <SkipLink />
-        <Shortcuts />
         {children}
+        {/* Ne rend rien : il observe la façon de naviguer et la pose en
+            `data-nav-mode`. Le carrousel s'en sert pour ne pas tourner sous
+            une lecture au clavier. */}
+        <NavMode />
+        <Shortcuts />
       </body>
     </html>
   );

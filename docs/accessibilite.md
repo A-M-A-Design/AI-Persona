@@ -15,6 +15,7 @@ La page `/dev/kit` est hors périmètre : elle n'est pas publiée.
 | --- | --- |
 | `npm run a11y:contrast` | Toutes les paires texte/fond du thème, 3 personas × 2 modes |
 | `npx playwright test e2e/a11y.spec.ts` | Balayage axe-core + tests nominatifs, 4 largeurs |
+| `npx playwright test e2e/audit-a11y.spec.ts` | Audit systématique : annonces en double, zones mortes, taille de cible, structure |
 
 **Le balayage automatique ne suffit pas, et il faut le dire.** Lancé sur le code
 d'avant correction avec les seules règles WCAG, axe-core ne signalait **aucune**
@@ -27,6 +28,17 @@ l'inspection de l'arbre d'accessibilité.
 C'est la raison d'être de la section « Ce que le lecteur d'écran annonce »
 ci-dessous : ce qui compte n'est pas l'absence de violation mécanique, mais ce
 qui est réellement dit, et dans quel ordre.
+
+**La passe du 2026-08-13 l'a confirmé de la pire façon.** Sept défauts ont été
+trouvés **à l'usage**, au lecteur d'écran ou à la main, alors qu'axe-core passait
+au vert sur tous : un libellé annoncé deux fois, un titre de page identique à son
+`h1`, un `lang` redondant sur 4 000 caractères, un focus qui ne revenait pas
+après la modale, un chevron qui volait le clic sur 20 % d'un contrôle, une ancre
+qui posait sa cible sous la barre collante, un bouton à 22 px.
+
+Aucun n'était visible dans le code sans l'entendre ou l'essayer. `audit-a11y.spec.ts`
+en tire les classes et les vérifie désormais à chaque run — c'est la seule façon
+de ne pas les redécouvrir une deuxième fois.
 
 ## Constats et corrections
 
@@ -68,7 +80,11 @@ Relevé sur l'arbre d'accessibilité réel du navigateur, après correction.
 ### Accueil, à l'ouverture
 
 ```
-lien « Aller au contenu »
+navigation « Accès rapide »
+  « Arthur Mathon — portfolio conversationnel »
+  lien « Poser une question à Arthur »
+  lien « Voir les articles »
+  lien « Aller au contenu »
 bannière
   liste déroulante « Type d'avatar » — Ours sélectionné
   liste déroulante « Langue » — FR sélectionné
@@ -76,7 +92,8 @@ bannière
 contenu principal
   titre niveau 1 « Bonjour, je suis Arthur ! »
   paragraphe « Designaut passionné de Design System, Product et Operations »
-  zone de texte « Votre question »
+  zone de texte « Votre question » — **une seule fois** : un `<label>` masqué
+    visuellement aurait été lu en plus, comme texte, avant le champ lui-même
   bouton « Discutons » (indisponible)
   groupe « Questions suggérées »
     bouton « Raconte-moi ton parcours »
@@ -97,7 +114,14 @@ pied de page
 2. Statut : « Réponse en cours… » — **une fois**.
 3. Statut : la réponse complète — **une fois**, à la fin du flux.
 4. Le fil reste lisible en exploration : « Qui es-tu ? » puis la réponse.
-5. Échap ferme, le focus revient sur l'élément qui avait ouvert le panneau.
+5. Échap ferme, et le focus revient sur l'élément qui avait ouvert le panneau
+   — ou, quand il a disparu, sur le champ du lanceur. Poser une question
+   suggérée la retire des chips : l'ouvrant n'existe alors plus, et c'est le
+   cas courant. **Jamais `<body>`**, d'où l'exploration repartirait du haut de
+   la page. La restauration vit dans `Chat` et non dans le panneau : celui-ci
+   prend le focus par `autoFocus` avant tout effet, et le mode strict de React
+   joue montage → purge → montage, ce qui déclenchait une restauration
+   panneau encore ouvert.
 
 Pendant toute la conversation, la page derrière est `inert` : ni tabulation, ni
 exploration.
@@ -111,6 +135,14 @@ région « Autres articles » avec sa pagination : « bouton Articles précéden
 
 Le corps d'un article non traduit porte `lang="fr"` même quand l'interface est
 en anglais : la synthèse vocale ne lit pas du français avec une voix anglaise.
+**Et seulement dans ce cas** : l'attribut marque un *changement* de langue. Posé
+systématiquement, il répétait le `lang` de `<html>` sur 4 000 caractères — une
+frontière que rien ne justifiait.
+
+Le titre du document ne reprend plus le `h1` : un gabarit lui ajoute
+« — Arthur Mathon ». Le lecteur d'écran annonce le nom de la page à l'ouverture,
+puis le titre de niveau 1 dès qu'on lit ; à l'identique, la même phrase était
+entendue deux fois de suite. Relevé sur VoiceOver.
 
 ## Non-défauts vérifiés
 
@@ -160,6 +192,30 @@ premiers arrêts un nom accessible et un anneau de focus visible.
   `prefers-reduced-motion` la neutralise entièrement. Elle se suspend aussi au
   survol, au focus clavier, quand l'onglet passe en arrière-plan et quand le
   panneau s'ouvre.
+- **La navigation au clavier le fige**, et la souris le relance. La demande
+  était « mettre en pause quand un lecteur d'écran est actif » : **c'est
+  impossible**. Aucune API n'expose la présence d'une technologie d'assistance,
+  et les heuristiques qui circulent — chaîne d'agent utilisateur,
+  `forced-colors` — sont autant du pistage que de l'approximation.
+
+  Ce qu'on observe, c'est la **façon de naviguer** (`components/NavMode.tsx`,
+  attribut `data-nav-mode` sur `<html>`, mémorisé). Un utilisateur de lecteur
+  d'écran navigue au clavier et ne produit **aucun** événement pointeur : il
+  reste en mode clavier toute sa visite, et le contenu ne change jamais sous sa
+  lecture. `Tab` est la touche fiable — le mode exploration la laisse passer là
+  où il consomme les flèches.
+
+  **Le mode est réversible**, et c'est ce qui le distingue du verrou qu'il
+  remplace : le visiteur voyant qui appuie une fois sur `Tab` retrouve
+  l'animation dès qu'il reprend la souris. Trois réglages en découlent :
+
+  - **le tactile ne bascule rien** — un lecteur d'écran mobile balaye l'écran et
+    produit les mêmes `pointerdown` qu'un doigt ordinaire, impossible à
+    distinguer ; seule la souris fait foi (`pointerType`) ;
+  - **les touches de saisie ne comptent pas** — écrire dans un champ, c'est
+    éditer, et le lanceur de conversation vit dans ce carrousel ;
+  - **le bouton lecture prime sur le mode** — sans quoi il serait un contrôle
+    sans effet pour qui navigue au clavier.
 
 ### Les raccourcis clavier du carrousel
 
@@ -210,6 +266,16 @@ raccourci que personne ne connaît ne sert personne.
 réservent les lettres à leur propre navigation. M, N et F ne leur parviendront
 probablement pas. Les flèches du carrousel, portées au focus, échappent à cette
 limite — c'est la raison de leur périmètre plus étroit.
+
+**Confirmé par la passe du 2026-08-13** : aucun des raccourcis à touche unique,
+`?` compris, n'atteint la page lecteur d'écran actif. Ce n'est pas contournable
+côté page — la touche est consommée avant que le document ne la voie, et aucune
+API ne permet ni de le savoir ni de s'y opposer.
+
+La réponse est donc structurelle : les destinations qui comptent existent
+**aussi en contrôles réels**, dans l'accès rapide en tête de document (voir
+« Accueil, à l'ouverture »). Les raccourcis restent un confort pour le clavier
+nu ; ils ne sont plus le seul chemin vers quoi que ce soit.
 
 ### Les liens dans les réponses
 

@@ -36,6 +36,12 @@ const STRINGS = {
     nextArticles: "Articles suivants",
     pageCounter: "Page {n} sur {total}",
     skipToContent: "Aller au contenu",
+    // Premier texte du document, lu à l'ouverture avant tout le reste. Il dit
+    // ce qu'est le site, pas ce qu'il contient : c'est un repère, pas un menu.
+    siteName: "Arthur Mathon — portfolio conversationnel",
+    quickAccess: "Accès rapide",
+    skipToAsk: "Poser une question à Arthur",
+    skipToArticles: "Voir les articles",
     shortcutsHint: "Raccourcis clavier",
     shortcutsTitle: "Raccourcis clavier",
     shortcutMain: "Aller au contenu principal",
@@ -53,7 +59,7 @@ const STRINGS = {
     optionLight: "Clair",
     optionDark: "Sombre",
     backToHome: "Retour à l'accueil",
-    articleFrenchOnly: "Cet article est publié en français.",
+    articleFrenchOnly: "Cet article est publié en français.",
     footerLinkedIn: "LinkedIn",
   },
   en: {
@@ -88,6 +94,10 @@ const STRINGS = {
     nextArticles: "Next articles",
     pageCounter: "Page {n} of {total}",
     skipToContent: "Skip to content",
+    siteName: "Arthur Mathon — conversational portfolio",
+    quickAccess: "Quick access",
+    skipToAsk: "Ask Arthur a question",
+    skipToArticles: "Browse the articles",
     shortcutsHint: "Keyboard shortcuts",
     shortcutsTitle: "Keyboard shortcuts",
     shortcutMain: "Go to the main content",
@@ -105,7 +115,7 @@ const STRINGS = {
     optionLight: "Light",
     optionDark: "Dark",
     backToHome: "Back to home",
-    articleFrenchOnly: "This article is published in French.",
+    articleFrenchOnly: "This article is published in French.",
     footerLinkedIn: "LinkedIn",
   },
 } as const;

@@ -89,17 +89,30 @@ test.describe("Nom accessible", () => {
     expect(nom).not.toContain(kicker!.trim());
   });
 
-  test("le champ de saisie a un libellé distinct de son indice", async ({ page }) => {
+  test("le champ de saisie a un libellé distinct de son indice, annoncé une seule fois", async ({
+    page,
+  }) => {
     await visit(page);
     const champ = page.locator(".launcher__row input");
     const { nom, placeholder } = await champ.evaluate((el: HTMLInputElement) => ({
-      nom: document.querySelector<HTMLLabelElement>(`label[for="${el.id}"]`)?.textContent?.trim(),
+      nom: el.getAttribute("aria-label"),
       placeholder: el.placeholder,
     }));
+    // Le défaut d'origine : un nom accessible recopiant l'indice, qui s'efface
+    // à la première frappe.
     expect(nom).toBeTruthy();
     expect(nom).not.toBe(placeholder);
-    // Et plus d'aria-label qui écraserait le <label>.
-    await expect(champ).not.toHaveAttribute("aria-label", /./);
+
+    /*
+      Et le nom ne doit apparaître **qu'une fois** dans l'arbre. Un `<label>`
+      masqué visuellement donne le même nom accessible, mais reste un nœud de
+      texte : en exploration, le lecteur d'écran lisait « Votre question », puis
+      « Votre question, zone d'édition, … ». Signalé à l'écoute le 2026-08-13 —
+      inaudible pour qui teste sans lecteur d'écran, et invisible pour axe.
+    */
+    const arbre = await page.locator(".launcher--hero").ariaSnapshot();
+    const occurrences = arbre.split(nom!).length - 1;
+    expect(occurrences, `« ${nom} » apparaît ${occurrences} fois dans l'arbre`).toBe(1);
   });
 
   test("le groupe de questions suggérées porte un rôle et un nom", async ({ page }) => {
@@ -113,8 +126,12 @@ test.describe("Nom accessible", () => {
 test.describe("Clavier", () => {
   test("le lien d'évitement mène au contenu", async ({ page }) => {
     await visit(page);
+    // Troisième arrêt : l'accès rapide propose d'abord la question et les
+    // articles. Cf. « Accès rapide » plus bas pour l'ordre lui-même.
     await page.keyboard.press("Tab");
-    const lien = page.locator(".skip-link");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    const lien = page.locator('.skip-link[href="#contenu"]');
     await expect(lien).toBeFocused();
     // Visible une fois atteint, et non simplement présent hors écran. Le lien
     // descend par une transition : on attend qu'elle se pose.
@@ -262,5 +279,103 @@ test.describe("Annonce de la réponse", () => {
     await page.keyboard.press("Escape");
     await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
     await expect(page.locator("main")).not.toHaveAttribute("inert", /.*/);
+  });
+});
+
+test.describe("Retour du focus après le panneau", () => {
+  /*
+    Le focus retombait sur `<body>` à la fermeture : au lecteur d'écran,
+    l'exploration repartait du haut de la page. Deux pièges, tous deux dans le
+    panneau — d'où la reprise dans `Chat`. `autoFocus` sur son champ
+    s'applique à l'insertion du nœud, **avant** tout effet, si bien qu'un effet
+    lisant `document.activeElement` capturait ce champ et « revenait » dessus
+    en le démontant. Et en mode strict, React joue montage → purge → montage :
+    une restauration posée dans une purge se déclenche panneau encore ouvert.
+  */
+  test("il revient sur l'élément qui a ouvert, quand il existe encore", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+
+    // Le bouton d'envoi survit à l'ouverture, contrairement aux chips.
+    await page.locator(".launcher__row input").fill("Bonjour");
+    const bouton = page.locator(".launcher__row button[type=submit]");
+    await bouton.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".chat-modal__panel").waitFor();
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    await expect(bouton).toBeFocused();
+  });
+
+  test("et sur le champ du lanceur quand l'ouvrant a disparu", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+
+    /*
+      Poser une question suggérée la retire des chips : le bouton qui a ouvert
+      le panneau n'existe plus à la fermeture. C'est le cas courant, pas
+      l'exception — on revient donc au champ du lanceur, là où la conversation
+      a commencé, plutôt qu'en haut de page.
+    */
+    const chip = page.locator(".launcher__suggestions .ama-chip").first();
+    await chip.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".chat-modal__panel").waitFor();
+
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    await expect(page.locator("#question")).toBeFocused();
+  });
+
+  test("jamais sur body", async ({ page }) => {
+    await stubChat(page);
+    await visit(page);
+    await openChat(page);
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".chat-modal__panel")).toHaveCount(0);
+    const tag = await page.evaluate(() => document.activeElement?.tagName.toLowerCase());
+    expect(tag).not.toBe("body");
+  });
+});
+
+test.describe("Titre de page et langue", () => {
+  /*
+    Signalé sur VoiceOver le 2026-08-13 : sur une page article, le titre était
+    lu deux fois. Le lecteur d'écran annonce le nom de la page à l'ouverture,
+    puis le titre de niveau 1 dès qu'on lit — et les deux portaient **le même
+    texte**, le `<title>` reprenant mot pour mot le `h1`.
+  */
+  test("le titre du document ne répète pas le titre de niveau 1", async ({ page }) => {
+    for (const url of ["/", ARTICLE]) {
+      await page.goto(url);
+      await page.waitForLoadState("networkidle");
+      const { titre, h1 } = await page.evaluate(() => ({
+        titre: document.title.trim(),
+        h1: document.querySelector("h1")?.textContent?.trim() ?? "",
+      }));
+      expect(titre, `${url} : titre vide`).not.toBe("");
+      expect(h1, `${url} : h1 vide`).not.toBe("");
+      expect(titre, `${url} : « ${titre} » est aussi le h1`).not.toBe(h1);
+    }
+  });
+
+  /*
+    `lang` ne se pose que sur un **changement** de langue. Le corps d'article
+    le portait toujours, y compris quand il répétait le `lang` de `<html>` :
+    une frontière de langue sur 4 000 caractères, que rien ne justifiait.
+  */
+  test("aucun attribut lang ne répète la langue du document", async ({ page }) => {
+    for (const url of ["/", ARTICLE]) {
+      await page.goto(url);
+      await page.waitForLoadState("networkidle");
+      const redondants = await page.evaluate(() => {
+        const doc = document.documentElement.lang;
+        return [...document.querySelectorAll("main [lang]")]
+          .filter((e) => e.getAttribute("lang") === doc)
+          .map((e) => e.tagName.toLowerCase() + "." + String(e.className).split(" ")[0]);
+      });
+      expect(redondants, `${url}`).toEqual([]);
+    }
   });
 });
